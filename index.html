@@ -155,13 +155,13 @@
   </div>
   <div class="card" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
     <div style="font-size:28px;">🎓</div>
-    <div style="flex:1;"><div style="font-size:14px;font-weight:500;margin-bottom:4px;">Join the batch</div><div style="font-size:13px;color:var(--muted);">Enter your name and the batch code to get started</div></div>
-    <button class="btn btn-primary" onclick="showJoinModal()">Join now</button>
+    <div style="flex:1;"><div style="font-size:14px;font-weight:500;margin-bottom:4px;">New here? Set your name first</div><div style="font-size:13px;color:var(--muted);">Enter your name + batch code so everyone knows it's you when you post</div></div>
+    <button class="btn btn-primary" onclick="showJoinModal()">Set my name</button>
   </div>
   <div class="card" style="margin-top:12px;">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;">
       <div style="font-size:13px;color:var(--muted);">Share with your batch</div>
-      <code style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;color:var(--gold);">amrutvahini-diaries.vercel.app</code>
+      <code style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;color:var(--gold);">rohan2531.github.io/amrutvahini-diaries</code>
       <button class="btn" onclick="copyLink()">Copy link</button>
     </div>
   </div>
@@ -432,15 +432,16 @@
     <div class="card" style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:500;">Allow photo uploads</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Members can add to the gallery</div></div><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div></div>
     <div class="card" style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:500;">Lock website (read-only)</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">No new posts or signups</div></div><div class="toggle off" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div></div>
     <div class="card" style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:500;">Reveal batch awards</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Show voting results to everyone on farewell day</div></div><div class="toggle off" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div></div>
-    <div class="card"><div style="font-size:14px;font-weight:500;margin-bottom:8px;">Batch photo logo</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Upload your batch photo — it appears as the logo in the topbar</div><input type="file" id="logoUpload" accept="image/*" style="display:none;" onchange="uploadLogo(event)"/><button class="btn btn-primary" onclick="document.getElementById('logoUpload').click()">Upload batch photo</button></div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><input type="text" value="ACOE-IT-2026" style="max-width:200px;" readonly/><button class="btn" onclick="copyCode()">Copy</button></div><div style="font-size:12px;color:var(--muted);margin-top:8px;">Share this with your batch to let them join</div></div>
+    <div class="card"><div style="font-size:14px;font-weight:500;margin-bottom:8px;">Batch photo logo</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Upload your batch photo — it appears as the logo in the topbar</div><input type="file" id="logoUpload" accept="image/*" style="display:none;" onchange="uploadLogo(event)"/><button class="btn btn-primary" onclick="document.getElementById('logoUpload').click()">Upload batch photo</button></div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><input type="text" value="AVCOE-IT-2026" style="max-width:200px;" readonly/><button class="btn" onclick="copyCode()">Copy</button></div><div style="font-size:12px;color:var(--muted);margin-top:8px;">Share this with your batch to let them join</div></div>
   </div>
 </div>
 
 <!-- JOIN MODAL -->
 <div id="joinModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;">
   <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;width:90%;max-width:400px;">
-    <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);margin-bottom:6px;">Join the batch</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">Amrutvahini Diaries — IT 2022–26</div>
+    <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);margin-bottom:6px;">Set your name</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Amrutvahini Diaries — IT 2022–26</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Your name will appear on your posts and memories. Batch code is <strong style="color:var(--gold2);">AVCOE-IT-2026</strong></div>
     <div class="form-row"><label class="form-label">Your full name</label><input id="joinName" type="text" placeholder="Enter your name"/></div>
     <div class="form-row"><label class="form-label">Batch code</label><input id="joinCode" type="text" placeholder="Ask your admin for the code"/></div>
     <div style="display:flex;gap:10px;margin-top:4px;"><button class="btn btn-primary" onclick="joinBatch()" style="flex:1;">Join</button><button class="btn" onclick="closeJoin()">Cancel</button></div>
@@ -450,9 +451,9 @@
 <script>
 function animateCount(id,target){let c=0;const el=document.getElementById(id);const t=setInterval(()=>{c=Math.min(c+Math.ceil(target/40),target);el.textContent=c;if(c>=target)clearInterval(t);},40);}
 window.addEventListener('load',()=>{
-  animateCount('s-members',64);animateCount('s-memories',138);animateCount('s-photos',47);animateCount('s-letters',21);
   const d=new Date();d.setDate(d.getDate()+14);
   document.getElementById('countdownPill').textContent='⏳ '+Math.ceil((d-new Date())/86400000)+' days to farewell';
+  setTimeout(()=>{ if(!window._userName) showJoinModal(); }, 800);
 });
 
 function showPage(id,el){
@@ -491,9 +492,21 @@ function toggleAdmin(){
   }
 }
 function toggleSwitch(el){el.classList.toggle('on');el.classList.toggle('off');}
+function isJoined(){
+  if(!window._userName){
+    alert('Please set your name first! Click "Set my name" on the home page.');
+    showPage('home', document.querySelector('#mainNav .nav-item'));
+    document.querySelectorAll('#mainNav .nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelector('#mainNav .nav-item').classList.add('active');
+    setTimeout(()=>showJoinModal(), 300);
+    return false;
+  }
+  return true;
+}
 function likePost(el){const c=el.querySelector('.like-count');c.textContent=parseInt(c.textContent)+1;el.style.color='var(--red)';}
 function flagPost(el){el.textContent='🚩 Reported';el.style.color='var(--red)';el.style.pointerEvents='none';}
 function addPost(){
+  if(!isJoined())return;
   const t=document.getElementById('newPost').value.trim();if(!t)return;
   const f=document.getElementById('postFeed');
   const d=document.createElement('div');d.className='post';
@@ -501,11 +514,13 @@ function addPost(){
   f.prepend(d);document.getElementById('newPost').value='';
 }
 function submitConfession(){
+  if(!isJoined())return;
   const t=document.getElementById('newConfession').value.trim();if(!t)return;
   alert('Your confession has been sent to admin for approval! 🤫');
   document.getElementById('newConfession').value='';
 }
 function sealLetter(){
+  if(!isJoined())return;
   const n=document.getElementById('lName').value.trim(),t=document.getElementById('lText').value.trim();
   if(!n||!t){alert('Please fill in your name and letter!');return;}
   const l=document.getElementById('letterList');
@@ -515,6 +530,7 @@ function sealLetter(){
   alert('Your letter has been sealed! 🔒');
 }
 function addVision(){
+  if(!isJoined())return;
   const n=document.getElementById('vName').value.trim(),dr=document.getElementById('vDream').value.trim();
   if(!n||!dr){alert('Please fill in your name and dream!');return;}
   const path=document.getElementById('vPath').value,loc=document.getElementById('vLocation').value,msg=document.getElementById('vMsg').value.trim();
@@ -528,11 +544,14 @@ function addVision(){
 const pollVoted={};
 function vote(el,id){if(pollVoted[id])return;pollVoted[id]=true;el.closest('.poll-card').querySelectorAll('.poll-option').forEach(o=>o.style.pointerEvents='none');el.classList.add('voted');}
 const awardVoted={};
-function castVote(el,id){if(awardVoted[id])return;awardVoted[id]=true;el.closest('.award-card').querySelectorAll('.vote-option').forEach(o=>o.style.pointerEvents='none');el.classList.add('voted');}
+function castVote(el,id){
+  if(!isJoined())return;
+  if(awardVoted[id])return;awardVoted[id]=true;el.closest('.award-card').querySelectorAll('.vote-option').forEach(o=>o.style.pointerEvents='none');el.classList.add('voted');}
 function filterProfiles(q){document.querySelectorAll('.profile-card').forEach(c=>{c.style.display=c.dataset.name.includes(q.toLowerCase())?'':'none';});}
 function toggleAddProfile(){const f=document.getElementById('addProfileForm');f.style.display=f.style.display==='none'?'block':'none';}
 const cols=['rgba(201,168,76,0.12);color:var(--gold)','rgba(77,184,164,0.12);color:var(--teal)','rgba(155,127,232,0.12);color:var(--purple)','rgba(76,175,125,0.12);color:var(--green)','rgba(224,82,82,0.12);color:var(--red)'];
 function addProfile(){
+  if(!isJoined())return;
   const n=document.getElementById('pName').value.trim();if(!n){alert('Please enter your name!');return;}
   const nick=document.getElementById('pNick').value.trim(),bio=document.getElementById('pBio').value.trim(),mem=document.getElementById('pMemory').value.trim();
   const i=n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
@@ -544,12 +563,14 @@ function addProfile(){
   toggleAddProfile();
 }
 function uploadPhoto(e){
+  if(!isJoined())return;
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
   r.onload=ev=>{const d=document.createElement('div');d.style.cssText='aspect-ratio:1;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);';const img=document.createElement('img');img.src=ev.target.result;img.style.cssText='width:100%;height:100%;object-fit:cover;';d.appendChild(img);document.getElementById('photoGrid').appendChild(d);document.getElementById('photoCount').textContent=document.getElementById('photoGrid').children.length+' photos';};
   r.readAsDataURL(f);
 }
 function pinHometown(){
+  if(!isJoined())return;
   const c=document.getElementById('mapCity').value.trim(),s=document.getElementById('mapState').value;
   if(!c){alert('Please enter your city!');return;}
   const d=document.createElement('div');d.className='card';d.style.cssText='display:flex;align-items:center;gap:10px;';
@@ -562,11 +583,11 @@ function closeJoin(){document.getElementById('joinModal').style.display='none';}
 function joinBatch(){
   const n=document.getElementById('joinName').value.trim(),code=document.getElementById('joinCode').value.trim();
   if(!n){alert('Please enter your name!');return;}
-  if(code!=='ACOE-IT-2026'){alert('Wrong batch code! Ask your batch admin for the correct code.');return;}
+  if(code!=='AVCOE-IT-2026'){alert('Wrong batch code! Ask your batch admin for the correct code.');return;}
   closeJoin();alert('Welcome to Amrutvahini Diaries, '+n+'! 🎓');
 }
-function copyLink(){navigator.clipboard.writeText('amrutvahini-diaries.vercel.app').then(()=>alert('Link copied!'));}
-function copyCode(){navigator.clipboard.writeText('ACOE-IT-2026').then(()=>alert('Batch code copied!'));}
+function copyLink(){navigator.clipboard.writeText('https://rohan2531.github.io/amrutvahini-diaries/').then(()=>alert('Link copied! Share it with your batch 🎓'));}
+function copyCode(){navigator.clipboard.writeText('AVCOE-IT-2026').then(()=>alert('Batch code copied!'));}
 function uploadLogo(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const img=document.getElementById('logoImg');img.src=ev.target.result;document.getElementById('logoWrap').style.display='block';alert('Batch photo set as logo! 🎓');};r.readAsDataURL(f);}
 function toggleCreateAward(){const f=document.getElementById('createAwardForm');f.style.display=f.style.display==='none'?'block':'none';}
 let awardCounter=100;
@@ -820,7 +841,7 @@ window.joinBatch = async function(){
   const name=document.getElementById('joinName').value.trim();
   const code=document.getElementById('joinCode').value.trim();
   if(!name){alert('Please enter your name!');return;}
-  if(code!=='ACOE-IT-2026'){alert('Wrong batch code! Ask your batch admin for the correct code.');return;}
+  if(code!=='AVCOE-IT-2026'){alert('Wrong batch code! Ask your batch admin for the correct code.');return;}
   window._userName = name;
   document.getElementById('joinModal').style.display='none';
   alert('Welcome to Amrutvahini Diaries, '+name+'! 🎓');
