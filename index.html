@@ -571,12 +571,20 @@ onAuthStateChanged(auth, async user => {
     let approved = user.uid === ADMIN_UID;
 
     if (!approved) {
-      const [uidSnap, emailSnap] = await Promise.all([
-        getDoc(doc(db,'allowlist',user.uid)),
-        getDoc(doc(db,'allowlist',tempId))
-      ]);
-      if (uidSnap.exists() || emailSnap.exists()) {
-        approved = true;
+      try {
+        const [uidSnap, emailSnap] = await Promise.all([
+          getDoc(doc(db,'allowlist',user.uid)),
+          getDoc(doc(db,'allowlist',tempId))
+        ]);
+        if (uidSnap.exists() || emailSnap.exists()) {
+          approved = true;
+        }
+      } catch(err) {
+        // if rules block the read, try individual reads
+        try { const s = await getDoc(doc(db,'allowlist',user.uid)); if(s.exists()) approved=true; } catch(e){}
+        if (!approved) {
+          try { const s = await getDoc(doc(db,'allowlist',tempId)); if(s.exists()) approved=true; } catch(e){}
+        }
       }
     }
 
