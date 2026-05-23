@@ -100,7 +100,45 @@
   </div>
 </div>
 
-<!-- TOPBAR -->
+<!-- ONBOARDING SCREEN — shown after first login, mandatory profile setup -->
+<div id="onboardScreen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:998;overflow-y:auto;">
+  <div style="max-width:500px;margin:0 auto;padding:40px 24px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div id="onboardAvatar" style="width:80px;height:80px;border-radius:50%;margin:0 auto 16px;background:rgba(201,168,76,0.12);border:3px solid rgba(201,168,76,0.4);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:500;color:var(--gold);overflow:hidden;"></div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);margin-bottom:6px;">Welcome to the batch! 🎓</div>
+      <div style="font-size:13px;color:var(--muted);">Complete your profile so your batchmates can find you.</div>
+      <div style="font-size:12px;color:var(--red);margin-top:6px;font-weight:500;">Required — you can't skip this</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;">
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Your name <span style="color:var(--muted);">(from Google)</span></label>
+        <input id="ob-name" type="text" readonly style="opacity:0.6;cursor:not-allowed;"/>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Nickname <span style="color:var(--red);">*</span></label>
+        <input id="ob-nick" type="text" placeholder="What your friends call you" maxlength="30"/>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Your vibe in one line <span style="color:var(--red);">*</span></label>
+        <input id="ob-bio" type="text" placeholder="e.g. The one who always had chai ready" maxlength="80"/>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Roll number <span style="color:var(--red);">*</span></label>
+        <input id="ob-roll" type="text" placeholder="e.g. 21IT001"/>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="form-label">Phone number <span style="color:var(--red);">*</span></label>
+        <input id="ob-phone" type="tel" placeholder="e.g. 9876543210" maxlength="10"/>
+      </div>
+      <div style="margin-bottom:24px;">
+        <label class="form-label">Message to the batch <span style="color:var(--red);">*</span></label>
+        <textarea id="ob-msg" placeholder="What do you want to say to your batchmates? Say it here — they'll read it forever." style="min-height:100px;"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="window.saveOnboarding()" style="width:100%;padding:12px;font-size:15px;">Save & Enter 🎓</button>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:12px;">Your phone number is only visible to your batchmates</div>
+    </div>
+  </div>
+</div>
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
     <div id="logoWrap" style="display:none;"><img id="logoImg" src="" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(201,168,76,0.4);"/></div>
@@ -175,8 +213,11 @@
   <div id="addProfileForm" style="display:none;margin-bottom:16px;">
     <div class="card">
       <div style="font-size:15px;font-weight:500;margin-bottom:14px;color:var(--gold);">Your profile</div>
-      <div class="form-row"><label class="form-label">Nickname</label><input id="pNick" type="text" placeholder="What your friends call you"/></div>
-      <div class="form-row"><label class="form-label">Your vibe in one line</label><input id="pBio" type="text" placeholder="e.g. The one who always had chai ready"/></div>
+      <div class="form-row"><label class="form-label">Nickname <span style="color:var(--red);">*</span></label><input id="pNick" type="text" placeholder="What your friends call you"/></div>
+      <div class="form-row"><label class="form-label">Your vibe in one line <span style="color:var(--red);">*</span></label><input id="pBio" type="text" placeholder="e.g. The one who always had chai ready"/></div>
+      <div class="form-row"><label class="form-label">Roll number <span style="color:var(--red);">*</span></label><input id="pRoll" type="text" placeholder="e.g. 21IT001"/></div>
+      <div class="form-row"><label class="form-label">Phone number <span style="color:var(--red);">*</span></label><input id="pPhone" type="tel" placeholder="e.g. 9876543210" maxlength="10"/></div>
+      <div class="form-row"><label class="form-label">Message to the batch <span style="color:var(--red);">*</span></label><textarea id="pMsg" placeholder="What do you want to say to your batchmates?"></textarea></div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-primary" id="profileSaveBtn" onclick="window.addProfile()">Save profile</button>
         <button class="btn" onclick="toggleAddProfile()">Cancel</button>
@@ -402,7 +443,6 @@ function filterProfiles(q) {
 function toggleAddProfile() {
   const f = document.getElementById('addProfileForm');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
-  // reset button to Save when opening
   if (f.style.display === 'block') {
     const btn = document.getElementById('profileSaveBtn');
     btn.textContent = 'Save profile';
@@ -450,7 +490,8 @@ const ADMIN_UID = 'wEz2oV7i4fMbm075oAqSSioTUEm2';
 
 // ── AUTH ───────────────────────────────────────────────
 onAuthStateChanged(auth, async user => {
-  const lock = document.getElementById('lockScreen');
+  const lock    = document.getElementById('lockScreen');
+  const onboard = document.getElementById('onboardScreen');
   if (user) {
     if (lock) lock.style.display = 'none';
     window._userUID = user.uid;
@@ -460,11 +501,36 @@ onAuthStateChanged(auth, async user => {
     const hs = document.getElementById('homeWelcomeSub');
     if (hw) hw.textContent = 'Welcome, ' + user.displayName.split(' ')[0] + '! 🎓';
     if (hs) hs.textContent = 'You are signed in — explore, post and share memories!';
-    const ref = doc(db, 'members', user.uid);
-    const snap = await getDoc(ref);
-    if (!snap.exists()) await setDoc(ref, { name: user.displayName, createdAt: serverTimestamp(), joinedAt: serverTimestamp() });
+    // save member doc
+    const memberRef = doc(db, 'members', user.uid);
+    const memberSnap = await getDoc(memberRef);
+    if (!memberSnap.exists()) await setDoc(memberRef, { name: user.displayName, createdAt: serverTimestamp(), joinedAt: serverTimestamp() });
+    // check if profile exists — if not show onboarding
+    const profileRef = doc(db, 'profiles', user.uid);
+    const profileSnap = await getDoc(profileRef);
+    if (!profileSnap.exists()) {
+      // show onboarding screen
+      if (onboard) {
+        onboard.style.display = 'block';
+        // prefill name
+        const nameEl = document.getElementById('ob-name');
+        if (nameEl) nameEl.value = user.displayName;
+        // show google photo or initials
+        const avatar = document.getElementById('onboardAvatar');
+        if (avatar) {
+          if (user.photoURL) {
+            avatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer"/>`;
+          } else {
+            avatar.textContent = user.displayName.slice(0,2).toUpperCase();
+          }
+        }
+      }
+    } else {
+      if (onboard) onboard.style.display = 'none';
+    }
   } else {
     if (lock) lock.style.display = 'flex';
+    if (onboard) onboard.style.display = 'none';
     window._userUID = null;
     document.getElementById('authBtn').textContent = '🔑 Sign in';
     document.getElementById('authBtn').style.color = '';
@@ -473,6 +539,34 @@ onAuthStateChanged(auth, async user => {
 
 window.googleLogin  = async () => { try { await signInWithPopup(auth, provider); } catch(e) { alert(e.message); } };
 window.googleLogout = async () => { if (confirm('Sign out?')) await signOut(auth); };
+
+// ── ONBOARDING SAVE ────────────────────────────────────
+window.saveOnboarding = async () => {
+  const u = auth.currentUser; if (!u) return;
+  const nick  = document.getElementById('ob-nick').value.trim();
+  const bio   = document.getElementById('ob-bio').value.trim();
+  const roll  = document.getElementById('ob-roll').value.trim();
+  const phone = document.getElementById('ob-phone').value.trim();
+  const msg   = document.getElementById('ob-msg').value.trim();
+  if (!nick)  { alert('Please enter your nickname!'); return; }
+  if (!bio)   { alert('Please enter your vibe!'); return; }
+  if (!roll)  { alert('Please enter your roll number!'); return; }
+  if (!phone) { alert('Please enter your phone number!'); return; }
+  if (phone.length < 10) { alert('Please enter a valid 10-digit phone number!'); return; }
+  if (!msg)   { alert('Please write your message to the batch!'); return; }
+  try {
+    const data = {
+      name: u.displayName,
+      nick, bio, roll, phone, msg,
+      createdAt: serverTimestamp(),
+      joinedAt: serverTimestamp()
+    };
+    if (u.photoURL) data.photo = u.photoURL;
+    await setDoc(doc(db, 'profiles', u.uid), data);
+    document.getElementById('onboardScreen').style.display = 'none';
+    alert('Welcome to Amrutvahini Diaries! 🎓');
+  } catch(err) { alert('Error saving profile: ' + err.message); }
+};
 
 // ── STATS ──────────────────────────────────────────────
 [{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
@@ -514,42 +608,71 @@ onSnapshot(query(collection(db,'profiles'), orderBy('createdAt','desc')), snap =
     const isMe = auth.currentUser && d.id === auth.currentUser.uid;
     const c = profileColors[Math.floor(Math.random()*profileColors.length)].split(';');
     const avatarHTML = p.photo
-      ? `<img src="${p.photo}" style="width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;border:2px solid rgba(201,168,76,0.4);" referrerpolicy="no-referrer"/>`
-      : `<div class="profile-avatar" style="background:${c[0]};${c[1]};">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
-    const safeNick = (p.nick||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    const safeBio  = (p.bio||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      ? `<img src="${p.photo}" style="width:70px;height:70px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;border:2px solid rgba(201,168,76,0.4);" referrerpolicy="no-referrer"/>`
+      : `<div style="width:70px;height:70px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;border:2px solid rgba(201,168,76,0.3);background:${c[0]};${c[1]};">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
+    const safeNick  = (p.nick||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safeBio   = (p.bio||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safeRoll  = (p.roll||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safePhone = (p.phone||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safeMsg   = (p.msg||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     const div = document.createElement('div'); div.className='profile-card'; div.dataset.name=(p.name||'').toLowerCase();
-    div.innerHTML = `${avatarHTML}
-      <div style="font-size:15px;font-weight:500;margin-bottom:3px;">${p.name}</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">IT${p.nick?' — "'+p.nick+'"':''}</div>
-      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"${p.bio||'IT Batch 2022–26'}"</div>
-      <span class="badge badge-gold">IT</span>
-      ${isMe?`<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="window.editProfileForm('${safeNick}','${safeBio}')">✏️ Edit my profile</button></div>`:''}`;
+    div.innerHTML = `
+      ${avatarHTML}
+      <div style="font-size:15px;font-weight:600;margin-bottom:2px;">${p.name}</div>
+      ${p.nick?`<div style="font-size:12px;color:var(--gold);margin-bottom:4px;">"${p.nick}"</div>`:''}
+      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">${p.bio||'IT Batch 2022–26'}</div>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;text-align:left;">
+        ${p.roll?`<div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><span>🎫</span><span>${p.roll}</span></div>`:''}
+        ${p.phone?`<div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><span>📞</span><span>${p.phone}</span></div>`:''}
+      </div>
+      ${p.msg?`<div style="background:var(--bg3);border-radius:var(--radius-sm);padding:8px 10px;font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;text-align:left;">"${p.msg}"</div>`:''}
+      <span class="badge badge-gold">IT 2022–26</span>
+      ${isMe?`<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="window.editProfileForm('${safeNick}','${safeBio}','${safeRoll}','${safePhone}','${safeMsg}')">✏️ Edit my profile</button></div>`:''}`;
     grid.appendChild(div);
   });
 });
 window.addProfile = async () => {
   const u = auth.currentUser; if (!u) return;
-  const data = { name:u.displayName, nick:document.getElementById('pNick').value.trim(), bio:document.getElementById('pBio').value.trim(), createdAt:serverTimestamp(), joinedAt:serverTimestamp() };
+  const nick  = document.getElementById('pNick').value.trim();
+  const bio   = document.getElementById('pBio').value.trim();
+  const roll  = document.getElementById('pRoll').value.trim();
+  const phone = document.getElementById('pPhone').value.trim();
+  const msg   = document.getElementById('pMsg').value.trim();
+  if (!nick)  { alert('Please enter your nickname!'); return; }
+  if (!bio)   { alert('Please enter your vibe!'); return; }
+  if (!roll)  { alert('Please enter your roll number!'); return; }
+  if (!phone) { alert('Please enter your phone number!'); return; }
+  if (!msg)   { alert('Please write a message to the batch!'); return; }
+  const data = { name:u.displayName, nick, bio, roll, phone, msg, createdAt:serverTimestamp(), joinedAt:serverTimestamp() };
   if (u.photoURL) data.photo = u.photoURL;
   await setDoc(doc(db,'profiles',u.uid), data);
-  ['pNick','pBio'].forEach(id => document.getElementById(id).value = '');
+  ['pNick','pBio','pRoll','pPhone','pMsg'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('addProfileForm').style.display = 'none';
   alert('Profile saved! 🎓');
 };
-window.editProfileForm = (nick, bio) => {
-  document.getElementById('pNick').value = nick;
-  document.getElementById('pBio').value  = bio;
+
+window.editProfileForm = (nick, bio, roll, phone, msg) => {
+  document.getElementById('pNick').value  = nick;
+  document.getElementById('pBio').value   = bio;
+  document.getElementById('pRoll').value  = roll;
+  document.getElementById('pPhone').value = phone;
+  document.getElementById('pMsg').value   = msg;
   document.getElementById('addProfileForm').style.display = 'block';
   document.getElementById('addProfileForm').scrollIntoView({behavior:'smooth'});
   const btn = document.getElementById('profileSaveBtn');
   btn.textContent = 'Update profile';
   btn.onclick = async () => {
     const u = auth.currentUser; if (!u) return;
-    const upd = { nick:document.getElementById('pNick').value.trim(), bio:document.getElementById('pBio').value.trim() };
+    const upd = {
+      nick:  document.getElementById('pNick').value.trim(),
+      bio:   document.getElementById('pBio').value.trim(),
+      roll:  document.getElementById('pRoll').value.trim(),
+      phone: document.getElementById('pPhone').value.trim(),
+      msg:   document.getElementById('pMsg').value.trim(),
+    };
     if (u.photoURL) upd.photo = u.photoURL;
     await updateDoc(doc(db,'profiles',u.uid), upd);
-    ['pNick','pBio'].forEach(i => document.getElementById(i).value = '');
+    ['pNick','pBio','pRoll','pPhone','pMsg'].forEach(i => document.getElementById(i).value = '');
     document.getElementById('addProfileForm').style.display = 'none';
     btn.textContent = 'Save profile';
     btn.onclick = () => window.addProfile();
@@ -674,7 +797,7 @@ let resultsRevealed = false;
 
 // Listen to settings doc for reveal state
 onSnapshot(doc(db,'settings','awards'), snap => {
-  resultsRevealed = snap.exists() ? (snap.data().revealed || false) : false;
+  resultsRevealed = snap.exists() ? (snap.data().revealResults || false) : false;
   // re-render all awards with updated reveal state
   renderedAwards.forEach(awardId => {
     renderAwardVotes(awardId);
@@ -724,11 +847,13 @@ async function renderAwardVotes(awardId) {
   const desc     = card.dataset.desc;
   const uid      = auth.currentUser ? auth.currentUser.uid : null;
 
-  // fetch votes
-  let votesSnap;
-  try { votesSnap = await getDoc(doc(db,'awards',awardId,'votes','__counts')); } catch(e) {}
-  const counts = (votesSnap && votesSnap.exists()) ? votesSnap.data() : {};
-  const total  = Object.values(counts).reduce((a,b)=>a+b, 0);
+  // fetch vote counts
+  let counts = {};
+  try {
+    const countSnap = await getDoc(doc(db,'awards',awardId,'votes','__counts'));
+    if (countSnap.exists()) counts = countSnap.data();
+  } catch(e) {}
+  const total = Object.values(counts).reduce((a,b)=>a+b, 0);
 
   // check if current user already voted
   let myVote = null;
@@ -788,11 +913,19 @@ window.submitVote = async (awardId, nominee, el) => {
   const u = auth.currentUser; if (!u) return;
   if (awardVoted[awardId]) return;
   try {
-    // save individual vote under user UID
-    await setDoc(doc(db,'awards',awardId,'votes',u.uid), { nominee, votedAt: serverTimestamp() });
-    // increment count in __counts doc
-    await setDoc(doc(db,'awards',awardId,'votes','__counts'),
-      { [nominee]: increment(1) }, { merge: true });
+    // save individual vote under user UID (create only — no update)
+    await setDoc(doc(db,'awards',awardId,'votes',u.uid), {
+      nominee,
+      votedAt: serverTimestamp()
+    });
+    // update vote counts — merge into __counts doc
+    const countRef = doc(db,'awards',awardId,'votes','__counts');
+    const countSnap = await getDoc(countRef);
+    if (countSnap.exists()) {
+      await updateDoc(countRef, { [nominee]: increment(1) });
+    } else {
+      await setDoc(countRef, { [nominee]: 1 });
+    }
     awardVoted[awardId] = true;
     await renderAwardVotes(awardId);
   } catch(err) { alert('Vote failed: '+err.message); }
@@ -812,7 +945,7 @@ window.createAward = async () => {
 window.toggleRevealResults = async () => {
   const u = auth.currentUser;
   if(!u||u.uid!==ADMIN_UID){alert('Admin access required.');return;}
-  await setDoc(doc(db,'settings','awards'), { revealed: !resultsRevealed }, { merge: true });
+  await setDoc(doc(db,'settings','awards'), { revealResults: !resultsRevealed }, { merge: true });
 };
 
 // ── ADMIN MEMBERS ──────────────────────────────────────
