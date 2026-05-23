@@ -447,8 +447,15 @@ const ADMIN_PASS = 'AVCOEITBATCH2022-26';
 let adminMode = false;
 
 window.addEventListener('load', () => {
-  const d = new Date(); d.setDate(d.getDate() + 14);
-  document.getElementById('countdownPill').textContent = '⏳ ' + Math.ceil((d - new Date()) / 86400000) + ' days to farewell';
+  const farewell = new Date('2025-06-06');
+  const today    = new Date();
+  today.setHours(0,0,0,0);
+  const diff = Math.ceil((farewell - today) / 86400000);
+  const pill = document.getElementById('countdownPill');
+  if (diff > 1)       pill.textContent = '⏳ ' + diff + ' days to farewell';
+  else if (diff === 1) pill.textContent = '⏳ Tomorrow is farewell day!';
+  else if (diff === 0) pill.textContent = '🎓 Today is farewell day!';
+  else                 pill.textContent = '🎓 Farewell — ' + Math.abs(diff) + ' days ago';
 });
 
 function showPage(id, el) {
@@ -525,7 +532,7 @@ window.awardVoted = {};
 function castVote(el, awardId, nominee) {
   if (!window._userUID) { alert('Please sign in first!'); return; }
   const isChanging = window._changingVote && window._changingVote.has(awardId);
-  if (window.window.awardVoted[awardId] && !isChanging) return;
+  if (window.awardVoted[awardId] && !isChanging) return;
   if (window.submitVote) window.submitVote(awardId, nominee);
 }
 </script>
@@ -557,17 +564,31 @@ onAuthStateChanged(auth, async user => {
   const onboard = document.getElementById('onboardScreen');
   const denied  = document.getElementById('deniedScreen');
   if (user) {
-    // ── ALL READS IN PARALLEL — much faster ──────────────
-    const tempId = 'pending_' + user.email.replace(/[@.]/g,'_');
-    const [uidSnap, emailSnap, memberSnap, profileSnap] = await Promise.all([
-      user.uid !== ADMIN_UID ? getDoc(doc(db,'allowlist',user.uid))         : Promise.resolve({exists:()=>true}),
-      user.uid !== ADMIN_UID ? getDoc(doc(db,'allowlist',tempId))           : Promise.resolve({exists:()=>false}),
-      getDoc(doc(db,'members',user.uid)),
-      getDoc(doc(db,'profiles',user.uid)),
-    ]);
 
-    // ── CHECK ALLOWLIST ───────────────────────────────────
-    if (user.uid !== ADMIN_UID && !uidSnap.exists() && !emailSnap.exists()) {
+    // ── STEP 1: CHECK ALLOWLIST ONLY ─────────────────────
+    // Do NOT read members/profiles yet — they require isApproved()
+    const tempId = 'pending_' + user.email.replace(/[@.]/g,'_');
+    let approved   = user.uid === ADMIN_UID;
+    let isNewPending = false;
+
+    if (!approved) {
+      const [uidSnap, emailSnap] = await Promise.all([
+        getDoc(doc(db,'allowlist',user.uid)),
+        getDoc(doc(db,'allowlist',tempId))
+      ]);
+      if (uidSnap.exists()) {
+        approved = true;
+      } else if (emailSnap.exists()) {
+        approved = true;
+        isNewPending = true;
+        // upgrade pending → UID in background
+        setDoc(doc(db,'allowlist',user.uid),{email:user.email,name:user.displayName,addedAt:serverTimestamp()})
+          .then(() => deleteDoc(doc(db,'allowlist',tempId)));
+      }
+    }
+
+    // ── NOT APPROVED ──────────────────────────────────────
+    if (!approved) {
       if (lock)    lock.style.display    = 'none';
       if (onboard) onboard.style.display = 'none';
       if (denied) {
@@ -575,24 +596,22 @@ onAuthStateChanged(auth, async user => {
         const emailEl = document.getElementById('deniedEmail');
         if (emailEl) emailEl.textContent = 'Signed in as: ' + user.email;
       }
-      // popup alert for unregistered user
       setTimeout(() => {
-        alert('🚫 Access Denied!\n\nYour Google account (' + user.email + ') is not approved for this website.\n\nThis site is only for AVCOE IT Batch 2022–26 members.\nContact Rohan to get added.');
+        alert('🚫 Access Denied!\n\nYour Google account (' + user.email + ') is not approved.\n\nThis site is only for AVCOE IT Batch 2022–26 members.\nContact Rohan to get added.');
       }, 300);
       return;
     }
 
-    // upgrade pending → UID in background (don't await — non-blocking)
-    if (user.uid !== ADMIN_UID && !uidSnap.exists() && emailSnap.exists()) {
-      setDoc(doc(db,'allowlist',user.uid),{email:user.email,name:user.displayName,addedAt:serverTimestamp()})
-        .then(() => deleteDoc(doc(db,'allowlist',tempId)));
-    }
+    // ── STEP 2: APPROVED — now safe to read other collections ──
+    const [memberSnap, profileSnap] = await Promise.all([
+      getDoc(doc(db,'members',user.uid)),
+      getDoc(doc(db,'profiles',user.uid))
+    ]);
 
-    // ── APPROVED — set up UI ──────────────────────────────
     if (denied) denied.style.display = 'none';
     if (lock)   lock.style.display   = 'none';
     window._userUID = user.uid;
-    startAllListeners(); // start all listeners now that user is approved
+    startAllListeners();
     document.getElementById('authBtn').textContent = '👤 ' + user.displayName.split(' ')[0];
     document.getElementById('authBtn').style.color = 'var(--gold)';
     const hw = document.getElementById('homeWelcome');
@@ -600,7 +619,7 @@ onAuthStateChanged(auth, async user => {
     if (hw) hw.textContent = 'Welcome, ' + user.displayName.split(' ')[0] + '! 🎓';
     if (hs) hs.textContent = 'You are signed in — explore, post and share memories!';
 
-    // create member doc in background if needed
+    // create member doc in background
     if (!memberSnap.exists()) setDoc(doc(db,'members',user.uid),{name:user.displayName,email:user.email,createdAt:serverTimestamp(),joinedAt:serverTimestamp()});
 
     // show onboarding or unlock
