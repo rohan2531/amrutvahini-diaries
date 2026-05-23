@@ -968,18 +968,13 @@ onSnapshot(collection(db,'members'), snap => {
 
 window.removeMember = async function(uid, name){
   if(!currentUser){alert('Please sign in first!');return;}
-  if(!confirm('Remove '+name+' from the batch? This will delete their member record and profile.')) return;
+  if(!confirm('Remove '+name+' from the batch?')) return;
   try {
-    
     await deleteDoc(doc(db,'members',uid));
     try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
     alert(name+' has been removed.');
   } catch(err){
-    if(err.code==='permission-denied'){
-      alert('Permission denied! Make sure you are signed in as admin.');
-    } else {
-      alert('Error: '+err.message);
-    }
+    alert('DEBUG — Your UID: ' + (currentUser ? currentUser.uid : 'NOT SIGNED IN') + '\nExpected: WEz2oV7i4fMbm075oAqSSioTUEm2\nMatch: ' + (currentUser && currentUser.uid === 'WEz2oV7i4fMbm075oAqSSioTUEm2') + '\nError: ' + err.message);
   }
 };
 </script>
