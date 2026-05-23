@@ -97,6 +97,9 @@
 <!-- LOCK SCREEN -->
 <div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:40px;max-width:420px;width:90%;">
+    <div id="lockLogo" style="display:none;margin-bottom:20px;">
+      <img id="lockLogoImg" src="" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid rgba(201,168,76,0.5);box-shadow:0 0 0 6px rgba(201,168,76,0.08);"/>
+    </div>
     <div style="font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);margin-bottom:8px;">Amrutvahini Diaries</div>
     <div style="font-size:14px;color:var(--muted2);margin-bottom:4px;">IT Batch 2022–26</div>
     <div style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:32px;">Amrutvahini College of Engineering, Sangamner</div>
@@ -568,10 +571,15 @@ window.googleLogout = async () => { if (confirm('Sign out?')) await signOut(auth
 // ── LOGO — load saved logo on startup ─────────────────
 onSnapshot(doc(db,'settings','site'), snap => {
   if (snap.exists() && snap.data().logoUrl) {
-    const url = snap.data().logoUrl;
+    const url  = snap.data().logoUrl;
+    // topbar logo
     const img  = document.getElementById('logoImg');
     const wrap = document.getElementById('logoWrap');
     if (img && wrap) { img.src = url; wrap.style.display = 'block'; }
+    // lock screen logo
+    const lockImg  = document.getElementById('lockLogoImg');
+    const lockWrap = document.getElementById('lockLogo');
+    if (lockImg && lockWrap) { lockImg.src = url; lockWrap.style.display = 'block'; }
   }
 });
 
