@@ -60,11 +60,22 @@
   .profile-card:hover{border-color:rgba(201,168,76,0.3);}
   .profile-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;border:2px solid rgba(201,168,76,0.3);}
   .award-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
-  .vote-option{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:var(--radius-sm);background:var(--bg3);margin-top:8px;cursor:pointer;border:1px solid transparent;transition:all 0.2s;font-size:13px;}
-  .vote-option:hover{border-color:rgba(201,168,76,0.3);}
+  .vote-option{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--radius-sm);background:var(--bg3);margin-top:8px;cursor:pointer;border:2px solid transparent;transition:all 0.25s;font-size:13px;}
+  .vote-option:hover{border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.05);}
   .vote-option.voted{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold);}
-  .vote-bar{height:4px;background:rgba(201,168,76,0.2);border-radius:2px;margin-top:4px;overflow:hidden;}
-  .vote-bar-fill{height:100%;background:var(--gold);border-radius:2px;width:0%;}
+  .vote-option.changing{border-color:rgba(77,184,164,0.5);background:rgba(77,184,164,0.05);}
+  .vote-option.changing:hover{border-color:var(--teal);background:rgba(77,184,164,0.1);}
+  .vote-bar{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;margin:4px 0 2px;overflow:hidden;}
+  .vote-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:3px;width:0%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);}
+  .vote-bar-fill.teal{background:linear-gradient(90deg,var(--teal),#6dd5c4);}
+  .award-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color 0.2s;}
+  .award-card:hover{border-color:rgba(201,168,76,0.2);}
+  .change-vote-btn{display:flex;align-items:center;gap:6px;margin-top:12px;padding:7px 14px;background:transparent;border:1px solid rgba(77,184,164,0.4);border-radius:var(--radius-sm);color:var(--teal);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;width:100%;justify-content:center;}
+  .change-vote-btn:hover{background:rgba(77,184,164,0.1);border-color:var(--teal);}
+  .vote-hint{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;padding:6px;background:rgba(77,184,164,0.06);border-radius:var(--radius-sm);border:1px solid rgba(77,184,164,0.15);}
+  @keyframes voteSuccess{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .vote-success{animation:voteSuccess 0.3s ease;}
   .letter-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
   .letter-icon{width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
   .vision-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;}
@@ -459,11 +470,12 @@ function uploadLogo(e) {
   r.onload = ev => { document.getElementById('logoImg').src = ev.target.result; document.getElementById('logoWrap').style.display = 'block'; };
   r.readAsDataURL(f);
 }
-const awardVoted = {};
+window.awardVoted = {};
 function castVote(el, awardId, nominee) {
   if (!window._userUID) { alert('Please sign in first!'); return; }
-  if (awardVoted[awardId]) { alert('You already voted in this award!'); return; }
-  if (window.submitVote) window.submitVote(awardId, nominee, el);
+  const isChanging = window._changingVote && window._changingVote.has(awardId);
+  if (window.window.awardVoted[awardId] && !isChanging) return;
+  if (window.submitVote) window.submitVote(awardId, nominee);
 }
 </script>
 
@@ -793,7 +805,9 @@ window.pinHometown = async () => { const u=auth.currentUser; if(!u) return; cons
 
 // ── AWARDS — secure voting system (no __counts) ────────
 const renderedAwards = new Set();
-let resultsRevealed = false;
+const changingVote   = new Set();
+window._changingVote = changingVote; // expose to plain script
+let resultsRevealed  = false;
 
 // Listen to settings doc for reveal state
 onSnapshot(doc(db,'settings','awards'), snap => {
@@ -815,7 +829,7 @@ onSnapshot(doc(db,'settings','awards'), snap => {
   }
 });
 
-// Load awards — render card shell, then attach live vote listener
+// Load awards
 onSnapshot(query(collection(db,'awards'), orderBy('createdAt','desc')), snap => {
   const grid = document.getElementById('awardsGrid'); if (!grid) return;
   snap.forEach(d => {
@@ -830,91 +844,160 @@ onSnapshot(query(collection(db,'awards'), orderBy('createdAt','desc')), snap => 
     card.dataset.title   = p.title||'';
     card.dataset.desc    = p.description||'';
     grid.appendChild(card);
-    // live listener on votes subcollection — re-renders on every new vote
     onSnapshot(collection(db,'awards',d.id,'votes'), () => renderAwardVotes(d.id));
   });
 });
 
 async function renderAwardVotes(awardId) {
   const card = document.getElementById('award_' + awardId); if (!card) return;
-  const options = JSON.parse(card.dataset.options || '[]');
-  const emoji   = card.dataset.emoji;
-  const title   = card.dataset.title;
-  const desc    = card.dataset.desc;
-  const uid     = auth.currentUser ? auth.currentUser.uid : null;
+  const options  = JSON.parse(card.dataset.options || '[]');
+  const emoji    = card.dataset.emoji;
+  const title    = card.dataset.title;
+  const desc     = card.dataset.desc;
+  const uid      = auth.currentUser ? auth.currentUser.uid : null;
+  const isChanging = changingVote.has(awardId);
 
-  // count votes from individual docs — no __counts, tamper-proof
+  // count votes from individual docs — tamper-proof
   let counts = {};
   let myVote  = null;
   try {
     const votesSnap = await getDocs(collection(db,'awards',awardId,'votes'));
     votesSnap.forEach(v => {
       const data = v.data();
-      if (!data.nominee) return; // skip any non-vote docs
+      if (!data.nominee) return;
       counts[data.nominee] = (counts[data.nominee] || 0) + 1;
       if (uid && v.id === uid) myVote = data.nominee;
     });
   } catch(e) {}
-  if (myVote) awardVoted[awardId] = true;
+  if (myVote) window.awardVoted[awardId] = true;
 
-  const total = Object.values(counts).reduce((a,b)=>a+b, 0);
-  const locked = !!(myVote || awardVoted[awardId]);
+  const total  = Object.values(counts).reduce((a,b)=>a+b, 0);
+  const voted  = !!(myVote || window.awardVoted[awardId]);
+  const locked = voted && !isChanging;
 
+  // build options
   let optionsHTML = '';
   options.forEach(nominee => {
     const count    = counts[nominee] || 0;
     const pct      = total > 0 ? Math.round((count/total)*100) : 0;
     const isMyVote = myVote === nominee;
+    const barColor = isMyVote ? '' : 'teal';
+
+    let optClass = '';
+    let optStyle = '';
+    if (isChanging) {
+      optClass = isMyVote ? 'changing' : '';
+      optStyle = '';
+    } else if (locked) {
+      optClass = isMyVote ? 'voted' : '';
+      optStyle = 'pointer-events:none;cursor:default;';
+    }
+
+    const showBar = resultsRevealed || isMyVote || isChanging;
+    const showPct = resultsRevealed || isChanging;
+
     optionsHTML += `
-      <div class="vote-option ${isMyVote?'voted':''}"
-        style="${locked?'pointer-events:none;cursor:default;':''}"
+      <div class="vote-option ${optClass}" style="${optStyle}"
         onclick="castVote(this,'${awardId}','${nominee.replace(/'/g,"\\'")}')">
-        <div style="display:flex;align-items:center;gap:8px;flex:1;">
-          ${isMyVote?'<span style="color:var(--gold);font-size:12px;">✓</span>':''}
-          <span>${nominee}</span>
+        <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
+          <span style="font-size:13px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nominee}</span>
         </div>
-        ${resultsRevealed?`<span style="font-size:12px;color:var(--muted);margin-left:8px;font-weight:500;">${pct}%</span>`:''}
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          ${showPct?`<span style="font-size:12px;color:var(--muted);font-weight:500;min-width:32px;text-align:right;">${pct}%</span>`:''}
+          ${isMyVote && !isChanging?'<span style="font-size:14px;">✓</span>':''}
+          ${isMyVote && isChanging?'<span style="font-size:11px;color:var(--teal);">current</span>':''}
+        </div>
       </div>
-      ${(resultsRevealed||isMyVote)?`<div class="vote-bar" style="margin-bottom:4px;"><div class="vote-bar-fill" style="width:${pct}%;transition:width 0.8s ease;"></div></div>`:''}`;
+      ${showBar?`<div class="vote-bar"><div class="vote-bar-fill ${barColor}" style="width:${pct}%;"></div></div>`:''}`;
   });
+
+  // status row
+  let statusHTML = '';
+  if (!voted) {
+    statusHTML = `<div style="font-size:11px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse 1.5s infinite;"></span>
+      ${total>0?total+' vote'+(total!==1?'s':'')+' cast · ':''}Voting open — pick your nominee
+    </div>`;
+  } else if (isChanging) {
+    statusHTML = `<div style="font-size:11px;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+      🔄 Changing vote — click a new nominee below
+    </div>`;
+  } else {
+    statusHTML = `<div style="font-size:11px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+      <span style="color:var(--gold);">✓</span>
+      You voted for <strong style="color:var(--gold);">${myVote}</strong> · ${total} vote${total!==1?'s':''} total
+      ${resultsRevealed?' · Results revealed':''}
+    </div>`;
+  }
+
+  // change vote button — only when voted and results not yet revealed
+  const changeBtn = (voted && !isChanging && !resultsRevealed)
+    ? `<button class="change-vote-btn" onclick="window.startChangeVote('${awardId}')">🔄 Change my vote</button>`
+    : '';
+
+  // cancel change button
+  const cancelBtn = isChanging
+    ? `<button class="change-vote-btn" style="border-color:rgba(224,82,82,0.4);color:var(--red);" onclick="window.cancelChangeVote('${awardId}')">✕ Keep my original vote</button>`
+    : '';
+
+  // hint when changing
+  const hintHTML = isChanging
+    ? `<div class="vote-hint">Your previous vote for <strong>${myVote}</strong> will be replaced</div>`
+    : '';
 
   // winner banner
   let winnerHTML = '';
   if (resultsRevealed && total > 0) {
-    const winner = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
-    if (winner) {
-      const winPct = Math.round((winner[1]/total)*100);
-      winnerHTML = `<div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px;font-size:13px;text-align:center;">
-        🏆 <strong style="color:var(--gold);">${winner[0]}</strong> wins with ${winPct}% · ${winner[1]} vote${winner[1]!==1?'s':''}
+    const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    const winner = sorted[0];
+    const winPct = Math.round((winner[1]/total)*100);
+    winnerHTML = `
+      <div style="background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.4);border-radius:var(--radius-sm);padding:12px 16px;margin-top:14px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:4px;">🏆</div>
+        <div style="font-size:14px;font-weight:600;color:var(--gold);">${winner[0]}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${winPct}% · ${winner[1]} vote${winner[1]!==1?'s':''} out of ${total}</div>
       </div>`;
-    }
   }
 
-  const statusText = locked
-    ? `${total} vote${total!==1?'s':''} · ${resultsRevealed?'Results revealed':'Your vote is locked in ✓'}`
-    : `${total > 0 ? total+' vote'+(total!==1?'s':'')+' · ' : ''}${resultsRevealed?'Results revealed':'Cast your vote'}`;
-
   card.innerHTML = `
-    <div style="font-size:26px;margin-bottom:6px;">${emoji}</div>
-    <div style="font-size:14px;font-weight:500;margin-bottom:2px;">${title}</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${desc}</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">${statusText}</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <span style="font-size:28px;">${emoji}</span>
+      <div>
+        <div style="font-size:14px;font-weight:600;">${title}</div>
+        ${desc?`<div style="font-size:12px;color:var(--muted);">${desc}</div>`:''}
+      </div>
+    </div>
+    ${statusHTML}
     ${optionsHTML}
+    ${changeBtn}
+    ${cancelBtn}
+    ${hintHTML}
     ${winnerHTML}`;
 }
 
 window.submitVote = async (awardId, nominee) => {
   const u = auth.currentUser; if (!u) return;
-  if (awardVoted[awardId]) return;
+  const isChanging = changingVote.has(awardId);
+  if (window.awardVoted[awardId] && !isChanging) return;
   try {
-    // write only the user's own vote doc — nothing else
     await setDoc(doc(db,'awards',awardId,'votes',u.uid), {
       nominee,
       votedAt: serverTimestamp()
     });
-    awardVoted[awardId] = true;
-    // renderAwardVotes triggered automatically by onSnapshot listener
+    window.awardVoted[awardId] = true;
+    changingVote.delete(awardId);
+    // onSnapshot auto re-renders
   } catch(err) { alert('Vote failed: ' + err.message); }
+};
+
+window.startChangeVote = (awardId) => {
+  changingVote.add(awardId);
+  renderAwardVotes(awardId);
+};
+
+window.cancelChangeVote = (awardId) => {
+  changingVote.delete(awardId);
+  renderAwardVotes(awardId);
 };
 
 window.createAward = async () => {
