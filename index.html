@@ -311,15 +311,29 @@
 <!-- HOMETOWN MAP -->
 <div class="page" id="map">
   <div class="section-title">Hometown map</div>
-  <div class="section-sub">See where your entire batch comes from</div>
-  <div class="card" style="margin-bottom:16px;">
-    <div class="form-row"><label class="form-label">Your hometown</label><input id="mapCity" type="text" placeholder="City or village name"/></div>
-    <div class="form-row"><label class="form-label">State</label>
-      <select id="mapState"><option>Maharashtra</option><option>Karnataka</option><option>Gujarat</option><option>Madhya Pradesh</option><option>Other</option></select>
-    </div>
+  <div class="section-sub">Cities across Maharashtra where your batch comes from 🟡</div>
+
+  <!-- Stats bar -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+    <div class="stat-card"><div class="stat-num" id="ht-total">0</div><div class="stat-label">Hometowns pinned</div></div>
+    <div class="stat-card"><div class="stat-num" id="ht-cities">0</div><div class="stat-label">Unique cities</div></div>
+  </div>
+
+  <!-- Dot cloud -->
+  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px;font-weight:500;">📍 Each dot = one batchmate</div>
+    <div id="mapDots" style="display:flex;flex-wrap:wrap;gap:8px;min-height:40px;"></div>
+  </div>
+
+  <!-- Pin form -->
+  <div class="card" style="margin-bottom:20px;">
+    <div style="font-size:14px;font-weight:500;margin-bottom:12px;color:var(--gold);">📍 Pin your hometown</div>
+    <div class="form-row"><label class="form-label">Your city or village</label><input id="mapCity" type="text" placeholder="e.g. Sangamner, Nashik, Pune..."/></div>
     <button class="btn btn-primary" onclick="window.pinHometown()">Pin my hometown 📍</button>
   </div>
-  <div class="grid-3" id="hometownList"></div>
+
+  <!-- City groups -->
+  <div id="stateGroups"></div>
 </div>
 
 <!-- BATCH AWARDS -->
@@ -792,16 +806,112 @@ window.uploadPhoto = async (e) => {
 window.deletePhoto = async (id) => { if(confirm('Delete this photo?')) await deleteDoc(doc(db,'photos',id)); };
 
 // ── HOMETOWN MAP ───────────────────────────────────────
-onSnapshot(query(collection(db,'hometowns'), orderBy('createdAt','desc')), snap => {
-  const list=document.getElementById('hometownList'); if(!list) return; list.innerHTML='';
+// Colour palette — cycles through for each unique city
+const cityPalette = [
+  { border:'var(--gold)',   bg:'rgba(201,168,76,0.15)',  text:'var(--gold)'   },
+  { border:'var(--teal)',   bg:'rgba(77,184,164,0.15)',  text:'var(--teal)'   },
+  { border:'var(--purple)', bg:'rgba(155,127,232,0.15)', text:'var(--purple)' },
+  { border:'var(--green)',  bg:'rgba(76,175,125,0.15)',  text:'var(--green)'  },
+  { border:'var(--red)',    bg:'rgba(224,82,82,0.15)',   text:'var(--red)'    },
+];
+const cityColorMap = {}; // city → color, assigned on first appearance
+let colorIdx = 0;
+function getCityColor(city) {
+  const key = city.trim().toLowerCase();
+  if (!cityColorMap[key]) cityColorMap[key] = cityPalette[colorIdx++ % cityPalette.length];
+  return cityColorMap[key];
+}
+
+onSnapshot(query(collection(db,'hometowns'), orderBy('createdAt','asc')), snap => {
+  const dots      = document.getElementById('mapDots');
+  const stateGrps = document.getElementById('stateGroups');
+  const htTotal   = document.getElementById('ht-total');
+  const htCities  = document.getElementById('ht-cities');
+  if (!dots || !stateGrps) return;
+
+  // group by city
+  const grouped = {};
   snap.forEach(d => {
-    const p=d.data();
-    const div=document.createElement('div'); div.className='hometown-card';
-    div.innerHTML=`<div style="font-size:18px;">📍</div><div><div style="font-size:13px;font-weight:500;">${p.city}</div><div style="font-size:12px;color:var(--muted);">${p.name||'Batchmate'} · ${p.state||''}</div></div>`;
-    list.appendChild(div);
+    const p    = d.data();
+    const city = (p.city||'Unknown').trim();
+    if (!grouped[city]) grouped[city] = [];
+    grouped[city].push({...p, id: d.id});
   });
+
+  const totalPins   = snap.size;
+  const totalCities = Object.keys(grouped).length;
+
+  if (htTotal)  htTotal.textContent  = totalPins;
+  if (htCities) htCities.textContent = totalCities;
+
+  // dot cloud — one dot per person, coloured by their city
+  dots.innerHTML = totalPins === 0
+    ? '<div style="font-size:13px;color:var(--muted);">No hometowns pinned yet — be the first! 📍</div>'
+    : snap.docs.map(d => {
+        const p   = d.data();
+        const col = getCityColor(p.city||'Unknown');
+        return `<div title="${p.name||'Batchmate'} — ${p.city}"
+          style="width:34px;height:34px;border-radius:50%;background:${col.bg};
+          border:2px solid ${col.border};display:flex;align-items:center;justify-content:center;
+          font-size:11px;font-weight:600;color:${col.text};cursor:default;transition:transform 0.2s;"
+          onmouseover="this.style.transform='scale(1.35)'"
+          onmouseout="this.style.transform='scale(1)'">
+          ${(p.name||'?').slice(0,2).toUpperCase()}
+        </div>`;
+      }).join('');
+
+  // city groups — sorted by most people first
+  stateGrps.innerHTML = '';
+  if (totalPins === 0) return;
+
+  Object.entries(grouped)
+    .sort((a,b) => b[1].length - a[1].length)
+    .forEach(([city, people]) => {
+      const col = getCityColor(city);
+      const pct = Math.round((people.length / totalPins) * 100);
+      const grp = document.createElement('div');
+      grp.style.cssText = 'margin-bottom:20px;';
+      grp.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">📍</span>
+            <span style="font-size:15px;font-weight:600;color:${col.text};">${city}</span>
+            <span style="font-size:11px;padding:2px 8px;border-radius:20px;background:${col.bg};
+              color:${col.text};border:1px solid ${col.border};">
+              ${people.length} batchmate${people.length!==1?'s':''}
+            </span>
+          </div>
+          <span style="font-size:12px;color:var(--muted);font-weight:500;">${pct}%</span>
+        </div>
+        <div style="height:5px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:12px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${col.border};border-radius:3px;transition:width 0.8s ease;"></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          ${people.map(p => `
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);
+              padding:8px 12px;display:flex;align-items:center;gap:8px;transition:border-color 0.2s;cursor:default;"
+              onmouseover="this.style.borderColor='${col.border}'"
+              onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
+              <div style="width:30px;height:30px;border-radius:50%;background:${col.bg};
+                border:2px solid ${col.border};display:flex;align-items:center;justify-content:center;
+                font-size:11px;font-weight:600;color:${col.text};">
+                ${(p.name||'?').slice(0,2).toUpperCase()}
+              </div>
+              <div style="font-size:13px;font-weight:500;">${p.name||'Batchmate'}</div>
+            </div>`).join('')}
+        </div>`;
+      stateGrps.appendChild(grp);
+    });
 });
-window.pinHometown = async () => { const u=auth.currentUser; if(!u) return; const city=document.getElementById('mapCity').value.trim(); if(!city){alert('Please enter your city!');return;} await addDoc(collection(db,'hometowns'),{city,state:document.getElementById('mapState').value,name:u.displayName,uid:u.uid,createdAt:serverTimestamp()}); document.getElementById('mapCity').value=''; alert('Hometown pinned! 📍'); };
+
+window.pinHometown = async () => {
+  const u = auth.currentUser; if (!u) return;
+  const city = document.getElementById('mapCity').value.trim();
+  if (!city) { alert('Please enter your city!'); return; }
+  await addDoc(collection(db,'hometowns'), { city, name:u.displayName, uid:u.uid, createdAt:serverTimestamp() });
+  document.getElementById('mapCity').value = '';
+  alert('Hometown pinned! 📍');
+};
 
 // ── AWARDS — secure voting system (no __counts) ────────
 const renderedAwards = new Set();
