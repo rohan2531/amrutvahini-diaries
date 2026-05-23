@@ -410,6 +410,7 @@ window.addEventListener('load',()=>{
 });
 
 function showPage(id,el){
+  if(adminMode) return;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('#mainNav .nav-item').forEach(n=>n.classList.remove('active'));
