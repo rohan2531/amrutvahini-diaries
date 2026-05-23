@@ -577,14 +577,21 @@ onAuthStateChanged(auth, async user => {
           getDoc(doc(db,'allowlist',user.uid)),
           email ? getDoc(doc(db,'allowlist',tempId)) : Promise.resolve({exists:()=>false})
         ]);
-        if (uidSnap.exists() || emailSnap.exists()) {
+        if (uidSnap.exists()) {
+          approved = true;
+        } else if (emailSnap.exists()) {
+          // Write UID doc NOW so isApproved() rule works for subsequent reads
+          // Include source:'email_approved' so rule can verify it was admin-initiated
+          await setDoc(doc(db,'allowlist',user.uid), {
+            email:    user.email,
+            name:     user.displayName,
+            addedAt:  serverTimestamp(),
+            source:   'email_approved'
+          });
           approved = true;
         }
       } catch(err) {
         try { const s = await getDoc(doc(db,'allowlist',user.uid)); if(s.exists()) approved=true; } catch(e){}
-        if (!approved && email) {
-          try { const s = await getDoc(doc(db,'allowlist',tempId)); if(s.exists()) approved=true; } catch(e){}
-        }
       }
     }
 
