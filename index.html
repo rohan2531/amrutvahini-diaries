@@ -566,32 +566,18 @@ onAuthStateChanged(auth, async user => {
   if (user) {
 
     // ── STEP 1: CHECK ALLOWLIST ONLY ─────────────────────
-    // Do NOT read members/profiles yet — they require isApproved()
     let approved = user.uid === ADMIN_UID;
     const email  = (user.email || '').toLowerCase().trim();
-    const tempId = 'pending_' + email.replace(/[@.]/g,'_');
 
     if (!approved) {
       try {
         const [uidSnap, emailSnap] = await Promise.all([
-          getDoc(doc(db,'allowlist',user.uid)),
-          email ? getDoc(doc(db,'allowlist',tempId)) : Promise.resolve({exists:()=>false})
+          getDoc(doc(db,'allowlist',user.uid)),   // returning user — UID doc
+          getDoc(doc(db,'allowlist',email))        // first time — email doc
         ]);
-        if (uidSnap.exists()) {
-          approved = true;
-        } else if (emailSnap.exists()) {
-          // Write UID doc NOW so isApproved() rule works for subsequent reads
-          // Include source:'email_approved' so rule can verify it was admin-initiated
-          await setDoc(doc(db,'allowlist',user.uid), {
-            email:    user.email,
-            name:     user.displayName,
-            addedAt:  serverTimestamp(),
-            source:   'email_approved'
-          });
-          approved = true;
-        }
+        approved = uidSnap.exists() || emailSnap.exists();
       } catch(err) {
-        try { const s = await getDoc(doc(db,'allowlist',user.uid)); if(s.exists()) approved=true; } catch(e){}
+        approved = false;
       }
     }
 
@@ -1376,9 +1362,8 @@ window.addApprovedEmail = async () => {
   if (!u || u.uid !== ADMIN_UID) { alert('Admin access required.'); return; }
   const email = document.getElementById('newEmail').value.trim().toLowerCase();
   if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
-  // store by email — we don't know UID yet, store email and update when they sign in
-  const tempId = 'pending_' + email.replace(/[@.]/g,'_');
-  await setDoc(doc(db,'allowlist',tempId), { email, name:'Pending sign-in', addedAt:serverTimestamp() });
+  // store with email as doc ID — rules can check request.auth.token.email directly
+  await setDoc(doc(db,'allowlist',email), { email, name:'Pending sign-in', addedAt:serverTimestamp() });
   document.getElementById('newEmail').value = '';
   alert('✅ ' + email + ' has been approved! They can now sign in.');
 };
