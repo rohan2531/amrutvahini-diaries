@@ -470,7 +470,7 @@ function castVote(el, awardId, nominee) {
 <!-- FIREBASE MODULE — type=module, handles all Firebase operations -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, setDoc, doc, increment, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, setDoc, doc, increment, getDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -791,20 +791,16 @@ onSnapshot(query(collection(db,'hometowns'), orderBy('createdAt','desc')), snap 
 });
 window.pinHometown = async () => { const u=auth.currentUser; if(!u) return; const city=document.getElementById('mapCity').value.trim(); if(!city){alert('Please enter your city!');return;} await addDoc(collection(db,'hometowns'),{city,state:document.getElementById('mapState').value,name:u.displayName,uid:u.uid,createdAt:serverTimestamp()}); document.getElementById('mapCity').value=''; alert('Hometown pinned! 📍'); };
 
-// ── AWARDS — proper voting system ──────────────────────
+// ── AWARDS — secure voting system (no __counts) ────────
 const renderedAwards = new Set();
 let resultsRevealed = false;
 
 // Listen to settings doc for reveal state
 onSnapshot(doc(db,'settings','awards'), snap => {
   resultsRevealed = snap.exists() ? (snap.data().revealResults || false) : false;
-  // re-render all awards with updated reveal state
-  renderedAwards.forEach(awardId => {
-    renderAwardVotes(awardId);
-  });
-  // update admin button state
-  const revealBtn  = document.getElementById('revealBtn');
-  const hideBtn    = document.getElementById('hideBtn');
+  renderedAwards.forEach(awardId => renderAwardVotes(awardId));
+  const revealBtn    = document.getElementById('revealBtn');
+  const hideBtn      = document.getElementById('hideBtn');
   const revealStatus = document.getElementById('revealStatus');
   if (revealBtn && hideBtn && revealStatus) {
     if (resultsRevealed) {
@@ -819,116 +815,106 @@ onSnapshot(doc(db,'settings','awards'), snap => {
   }
 });
 
-// Load awards
+// Load awards — render card shell, then attach live vote listener
 onSnapshot(query(collection(db,'awards'), orderBy('createdAt','desc')), snap => {
   const grid = document.getElementById('awardsGrid'); if (!grid) return;
   snap.forEach(d => {
     if (renderedAwards.has(d.id)) return;
     renderedAwards.add(d.id);
-    const p = d.data(); const cardId = 'award_' + d.id;
-    const card = document.createElement('div'); card.className = 'award-card'; card.id = cardId;
+    const p = d.data();
+    const card = document.createElement('div');
+    card.className = 'award-card';
+    card.id = 'award_' + d.id;
     card.dataset.options = JSON.stringify(p.options||[]);
     card.dataset.emoji   = p.emoji||'🏆';
     card.dataset.title   = p.title||'';
     card.dataset.desc    = p.description||'';
-    card.dataset.awardid = d.id;
     grid.appendChild(card);
-    renderAwardVotes(d.id);
-    // listen to votes for this award
+    // live listener on votes subcollection — re-renders on every new vote
     onSnapshot(collection(db,'awards',d.id,'votes'), () => renderAwardVotes(d.id));
   });
 });
 
 async function renderAwardVotes(awardId) {
   const card = document.getElementById('award_' + awardId); if (!card) return;
-  const options  = JSON.parse(card.dataset.options || '[]');
-  const emoji    = card.dataset.emoji;
-  const title    = card.dataset.title;
-  const desc     = card.dataset.desc;
-  const uid      = auth.currentUser ? auth.currentUser.uid : null;
+  const options = JSON.parse(card.dataset.options || '[]');
+  const emoji   = card.dataset.emoji;
+  const title   = card.dataset.title;
+  const desc    = card.dataset.desc;
+  const uid     = auth.currentUser ? auth.currentUser.uid : null;
 
-  // fetch vote counts
+  // count votes from individual docs — no __counts, tamper-proof
   let counts = {};
+  let myVote  = null;
   try {
-    const countSnap = await getDoc(doc(db,'awards',awardId,'votes','__counts'));
-    if (countSnap.exists()) counts = countSnap.data();
+    const votesSnap = await getDocs(collection(db,'awards',awardId,'votes'));
+    votesSnap.forEach(v => {
+      const data = v.data();
+      if (!data.nominee) return; // skip any non-vote docs
+      counts[data.nominee] = (counts[data.nominee] || 0) + 1;
+      if (uid && v.id === uid) myVote = data.nominee;
+    });
   } catch(e) {}
-  const total = Object.values(counts).reduce((a,b)=>a+b, 0);
-
-  // check if current user already voted
-  let myVote = null;
-  if (uid) {
-    try {
-      const mySnap = await getDoc(doc(db,'awards',awardId,'votes',uid));
-      if (mySnap.exists()) myVote = mySnap.data().nominee;
-    } catch(e) {}
-  }
   if (myVote) awardVoted[awardId] = true;
+
+  const total = Object.values(counts).reduce((a,b)=>a+b, 0);
+  const locked = !!(myVote || awardVoted[awardId]);
 
   let optionsHTML = '';
   options.forEach(nominee => {
-    const count   = counts[nominee] || 0;
-    const pct     = total > 0 ? Math.round((count/total)*100) : 0;
+    const count    = counts[nominee] || 0;
+    const pct      = total > 0 ? Math.round((count/total)*100) : 0;
     const isMyVote = myVote === nominee;
-    const showBar  = resultsRevealed || isMyVote;
-
-    optionsHTML += `<div class="vote-option ${isMyVote?'voted':''}"
-      style="${myVote||awardVoted[awardId]?'pointer-events:none;':''}"
-      onclick="castVote(this,'${awardId}','${nominee.replace(/'/g,"\\'")}')">
-      <div style="display:flex;align-items:center;gap:8px;flex:1;">
-        ${isMyVote?'<span style="color:var(--gold);font-size:12px;">✓</span>':''}
-        <span>${nominee}</span>
+    optionsHTML += `
+      <div class="vote-option ${isMyVote?'voted':''}"
+        style="${locked?'pointer-events:none;cursor:default;':''}"
+        onclick="castVote(this,'${awardId}','${nominee.replace(/'/g,"\\'")}')">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;">
+          ${isMyVote?'<span style="color:var(--gold);font-size:12px;">✓</span>':''}
+          <span>${nominee}</span>
+        </div>
+        ${resultsRevealed?`<span style="font-size:12px;color:var(--muted);margin-left:8px;font-weight:500;">${pct}%</span>`:''}
       </div>
-      ${resultsRevealed?`<span style="font-size:12px;color:var(--muted);margin-left:8px;">${pct}%</span>`:''}
-    </div>
-    ${showBar?`<div class="vote-bar" style="margin-bottom:4px;"><div class="vote-bar-fill" style="width:${pct}%;transition:width 0.6s;"></div></div>`:''}`;
+      ${(resultsRevealed||isMyVote)?`<div class="vote-bar" style="margin-bottom:4px;"><div class="vote-bar-fill" style="width:${pct}%;transition:width 0.8s ease;"></div></div>`:''}`;
   });
 
-  // winner badge when revealed
+  // winner banner
   let winnerHTML = '';
   if (resultsRevealed && total > 0) {
     const winner = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
     if (winner) {
       const winPct = Math.round((winner[1]/total)*100);
-      winnerHTML = `<div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);padding:8px 12px;margin-top:12px;font-size:13px;">
-        🏆 <strong style="color:var(--gold);">${winner[0]}</strong> wins with ${winPct}% (${winner[1]} vote${winner[1]!==1?'s':''})
+      winnerHTML = `<div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px;font-size:13px;text-align:center;">
+        🏆 <strong style="color:var(--gold);">${winner[0]}</strong> wins with ${winPct}% · ${winner[1]} vote${winner[1]!==1?'s':''}
       </div>`;
     }
   }
 
-  const totalText = total > 0
-    ? `<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${total} vote${total!==1?'s':''} · ${resultsRevealed?'Results revealed':'Voting open'}</div>`
-    : `<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">No votes yet · Be the first!</div>`;
+  const statusText = locked
+    ? `${total} vote${total!==1?'s':''} · ${resultsRevealed?'Results revealed':'Your vote is locked in ✓'}`
+    : `${total > 0 ? total+' vote'+(total!==1?'s':'')+' · ' : ''}${resultsRevealed?'Results revealed':'Cast your vote'}`;
 
   card.innerHTML = `
     <div style="font-size:26px;margin-bottom:6px;">${emoji}</div>
     <div style="font-size:14px;font-weight:500;margin-bottom:2px;">${title}</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${desc}</div>
-    ${totalText}
+    <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">${desc}</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">${statusText}</div>
     ${optionsHTML}
     ${winnerHTML}`;
 }
 
-window.submitVote = async (awardId, nominee, el) => {
+window.submitVote = async (awardId, nominee) => {
   const u = auth.currentUser; if (!u) return;
   if (awardVoted[awardId]) return;
   try {
-    // save individual vote under user UID (create only — no update)
+    // write only the user's own vote doc — nothing else
     await setDoc(doc(db,'awards',awardId,'votes',u.uid), {
       nominee,
       votedAt: serverTimestamp()
     });
-    // update vote counts — merge into __counts doc
-    const countRef = doc(db,'awards',awardId,'votes','__counts');
-    const countSnap = await getDoc(countRef);
-    if (countSnap.exists()) {
-      await updateDoc(countRef, { [nominee]: increment(1) });
-    } else {
-      await setDoc(countRef, { [nominee]: 1 });
-    }
     awardVoted[awardId] = true;
-    await renderAwardVotes(awardId);
-  } catch(err) { alert('Vote failed: '+err.message); }
+    // renderAwardVotes triggered automatically by onSnapshot listener
+  } catch(err) { alert('Vote failed: ' + err.message); }
 };
 
 window.createAward = async () => {
