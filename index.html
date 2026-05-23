@@ -576,11 +576,12 @@ onAuthStateChanged(auth, async user => {
           getDoc(doc(db,'allowlist',user.uid)),
           getDoc(doc(db,'allowlist',tempId))
         ]);
+        alert('DEBUG\nUID: ' + user.uid + '\ntempId: ' + tempId + '\nuidSnap exists: ' + uidSnap.exists() + '\nemailSnap exists: ' + emailSnap.exists());
         if (uidSnap.exists() || emailSnap.exists()) {
           approved = true;
         }
       } catch(err) {
-        // if rules block the read, try individual reads
+        alert('DEBUG ERROR: ' + err.message + '\nCode: ' + err.code);
         try { const s = await getDoc(doc(db,'allowlist',user.uid)); if(s.exists()) approved=true; } catch(e){}
         if (!approved) {
           try { const s = await getDoc(doc(db,'allowlist',tempId)); if(s.exists()) approved=true; } catch(e){}
