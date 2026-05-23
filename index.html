@@ -493,10 +493,204 @@ const db   = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-window.db = db;
-window.collection = collection;
-window.addDoc = addDoc;
-window.serverTimestamp = serverTimestamp;
+// ── EXPOSE ALL WINDOW FUNCTIONS IMMEDIATELY ────────────
+// Define ALL functions that HTML onclick= attributes call
+// BEFORE any async operations so they are always available
+
+window.googleLogin = async function(){
+  try { await signInWithPopup(auth, provider); }
+  catch(err){ alert('Sign in failed: ' + err.message); }
+};
+
+window.googleLogout = async function(){
+  if(confirm('Sign out?')){ await signOut(auth); }
+};
+
+window.addPost = async function(){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const text = document.getElementById('newPost').value.trim();
+  if(!text) return;
+  await addDoc(collection(db,'posts'),{text, name:user.displayName, uid:user.uid, likes:0, createdAt:serverTimestamp()});
+  document.getElementById('newPost').value='';
+};
+
+window.likeFirePost = async function(id, el){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  await updateDoc(doc(db,'posts',id),{likes: increment(1)});
+  el.style.color='var(--red)';
+};
+
+window.deletePost = async function(id){
+  const user = auth.currentUser;
+  if(!user) return;
+  if(!confirm('Delete this post?')) return;
+  await deleteDoc(doc(db,'posts',id));
+};
+
+window.addProfile = async function(){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const nick = document.getElementById('pNick').value.trim();
+  const bio  = document.getElementById('pBio').value.trim();
+  const data = {name:user.displayName, nick, bio, createdAt:serverTimestamp(), joinedAt:serverTimestamp()};
+  if(user.photoURL) data.photo = user.photoURL;
+  await setDoc(doc(db,'profiles',user.uid), data);
+  ['pName','pNick','pBio','pMemory'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('addProfileForm').style.display='none';
+  alert('Profile saved! 🎓');
+};
+
+window.editProfile = function(id, name, nick, bio){
+  document.getElementById('pName').value = name;
+  document.getElementById('pNick').value = nick;
+  document.getElementById('pBio').value  = bio;
+  document.getElementById('addProfileForm').style.display = 'block';
+  document.getElementById('addProfileForm').scrollIntoView({behavior:'smooth'});
+  const btn = document.querySelector('#addProfileForm .btn-primary');
+  btn.textContent = 'Update profile';
+  btn.onclick = async function(){
+    const user = auth.currentUser;
+    if(!user) return;
+    const newNick = document.getElementById('pNick').value.trim();
+    const newBio  = document.getElementById('pBio').value.trim();
+    const updateData = {nick:newNick, bio:newBio};
+    if(user.photoURL) updateData.photo = user.photoURL;
+    await updateDoc(doc(db,'profiles',user.uid), updateData);
+    ['pName','pNick','pBio','pMemory'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('addProfileForm').style.display='none';
+    btn.textContent='Save profile'; btn.onclick=window.addProfile;
+    alert('Profile updated! 🎓');
+  };
+};
+
+window.submitConfession = async function(){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const text = document.getElementById('newConfession').value.trim();
+  if(!text) return;
+  await addDoc(collection(db,'confessions'),{text, createdAt:serverTimestamp()});
+  document.getElementById('newConfession').value='';
+  alert('Confession posted! 🤫');
+};
+
+window.sealLetter = async function(){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const text = document.getElementById('lText').value.trim();
+  const date = document.getElementById('lDate').value;
+  if(!text){ alert('Please write your letter!'); return; }
+  await addDoc(collection(db,'letters'),{name:user.displayName, text, unlockDate:date||'farewell day', uid:user.uid, createdAt:serverTimestamp()});
+  ['lName','lText','lDate'].forEach(id=>document.getElementById(id).value='');
+  alert('Your letter has been sealed! 🔒');
+};
+
+window.addVision = async function(){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const dream = document.getElementById('vDream').value.trim();
+  if(!dream){ alert('Please write your dream!'); return; }
+  const path     = document.getElementById('vPath').value;
+  const location = document.getElementById('vLocation').value;
+  const msg      = document.getElementById('vMsg').value.trim();
+  await addDoc(collection(db,'visions'),{name:user.displayName, dream, path, location, msg, uid:user.uid, createdAt:serverTimestamp()});
+  ['vName','vDream','vMsg'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('vPath').value=''; document.getElementById('vLocation').value='';
+  alert('Vision submitted! 🚀');
+};
+
+window.uploadPhoto = async function(e){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const file = e.target.files[0]; if(!file) return;
+  const btn = document.querySelector('#gallery .btn-primary');
+  btn.textContent='Uploading...'; btn.disabled=true;
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', 'batch_photos');
+    fd.append('folder','amrutvahini-diaries');
+    const res  = await fetch(`https://api.cloudinary.com/v1_1/dluc4n5m6/image/upload`,{method:'POST',body:fd});
+    const data = await res.json();
+    if(data.secure_url){
+      await addDoc(collection(db,'photos'),{url:data.secure_url, uploadedBy:user.displayName, uid:user.uid, caption:'', createdAt:serverTimestamp()});
+      alert('Photo uploaded! 📸');
+    } else { alert('Upload failed. Please try again.'); }
+  } catch(err){ alert('Upload failed: '+err.message); }
+  finally { btn.textContent='+ Upload photo'; btn.disabled=false; }
+};
+
+window.deletePhoto = async function(id){
+  const user = auth.currentUser;
+  if(!user) return;
+  if(!confirm('Delete this photo?')) return;
+  await deleteDoc(doc(db,'photos',id));
+};
+
+window.adminDeletePhoto = async function(id, btn){
+  const user = auth.currentUser;
+  if(!user){ alert('Please sign in first!'); return; }
+  if(!confirm('Delete this photo permanently?')) return;
+  try {
+    await deleteDoc(doc(db,'photos',id));
+    const card = btn.closest('div[style*="aspect-ratio"]');
+    if(card) card.remove();
+  } catch(err){ alert('Delete failed: ' + err.message + ' ('+err.code+')'); }
+};
+
+window.adminDeleteDoc = async function(collectionName, docId, btn){
+  const user = auth.currentUser;
+  if(!user){ alert('Please sign in first!'); return; }
+  if(!confirm('Delete this permanently?')) return;
+  try {
+    await deleteDoc(doc(db, collectionName, docId));
+    const card = btn.closest('.card,.flagged-post,.confession,.letter-card,.post');
+    if(card){ card.style.opacity='0.3'; card.style.pointerEvents='none'; }
+    btn.textContent='Deleted';
+  } catch(err){ alert('Delete failed: ' + err.message + ' ('+err.code+')'); }
+};
+
+window.removeMember = async function(uid, name){
+  const user = auth.currentUser;
+  if(!user){ alert('Please sign in first!'); return; }
+  if(!confirm('Remove '+name+' from the batch?')) return;
+  try {
+    await deleteDoc(doc(db,'members',uid));
+    try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
+    alert(name+' has been removed.');
+  } catch(err){ alert('Remove failed: ' + err.message + ' ('+err.code+')'); }
+};
+
+window.pinHometown = async function(){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const city  = document.getElementById('mapCity').value.trim();
+  const state = document.getElementById('mapState').value;
+  if(!city){ alert('Please enter your city!'); return; }
+  await addDoc(collection(db,'hometowns'),{city, state, name:user.displayName, uid:user.uid, createdAt:serverTimestamp()});
+  document.getElementById('mapCity').value='';
+  alert('Hometown pinned! 📍');
+};
+
+window.createAward = async function(){
+  const user = auth.currentUser;
+  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+  const emoji = document.getElementById('aEmoji').value.trim()||'🏆';
+  const title = document.getElementById('aTitle').value.trim();
+  const desc  = document.getElementById('aDesc').value.trim();
+  const opts  = document.getElementById('aOptions').value.trim().split('\n').map(o=>o.trim()).filter(o=>o.length>0);
+  if(!title){ alert('Please enter an award title!'); return; }
+  if(opts.length<2){ alert('Please add at least 2 nominees, one per line!'); return; }
+  await addDoc(collection(db,'awards'),{title, description:desc, emoji, options:opts, uid:user.uid, createdAt:serverTimestamp()});
+  ['aEmoji','aTitle','aDesc','aOptions'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('createAwardForm').style.display='none';
+  alert('Award created! 🏆');
+};
+
+window.editVision = function(id){
+  alert('Edit vision — coming soon!');
+};
 
 let currentUser = null;
 
@@ -539,22 +733,9 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-// ── GOOGLE LOGIN ───────────────────────────────────────
-window.googleLogin = async function(){
-  try {
-    await signInWithPopup(auth, provider);
-  } catch(err){ alert('Sign in failed: ' + err.message); }
-};
-
-window.googleLogout = async function(){
-  if(confirm('Sign out?')){ await signOut(auth); }
-};
-
 function showGoogleLogin(){
   document.getElementById('joinModal').style.display = 'flex';
 }
-
-// replace old joinBatch with google login trigger
 window.joinBatch = window.googleLogin;
 
 // ── STATS ──────────────────────────────────────────────
@@ -581,26 +762,7 @@ onSnapshot(postQ, snap => {
   });
 });
 
-window.addPost = async function(){
-  if(!currentUser){showGoogleLogin();return;}
-  const text = document.getElementById('newPost').value.trim();
-  if(!text) return;
-  await addDoc(collection(db,'posts'),{text, name:currentUser.displayName, uid:currentUser.uid, likes:0, createdAt:serverTimestamp()});
-  document.getElementById('newPost').value='';
-};
 
-window.likeFirePost = async function(id, el){
-  if(!currentUser){showGoogleLogin();return;}
-  await updateDoc(doc(db,'posts',id),{likes: increment(1)});
-  el.style.color='var(--red)';
-};
-
-window.deletePost = async function(id){
-  if(!currentUser) return;
-  if(!confirm('Delete this post?')) return;
-  
-  await deleteDoc(doc(db,'posts',id));
-};
 
 // ── PROFILES ───────────────────────────────────────────
 const profileQ = query(collection(db,'profiles'), orderBy('createdAt','desc'));
@@ -627,40 +789,7 @@ onSnapshot(profileQ, snap => {
   });
 });
 
-window.addProfile = async function(){
-  if(!currentUser){showGoogleLogin();return;}
-  const name  = currentUser.displayName;
-  const nick  = document.getElementById('pNick').value.trim();
-  const bio   = document.getElementById('pBio').value.trim();
-  const data  = {name, nick, bio, createdAt:serverTimestamp(), joinedAt:serverTimestamp()};
-  if(currentUser.photoURL) data.photo = currentUser.photoURL;
-  await setDoc(doc(db,'profiles',currentUser.uid), data);
-  ['pName','pNick','pBio','pMemory'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('addProfileForm').style.display='none';
-  alert('Profile saved! 🎓');
-};
 
-window.editProfile = function(id, name, nick, bio){
-  document.getElementById('pName').value = name;
-  document.getElementById('pNick').value = nick;
-  document.getElementById('pBio').value  = bio;
-  document.getElementById('addProfileForm').style.display = 'block';
-  document.getElementById('addProfileForm').scrollIntoView({behavior:'smooth'});
-  // switch save button to update
-  const btn = document.querySelector('#addProfileForm .btn-primary');
-  btn.textContent = 'Update profile';
-  btn.onclick = async function(){
-    const newNick = document.getElementById('pNick').value.trim();
-    const newBio  = document.getElementById('pBio').value.trim();
-    const updateData = {nick:newNick, bio:newBio};
-    if(currentUser.photoURL) updateData.photo = currentUser.photoURL;
-    await updateDoc(doc(db,'profiles',currentUser.uid), updateData);
-    ['pName','pNick','pBio','pMemory'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('addProfileForm').style.display='none';
-    btn.textContent='Save profile'; btn.onclick=window.addProfile;
-    alert('Profile updated! 🎓');
-  };
-};
 
 // ── CONFESSIONS ────────────────────────────────────────
 const confQ = query(collection(db,'confessions'), orderBy('createdAt','desc'));
@@ -676,14 +805,6 @@ onSnapshot(confQ, snap => {
   });
 });
 
-window.submitConfession = async function(){
-  if(!currentUser){showGoogleLogin();return;}
-  const text = document.getElementById('newConfession').value.trim();
-  if(!text) return;
-  await addDoc(collection(db,'confessions'),{text, createdAt:serverTimestamp()});
-  document.getElementById('newConfession').value='';
-  alert('Confession posted! 🤫');
-};
 
 // ── LETTERS ────────────────────────────────────────────
 const letterQ = query(collection(db,'letters'), orderBy('createdAt','desc'));
@@ -700,15 +821,6 @@ onSnapshot(letterQ, snap => {
   });
 });
 
-window.sealLetter = async function(){
-  if(!currentUser){showGoogleLogin();return;}
-  const text = document.getElementById('lText').value.trim();
-  const date = document.getElementById('lDate').value;
-  if(!text){alert('Please write your letter!');return;}
-  await addDoc(collection(db,'letters'),{name:currentUser.displayName, text, unlockDate:date||'farewell day', uid:currentUser.uid, createdAt:serverTimestamp()});
-  ['lName','lText','lDate'].forEach(id=>document.getElementById(id).value='');
-  alert('Your letter has been sealed! 🔒');
-};
 
 // ── 5-YEAR VISION ──────────────────────────────────────
 const visionQ = query(collection(db,'visions'), orderBy('createdAt','desc'));
@@ -734,22 +846,7 @@ onSnapshot(visionQ, snap => {
   });
 });
 
-window.addVision = async function(){
-  if(!currentUser){showGoogleLogin();return;}
-  const dream = document.getElementById('vDream').value.trim();
-  if(!dream){alert('Please write your dream!');return;}
-  const path     = document.getElementById('vPath').value;
-  const location = document.getElementById('vLocation').value;
-  const msg      = document.getElementById('vMsg').value.trim();
-  await addDoc(collection(db,'visions'),{name:currentUser.displayName, dream, path, location, msg, uid:currentUser.uid, createdAt:serverTimestamp()});
-  ['vName','vDream','vMsg'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('vPath').value=''; document.getElementById('vLocation').value='';
-  alert('Vision submitted! 🚀');
-};
 
-window.editVision = function(id){
-  alert('Edit vision — coming soon! For now contact admin to update.');
-};
 
 // ── PHOTO GALLERY ──────────────────────────────────────
 const CLOUDINARY_CLOUD  = 'dluc4n5m6';
@@ -772,32 +869,7 @@ onSnapshot(photoQ, snap => {
   });
 });
 
-window.uploadPhoto = async function(e){
-  if(!currentUser){showGoogleLogin();return;}
-  const file = e.target.files[0]; if(!file) return;
-  const btn = document.querySelector('#gallery .btn-primary');
-  btn.textContent='Uploading...'; btn.disabled=true;
-  try {
-    const fd = new FormData();
-    fd.append('file', file);
-    fd.append('upload_preset', CLOUDINARY_PRESET);
-    fd.append('folder','amrutvahini-diaries');
-    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,{method:'POST',body:fd});
-    const data = await res.json();
-    if(data.secure_url){
-      await addDoc(collection(db,'photos'),{url:data.secure_url, uploadedBy:currentUser.displayName, uid:currentUser.uid, caption:'', createdAt:serverTimestamp()});
-      alert('Photo uploaded! 📸');
-    } else { alert('Upload failed. Please try again.'); }
-  } catch(err){ alert('Upload failed: '+err.message); }
-  finally { btn.textContent='+ Upload photo'; btn.disabled=false; }
-};
 
-window.deletePhoto = async function(id){
-  if(!currentUser) return;
-  if(!confirm('Delete this photo?')) return;
-  
-  await deleteDoc(doc(db,'photos',id));
-};
 
 // ── HOMETOWN MAP ───────────────────────────────────────
 const hometownQ = query(collection(db,'hometowns'), orderBy('createdAt','desc'));
@@ -812,15 +884,6 @@ onSnapshot(hometownQ, snap => {
   });
 });
 
-window.pinHometown = async function(){
-  if(!currentUser){showGoogleLogin();return;}
-  const city  = document.getElementById('mapCity').value.trim();
-  const state = document.getElementById('mapState').value;
-  if(!city){alert('Please enter your city!');return;}
-  await addDoc(collection(db,'hometowns'),{city, state, name:currentUser.displayName, uid:currentUser.uid, createdAt:serverTimestamp()});
-  document.getElementById('mapCity').value='';
-  alert('Hometown pinned! 📍');
-};
 
 // ── AWARDS ─────────────────────────────────────────────
 const renderedAwardIds = new Set();
@@ -849,32 +912,8 @@ onSnapshot(awardsQ, snap => {
 });
 
 // ── CREATE AWARD ───────────────────────────────────────
-window.createAward = async function(){
-  if(!currentUser){showGoogleLogin();return;}
-  const emoji = document.getElementById('aEmoji').value.trim()||'🏆';
-  const title = document.getElementById('aTitle').value.trim();
-  const desc  = document.getElementById('aDesc').value.trim();
-  const opts  = document.getElementById('aOptions').value.trim().split('\n').map(o=>o.trim()).filter(o=>o.length>0);
-  if(!title){alert('Please enter an award title!');return;}
-  if(opts.length<2){alert('Please add at least 2 nominees, one per line!');return;}
-  await addDoc(collection(db,'awards'),{title, description:desc, emoji, options:opts, uid:currentUser.uid, createdAt:serverTimestamp()});
-  ['aEmoji','aTitle','aDesc','aOptions'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('createAwardForm').style.display='none';
-  alert('Award created! 🏆');
-};
 
 // ── ADMIN DELETE ────────────────────────────────────────
-window.adminDeleteDoc = async function(collectionName, docId, btn){
-  if(!currentUser){alert('Please sign in first!');return;}
-  if(!confirm('Delete this permanently?')) return;
-  try {
-    
-    await deleteDoc(doc(db, collectionName, docId));
-    const card = btn.closest('.card,.flagged-post,.confession,.letter-card,.post');
-    if(card){card.style.opacity='0.3';card.style.pointerEvents='none';}
-    btn.textContent='Deleted';
-  } catch(err){ alert('Error: '+err.message); }
-};
 
 // ── ADMIN PHOTOS ───────────────────────────────────────
 const adminPhotoQ = query(collection(db,'photos'), orderBy('createdAt','desc'));
@@ -902,17 +941,6 @@ onSnapshot(adminPhotoQ, snap => {
   });
 });
 
-window.adminDeletePhoto = async function(id, btn){
-  if(!currentUser){alert('Please sign in!');return;}
-  if(!confirm('Delete this photo permanently?')) return;
-  try {
-    
-    await deleteDoc(doc(db,'photos',id));
-    btn.closest('div[style*="aspect-ratio"]').remove();
-  } catch(err){
-    alert('Error: '+err.message);
-  }
-};
 
 // ── ADMIN CONFESSIONS ──────────────────────────────────
 const adminConfQ = query(collection(db,'confessions'), orderBy('createdAt','desc'));
@@ -967,17 +995,7 @@ onSnapshot(collection(db,'members'), snap => {
   }
 });
 
-window.removeMember = async function(uid, name){
-  if(!currentUser){ alert('Please sign in first!'); return; }
-  if(!confirm('Remove '+name+' from the batch?')) return;
-  try {
-    await deleteDoc(doc(db,'members',uid));
-    try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
-    alert(name+' has been removed successfully.');
-  } catch(err){
-    alert('Error removing member: ' + err.message + ' (code: ' + err.code + ')');
-  }
-};
+
 </script>
 </body>
 </html>
