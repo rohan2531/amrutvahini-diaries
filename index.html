@@ -118,7 +118,20 @@
   </div>
 </div>
 
-<!-- ONBOARDING SCREEN — shown after first login, mandatory profile setup -->
+<!-- ACCESS DENIED SCREEN -->
+<div id="deniedScreen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:999;display:none;align-items:center;justify-content:center;">
+  <div style="text-align:center;padding:40px;max-width:420px;width:90%;">
+    <div style="font-size:48px;margin-bottom:16px;">🚫</div>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--red);margin-bottom:10px;">Access Denied</div>
+    <div style="font-size:14px;color:var(--muted2);margin-bottom:8px;">This website is only for <strong>AVCOE IT Batch 2022–26</strong> members.</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px;" id="deniedEmail"></div>
+    <div style="background:var(--card);border:1px solid rgba(224,82,82,0.3);border-radius:var(--radius);padding:20px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.8;">
+      Your Google account is not on the approved list.<br/>
+      Contact <strong style="color:var(--gold);">Rohan</strong> to get added.
+    </div>
+    <button onclick="window.googleLogout()" style="padding:10px 28px;background:transparent;border:1px solid rgba(224,82,82,0.4);border-radius:var(--radius-sm);color:var(--red);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;">Sign out</button>
+  </div>
+</div>
 <div id="onboardScreen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:998;overflow-y:auto;">
   <div style="max-width:500px;margin:0 auto;padding:40px 24px;">
     <div style="text-align:center;margin-bottom:32px;">
@@ -192,6 +205,7 @@
   <div class="nav-item active" style="color:var(--red);" onclick="showAdmin('a-confessions',this)">📝 Confessions</div>
   <div class="nav-item" onclick="showAdmin('a-photos',this)">📸 Photos</div>
   <div class="nav-item" onclick="showAdmin('a-members',this)">👥 Members</div>
+  <div class="nav-item" onclick="showAdmin('a-access',this)">🔒 Access</div>
   <div class="nav-item" onclick="showAdmin('a-settings',this)">⚙️ Settings</div>
 </div>
 
@@ -384,7 +398,19 @@
   <div id="memberList"><div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading...</div></div>
 </div>
 
-<div class="admin-page" id="a-settings">
+<div class="admin-page" id="a-access">
+  <div class="section-title">Access control</div>
+  <div class="section-sub">Only approved emails can sign in to the website 🔒</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div style="font-size:14px;font-weight:500;margin-bottom:10px;color:var(--gold);">Add approved email</div>
+    <div style="display:flex;gap:10px;">
+      <input id="newEmail" type="email" placeholder="batchmate@gmail.com" style="flex:1;"/>
+      <button class="btn btn-primary" onclick="window.addApprovedEmail()">Add</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Add each batchmate's Gmail address. They can only sign in after being added here.</div>
+  </div>
+  <div id="approvedList"><div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading...</div></div>
+</div>
   <div class="section-title">Settings</div>
   <div class="section-sub">Website controls</div>
   <div style="display:flex;flex-direction:column;gap:10px;">
@@ -524,8 +550,38 @@ const ADMIN_UID = 'wEz2oV7i4fMbm075oAqSSioTUEm2';
 onAuthStateChanged(auth, async user => {
   const lock    = document.getElementById('lockScreen');
   const onboard = document.getElementById('onboardScreen');
+  const denied  = document.getElementById('deniedScreen');
   if (user) {
-    if (lock) lock.style.display = 'none';
+    // ── ALL READS IN PARALLEL — much faster ──────────────
+    const tempId = 'pending_' + user.email.replace(/[@.]/g,'_');
+    const [uidSnap, emailSnap, memberSnap, profileSnap] = await Promise.all([
+      user.uid !== ADMIN_UID ? getDoc(doc(db,'allowlist',user.uid))         : Promise.resolve({exists:()=>true}),
+      user.uid !== ADMIN_UID ? getDoc(doc(db,'allowlist',tempId))           : Promise.resolve({exists:()=>false}),
+      getDoc(doc(db,'members',user.uid)),
+      getDoc(doc(db,'profiles',user.uid)),
+    ]);
+
+    // ── CHECK ALLOWLIST ───────────────────────────────────
+    if (user.uid !== ADMIN_UID && !uidSnap.exists() && !emailSnap.exists()) {
+      if (lock)    lock.style.display    = 'none';
+      if (onboard) onboard.style.display = 'none';
+      if (denied) {
+        denied.style.display = 'flex';
+        const emailEl = document.getElementById('deniedEmail');
+        if (emailEl) emailEl.textContent = 'Signed in as: ' + user.email;
+      }
+      return;
+    }
+
+    // upgrade pending → UID in background (don't await — non-blocking)
+    if (user.uid !== ADMIN_UID && !uidSnap.exists() && emailSnap.exists()) {
+      setDoc(doc(db,'allowlist',user.uid),{email:user.email,name:user.displayName,addedAt:serverTimestamp()})
+        .then(() => deleteDoc(doc(db,'allowlist',tempId)));
+    }
+
+    // ── APPROVED — set up UI ──────────────────────────────
+    if (denied) denied.style.display = 'none';
+    if (lock)   lock.style.display   = 'none';
     window._userUID = user.uid;
     document.getElementById('authBtn').textContent = '👤 ' + user.displayName.split(' ')[0];
     document.getElementById('authBtn').style.color = 'var(--gold)';
@@ -533,36 +589,29 @@ onAuthStateChanged(auth, async user => {
     const hs = document.getElementById('homeWelcomeSub');
     if (hw) hw.textContent = 'Welcome, ' + user.displayName.split(' ')[0] + '! 🎓';
     if (hs) hs.textContent = 'You are signed in — explore, post and share memories!';
-    // save member doc
-    const memberRef = doc(db, 'members', user.uid);
-    const memberSnap = await getDoc(memberRef);
-    if (!memberSnap.exists()) await setDoc(memberRef, { name: user.displayName, createdAt: serverTimestamp(), joinedAt: serverTimestamp() });
-    // check if profile exists — if not show onboarding
-    const profileRef = doc(db, 'profiles', user.uid);
-    const profileSnap = await getDoc(profileRef);
+
+    // create member doc in background if needed
+    if (!memberSnap.exists()) setDoc(doc(db,'members',user.uid),{name:user.displayName,email:user.email,createdAt:serverTimestamp(),joinedAt:serverTimestamp()});
+
+    // show onboarding or unlock
     if (!profileSnap.exists()) {
-      // show onboarding screen
       if (onboard) {
         onboard.style.display = 'block';
-        // prefill name
         const nameEl = document.getElementById('ob-name');
         if (nameEl) nameEl.value = user.displayName;
-        // show google photo or initials
         const avatar = document.getElementById('onboardAvatar');
         if (avatar) {
-          if (user.photoURL) {
-            avatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer"/>`;
-          } else {
-            avatar.textContent = user.displayName.slice(0,2).toUpperCase();
-          }
+          if (user.photoURL) avatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;" referrerpolicy="no-referrer"/>`;
+          else avatar.textContent = user.displayName.slice(0,2).toUpperCase();
         }
       }
     } else {
       if (onboard) onboard.style.display = 'none';
     }
   } else {
-    if (lock) lock.style.display = 'flex';
+    if (lock)    lock.style.display    = 'flex';
     if (onboard) onboard.style.display = 'none';
+    if (denied)  denied.style.display  = 'none';
     window._userUID = null;
     document.getElementById('authBtn').textContent = '🔑 Sign in';
     document.getElementById('authBtn').style.color = '';
@@ -1236,7 +1285,49 @@ onSnapshot(collection(db,'members'), snap => {
   });
 });
 
-// ── ADMIN ACTIONS ──────────────────────────────────────
+// ── ACCESS CONTROL — ALLOWLIST ─────────────────────────
+onSnapshot(collection(db,'allowlist'), snap => {
+  const list = document.getElementById('approvedList'); if (!list) return;
+  list.innerHTML = '';
+  if (snap.size === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No emails added yet. Add your batchmates above.</div>';
+    return;
+  }
+  snap.forEach(d => {
+    const data = d.data();
+    const div  = document.createElement('div');
+    div.className = 'card';
+    div.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:8px;';
+    div.innerHTML = `
+      <div style="width:34px;height:34px;border-radius:50%;background:rgba(76,175,125,0.12);border:1px solid rgba(76,175,125,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:500;">${data.name||'Pending'}</div>
+        <div style="font-size:12px;color:var(--muted);">${data.email}</div>
+      </div>
+      ${d.id !== ADMIN_UID ? `<button class="btn btn-danger" style="font-size:11px;padding:4px 10px;flex-shrink:0;" onclick="window.removeApprovedEmail('${d.id}','${(data.email||'').replace(/'/g,"\\'")}')">Remove</button>` : '<span class="badge badge-gold">Admin</span>'}`;
+    list.appendChild(div);
+  });
+});
+
+window.addApprovedEmail = async () => {
+  const u = auth.currentUser;
+  if (!u || u.uid !== ADMIN_UID) { alert('Admin access required.'); return; }
+  const email = document.getElementById('newEmail').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) { alert('Please enter a valid email!'); return; }
+  // store by email — we don't know UID yet, store email and update when they sign in
+  const tempId = 'pending_' + email.replace(/[@.]/g,'_');
+  await setDoc(doc(db,'allowlist',tempId), { email, name:'Pending sign-in', addedAt:serverTimestamp() });
+  document.getElementById('newEmail').value = '';
+  alert('✅ ' + email + ' has been approved! They can now sign in.');
+};
+
+window.removeApprovedEmail = async (id, email) => {
+  const u = auth.currentUser;
+  if (!u || u.uid !== ADMIN_UID) { alert('Admin access required.'); return; }
+  if (!confirm('Remove ' + email + ' from approved list?')) return;
+  await deleteDoc(doc(db,'allowlist',id));
+  alert(email + ' has been removed.');
+};
 window.adminDelete = async (col, id, btn) => {
   const u=auth.currentUser;
   if(!u||u.uid!==ADMIN_UID){alert('Admin access required.');return;}
