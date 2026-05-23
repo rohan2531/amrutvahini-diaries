@@ -366,6 +366,7 @@ function showAdmin(id, el) {
   document.querySelectorAll('#adminNav .nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (el) el.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 function toggleAdmin() {
   if (adminMode) {
@@ -373,6 +374,7 @@ function toggleAdmin() {
     document.getElementById('adminNav').style.display = 'none';
     document.getElementById('mainNav').style.display = 'flex';
     showPage('home', document.querySelector('#mainNav .nav-item'));
+    window.scrollTo({top: 0, behavior: 'smooth'});
     return;
   }
   if (!window._userUID) { alert('Please sign in with Google first!'); return; }
@@ -382,6 +384,7 @@ function toggleAdmin() {
     document.getElementById('mainNav').style.display = 'none';
     document.getElementById('adminNav').style.display = 'flex';
     showAdmin('a-confessions', document.querySelector('#adminNav .nav-item'));
+    window.scrollTo({top: 0, behavior: 'smooth'});
   } else if (entered !== null) {
     alert('❌ Wrong password!');
   }
