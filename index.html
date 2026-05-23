@@ -434,6 +434,10 @@ function toggleAdmin(){
     showPage('home',mn.querySelector('.nav-item'));
     return;
   }
+  if(!window._userUID){
+    alert('Please sign in with Google first before accessing admin panel!');
+    return;
+  }
   const entered=prompt('🛡 Enter admin password:');
   if(entered===null) return;
   if(entered===ADMIN_PASS){
@@ -964,14 +968,15 @@ onSnapshot(collection(db,'members'), snap => {
 
 window.removeMember = async function(uid, name){
   if(!currentUser){alert('Please sign in first!');return;}
-  if(!confirm('Remove '+name+' from the batch? They will need to sign in again to rejoin.')) return;
+  if(!confirm('Remove '+name+' from the batch? This will delete their member record and profile.')) return;
   try {
     const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     await deleteDoc(doc(db,'members',uid));
+    try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
     alert(name+' has been removed.');
   } catch(err){
-    if(err.code === 'permission-denied'){
-      alert('Permission denied! To enable admin deletes, share your Google UID with the developer to update Firebase rules.');
+    if(err.code==='permission-denied'){
+      alert('Permission denied! Make sure you are signed in as admin.');
     } else {
       alert('Error: '+err.message);
     }
