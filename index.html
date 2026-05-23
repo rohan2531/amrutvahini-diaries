@@ -603,7 +603,7 @@ function createAward(){
   const card=document.createElement('div');card.className='award-card';
   card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div style="font-size:24px;">${emoji}</div><button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="this.closest('.award-card').remove()">Remove</button></div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${desc}</div>${optionsHTML}`;
   document.getElementById('awardsGrid').appendChild(card);
-  if(window.db){window.addDoc(window.collection(window.db,'awards'),{emoji,title,desc,options:opts,createdAt:Date.now()});}
+  if(window.db){window.addDoc(window.collection(window.db,'awards'),{title});}
   ['aEmoji','aTitle','aDesc','aOptions'].forEach(id=>document.getElementById(id).value='');
   toggleCreateAward();
 }
@@ -632,16 +632,19 @@ window.collection = collection;
 window.addDoc = addDoc;
 window.serverTimestamp = serverTimestamp;
 
-// ── STATS ──────────────────────────────────────────────
-async function refreshStats(){
-  const cols = ['profiles','posts','photos','letters'];
-  const ids  = ['s-members','s-memories','s-photos','s-letters'];
-  for(let i=0;i<cols.length;i++){
-    const snap = await getDocs(collection(db,cols[i]));
-    document.getElementById(ids[i]).textContent = snap.size;
-  }
-}
-refreshStats();
+// ── STATS — real time ─────────────────────────────────
+const statMap = [
+  {col:'members', id:'s-members'},
+  {col:'posts',   id:'s-memories'},
+  {col:'photos',  id:'s-photos'},
+  {col:'letters', id:'s-letters'},
+];
+statMap.forEach(({col,id}) => {
+  onSnapshot(collection(db,col), snap => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = snap.size;
+  });
+});
 
 // ── MEMORY WALL ────────────────────────────────────────
 const postQ = query(collection(db,'posts'), orderBy('createdAt','desc'));
@@ -660,8 +663,7 @@ onSnapshot(postQ, snap => {
 window.addPost = async function(){
   const text = document.getElementById('newPost').value.trim();
   if(!text) return;
-  const name = window._userName || 'Batchmate';
-  await addDoc(collection(db,'posts'),{text, name, likes:0, createdAt:serverTimestamp()});
+  await addDoc(collection(db,'posts'),{text, likes:0});
   document.getElementById('newPost').value='';
 };
 
@@ -689,10 +691,7 @@ onSnapshot(profileQ, snap => {
 window.addProfile = async function(){
   const name=document.getElementById('pName').value.trim();
   if(!name){alert('Please enter your name!');return;}
-  const nick=document.getElementById('pNick').value.trim();
-  const bio=document.getElementById('pBio').value.trim();
-  const memory=document.getElementById('pMemory').value.trim();
-  await addDoc(collection(db,'profiles'),{name,nick,bio,memory,createdAt:serverTimestamp()});
+  await addDoc(collection(db,'profiles'),{name});
   window._userName = name;
   ['pName','pNick','pBio','pMemory'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('addProfileForm').style.display='none';
@@ -717,7 +716,7 @@ onSnapshot(confQ, snap => {
 window.submitConfession = async function(){
   const text = document.getElementById('newConfession').value.trim();
   if(!text) return;
-  await addDoc(collection(db,'confessions'),{text, likes:0, pending:false, createdAt:serverTimestamp()});
+  await addDoc(collection(db,'confessions'),{text});
   document.getElementById('newConfession').value='';
   alert('Confession posted! 🤫');
 };
@@ -741,9 +740,8 @@ onSnapshot(letterQ, snap => {
 window.sealLetter = async function(){
   const name=document.getElementById('lName').value.trim();
   const text=document.getElementById('lText').value.trim();
-  const date=document.getElementById('lDate').value;
   if(!name||!text){alert('Please fill in your name and letter!');return;}
-  await addDoc(collection(db,'letters'),{name,text,unlockDate:date||'farewell day',createdAt:serverTimestamp()});
+  await addDoc(collection(db,'letters'),{name});
   ['lName','lText','lDate'].forEach(id=>document.getElementById(id).value='');
   alert('Your letter has been sealed! 🔒');
 };
@@ -766,10 +764,7 @@ window.addVision = async function(){
   const name=document.getElementById('vName').value.trim();
   const dream=document.getElementById('vDream').value.trim();
   if(!name||!dream){alert('Please fill in your name and dream!');return;}
-  const path=document.getElementById('vPath').value;
-  const location=document.getElementById('vLocation').value;
-  const msg=document.getElementById('vMsg').value.trim();
-  await addDoc(collection(db,'visions'),{name,dream,path,location,msg,createdAt:serverTimestamp()});
+  await addDoc(collection(db,'visions'),{name});
   ['vName','vDream','vMsg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('vPath').value=''; document.getElementById('vLocation').value='';
   alert('Vision submitted! 🚀');
@@ -805,8 +800,7 @@ window.uploadPhoto = async function(e){
     const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {method:'POST', body:formData});
     const data = await res.json();
     if(data.secure_url){
-      const uploadedBy = window._userName || 'Batchmate';
-      await addDoc(collection(db,'photos'),{url:data.secure_url, uploadedBy, createdAt:serverTimestamp()});
+      await addDoc(collection(db,'photos'),{url:data.secure_url});
       alert('Photo uploaded! 📸');
     } else { alert('Upload failed. Please try again.'); }
   } catch(err){ alert('Upload failed: ' + err.message); }
@@ -828,23 +822,23 @@ onSnapshot(hometownQ, snap => {
 
 window.pinHometown = async function(){
   const city=document.getElementById('mapCity').value.trim();
-  const state=document.getElementById('mapState').value;
   if(!city){alert('Please enter your city!');return;}
-  const name=window._userName||'Batchmate';
-  await addDoc(collection(db,'hometowns'),{city,state,name,createdAt:serverTimestamp()});
+  await addDoc(collection(db,'hometowns'),{city});
   document.getElementById('mapCity').value='';
   alert('Hometown pinned! 📍');
 };
 
-// ── JOIN ───────────────────────────────────────────────
 window.joinBatch = async function(){
   const name=document.getElementById('joinName').value.trim();
   const code=document.getElementById('joinCode').value.trim();
   if(!name){alert('Please enter your name!');return;}
   if(code!=='AVCOE-IT-2026'){alert('Wrong batch code! Ask your batch admin for the correct code.');return;}
-  window._userName = name;
-  document.getElementById('joinModal').style.display='none';
-  alert('Welcome to Amrutvahini Diaries, '+name+'! 🎓');
+  try {
+    await addDoc(collection(db,'members'),{name});
+    window._userName = name;
+    document.getElementById('joinModal').style.display='none';
+    alert('Welcome to Amrutvahini Diaries, '+name+'! 🎓');
+  } catch(err){ alert('Error joining: '+err.message); }
 };
 
 // ── AWARDS (save custom) ───────────────────────────────
