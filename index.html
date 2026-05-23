@@ -170,7 +170,7 @@
   <div class="nav-item" onclick="showPage('gallery',this)">Gallery</div>
   <div class="nav-item" onclick="showPage('confessions',this)">Confessions</div>
   <div class="nav-item" onclick="showPage('letters',this)">Letters</div>
-  <div class="nav-item" onclick="showPage('vision',this)">5-Year Vision</div>
+  <div class="nav-item" onclick="showPage('vision',this)">Messages 💛</div>
   <div class="nav-item" onclick="showPage('map',this)">Hometown Map</div>
   <div class="nav-item" onclick="showPage('awards',this)">Batch Awards</div>
 </div>
@@ -288,22 +288,15 @@
   <div id="letterList"></div>
 </div>
 
-<!-- 5-YEAR VISION -->
+<!-- MESSAGE TO BATCH -->
 <div class="page" id="vision">
-  <div class="section-title">5-year vision</div>
-  <div class="section-sub">Where do you see yourself? Leave a message to the batch.</div>
+  <div class="section-title">Message to the batch</div>
+  <div class="section-sub">Say what's in your heart before you part ways 💛</div>
   <div class="card" style="margin-bottom:16px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-      <div><label class="form-label">Your path</label>
-        <select id="vPath"><option value="">Choose...</option><option>Software engineer</option><option>Entrepreneur</option><option>Higher studies / Masters</option><option>Core IT / Infra</option><option>Government / PSU</option><option>Research</option><option>Still figuring out</option></select>
-      </div>
-      <div><label class="form-label">Location</label>
-        <select id="vLocation"><option value="">Choose...</option><option>Same city</option><option>Different city in India</option><option>Abroad</option><option>No idea yet</option></select>
-      </div>
+    <textarea id="vDream" placeholder="What do you want to say to your batch before farewell? Say it here — they'll read it forever." style="min-height:160px;"></textarea>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+      <button class="btn btn-primary" onclick="window.addVision()">Post message 💛</button>
     </div>
-    <div class="form-row"><label class="form-label">Your 5-year dream</label><textarea id="vDream" placeholder="Where do you honestly see yourself in 5 years?"></textarea></div>
-    <div class="form-row"><label class="form-label">Message to the batch</label><textarea id="vMsg" placeholder="What do you want to say to everyone before you part ways?"></textarea></div>
-    <button class="btn btn-primary" onclick="window.addVision()">Submit vision</button>
   </div>
   <div id="visionFeed"></div>
 </div>
@@ -746,22 +739,36 @@ onSnapshot(query(collection(db,'letters'), orderBy('createdAt','desc')), snap =>
 });
 window.sealLetter = async () => { const u=auth.currentUser; if(!u) return; const text=document.getElementById('lText').value.trim(); if(!text){alert('Please write your letter!');return;} await addDoc(collection(db,'letters'),{name:u.displayName,text,unlockDate:document.getElementById('lDate').value||'farewell day',uid:u.uid,createdAt:serverTimestamp()}); ['lText','lDate'].forEach(id=>document.getElementById(id).value=''); alert('Letter sealed! 🔒'); };
 
-// ── 5-YEAR VISION ──────────────────────────────────────
+// ── MESSAGES TO BATCH ──────────────────────────────────
 onSnapshot(query(collection(db,'visions'), orderBy('createdAt','desc')), snap => {
   const feed = document.getElementById('visionFeed'); if (!feed) return; feed.innerHTML = '';
   snap.forEach(d => {
     const p = d.data();
     const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : '';
     const div = document.createElement('div'); div.className = 'vision-card';
-    div.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${i}</div>
-      <div><div style="font-size:14px;font-weight:500;">${p.name}</div><span class="badge badge-gold">${p.path||'IT'}${p.location?' · '+p.location:''}</span></div></div>
-      <div style="font-size:13px;color:var(--muted2);font-style:italic;">"${p.dream}"</div>
-      ${p.msg?`<div style="font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:10px;margin-top:10px;">"${p.msg}"</div>`:''}`;
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${i}</div>
+        <div>
+          <div style="font-size:14px;font-weight:500;">${p.name}</div>
+          <div style="font-size:11px;color:var(--muted);">${time}</div>
+        </div>
+        <span class="badge badge-gold" style="margin-left:auto;">💛 Message</span>
+      </div>
+      <div style="font-size:14px;color:var(--muted2);line-height:1.7;font-style:italic;">"${p.dream}"</div>`;
     feed.appendChild(div);
   });
 });
-window.addVision = async () => { const u=auth.currentUser; if(!u) return; const dream=document.getElementById('vDream').value.trim(); if(!dream){alert('Please write your dream!');return;} await addDoc(collection(db,'visions'),{name:u.displayName,dream,path:document.getElementById('vPath').value,location:document.getElementById('vLocation').value,msg:document.getElementById('vMsg').value.trim(),uid:u.uid,createdAt:serverTimestamp()}); ['vDream','vMsg'].forEach(id=>document.getElementById(id).value=''); document.getElementById('vPath').value=''; document.getElementById('vLocation').value=''; alert('Vision submitted! 🚀'); };
+
+window.addVision = async () => {
+  const u = auth.currentUser; if (!u) return;
+  const msg = document.getElementById('vDream').value.trim();
+  if (!msg) { alert('Please write your message to the batch!'); return; }
+  await addDoc(collection(db,'visions'), { name:u.displayName, dream:msg, uid:u.uid, createdAt:serverTimestamp() });
+  document.getElementById('vDream').value = '';
+  alert('Message posted! 💛');
+};
 
 // ── PHOTOS ─────────────────────────────────────────────
 onSnapshot(query(collection(db,'photos'), orderBy('createdAt','desc')), snap => {
