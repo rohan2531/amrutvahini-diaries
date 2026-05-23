@@ -575,6 +575,10 @@ onAuthStateChanged(auth, async user => {
         const emailEl = document.getElementById('deniedEmail');
         if (emailEl) emailEl.textContent = 'Signed in as: ' + user.email;
       }
+      // popup alert for unregistered user
+      setTimeout(() => {
+        alert('🚫 Access Denied!\n\nYour Google account (' + user.email + ') is not approved for this website.\n\nThis site is only for AVCOE IT Batch 2022–26 members.\nContact Rohan to get added.');
+      }, 300);
       return;
     }
 
@@ -588,7 +592,7 @@ onAuthStateChanged(auth, async user => {
     if (denied) denied.style.display = 'none';
     if (lock)   lock.style.display   = 'none';
     window._userUID = user.uid;
-    startStats(); // start stats now that user is approved
+    startAllListeners(); // start all listeners now that user is approved
     document.getElementById('authBtn').textContent = '👤 ' + user.displayName.split(' ')[0];
     document.getElementById('authBtn').style.color = 'var(--gold)';
     const hw = document.getElementById('homeWelcome');
@@ -697,6 +701,13 @@ function startStats() {
   [{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
   .forEach(({col,id}) => onSnapshot(collection(db,col), snap => { const el=document.getElementById(id); if(el) el.textContent=snap.size; }));
 }
+
+// ── ALL LISTENERS — started once after user is approved ──
+let allListenersStarted = false;
+function startAllListeners() {
+  if (allListenersStarted) return;
+  allListenersStarted = true;
+  startStats();
 
 // ── MEMORY WALL ────────────────────────────────────────
 onSnapshot(query(collection(db,'posts'), orderBy('createdAt','desc')), snap => {
@@ -1281,6 +1292,8 @@ window.toggleRevealResults = async () => {
   if(!u||u.uid!==ADMIN_UID){alert('Admin access required.');return;}
   await setDoc(doc(db,'settings','awards'), { revealResults: !resultsRevealed }, { merge: true });
 };
+
+} // end startAllListeners
 
 // ── ADMIN LISTENERS — lazy loaded only when admin panel opens ──
 let adminListenersStarted = false;
