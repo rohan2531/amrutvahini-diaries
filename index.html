@@ -55,7 +55,6 @@
   .btn-primary:hover{background:var(--gold2);border-color:var(--gold2);color:#0d0d0d;}
   .btn-danger{border-color:rgba(224,82,82,0.4);color:var(--red);background:rgba(224,82,82,0.08);}
   .btn-danger:hover{background:rgba(224,82,82,0.18);}
-  .btn-success{border-color:rgba(76,175,125,0.4);color:var(--green);background:rgba(76,175,125,0.08);}
   .post{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;}
   .post-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
   .post-actions{display:flex;gap:14px;margin-top:12px;}
@@ -243,7 +242,7 @@
   <div class="card" style="margin-bottom:16px;">
     <div class="form-row"><label class="form-label">Your letter</label><textarea id="lText" placeholder="Dear future me..." style="min-height:140px;"></textarea></div>
     <div class="form-row"><label class="form-label">Unlock date</label><input id="lDate" type="date"/></div>
-    <button class="btn btn-primary" onclick="sealLetter()">Seal my letter 🔒</button>
+    <button class="btn btn-primary" onclick="window.sealLetter()">Seal my letter 🔒</button>
   </div>
   <div id="letterList"></div>
 </div>
@@ -263,7 +262,7 @@
     </div>
     <div class="form-row"><label class="form-label">Your 5-year dream</label><textarea id="vDream" placeholder="Where do you honestly see yourself in 5 years?"></textarea></div>
     <div class="form-row"><label class="form-label">Message to the batch</label><textarea id="vMsg" placeholder="What do you want to say to everyone before you part ways?"></textarea></div>
-    <button class="btn btn-primary" onclick="addVision()">Submit vision</button>
+    <button class="btn btn-primary" onclick="window.addVision()">Submit vision</button>
   </div>
   <div id="visionFeed"></div>
 </div>
@@ -277,7 +276,7 @@
     <div class="form-row"><label class="form-label">State</label>
       <select id="mapState"><option>Maharashtra</option><option>Karnataka</option><option>Gujarat</option><option>Madhya Pradesh</option><option>Other</option></select>
     </div>
-    <button class="btn btn-primary" onclick="pinHometown()">Pin my hometown 📍</button>
+    <button class="btn btn-primary" onclick="window.pinHometown()">Pin my hometown 📍</button>
   </div>
   <div class="grid-3" id="hometownList"></div>
 </div>
@@ -673,7 +672,6 @@ onSnapshot(collection(db,'members'), snap => {
 });
 
 // ── ADMIN ACTIONS ──────────────────────────────────────
-// Key fix: checks ADMIN_UID client-side before calling Firestore
 window.adminDelete = async (col, id, btn) => {
   const u = auth.currentUser;
   if (!u || u.uid !== ADMIN_UID) { alert('Admin access required. Make sure you are signed in as admin.'); return; }
@@ -696,7 +694,6 @@ window.adminRemoveMember = async (uid, name) => {
     alert(name + ' has been removed.');
   } catch(err) { alert('Error: ' + err.message + ' (' + err.code + ')'); }
 };
-
 </script>
 </body>
 </html>
