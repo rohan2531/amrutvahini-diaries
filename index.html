@@ -587,6 +587,7 @@ onAuthStateChanged(auth, async user => {
     if (denied) denied.style.display = 'none';
     if (lock)   lock.style.display   = 'none';
     window._userUID = user.uid;
+    startStats(); // start stats now that user is approved
     document.getElementById('authBtn').textContent = '👤 ' + user.displayName.split(' ')[0];
     document.getElementById('authBtn').style.color = 'var(--gold)';
     const hw = document.getElementById('homeWelcome');
@@ -687,8 +688,14 @@ window.saveOnboarding = async () => {
 };
 
 // ── STATS ──────────────────────────────────────────────
-[{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
-.forEach(({col,id}) => onSnapshot(collection(db,col), snap => { const el=document.getElementById(id); if(el) el.textContent=snap.size; }));
+// Started once after user is confirmed approved
+let statsStarted = false;
+function startStats() {
+  if (statsStarted) return;
+  statsStarted = true;
+  [{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
+  .forEach(({col,id}) => onSnapshot(collection(db,col), snap => { const el=document.getElementById(id); if(el) el.textContent=snap.size; }));
+}
 
 // ── MEMORY WALL ────────────────────────────────────────
 onSnapshot(query(collection(db,'posts'), orderBy('createdAt','desc')), snap => {
