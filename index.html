@@ -980,10 +980,11 @@ window.submitVote = async (awardId, nominee) => {
   const isChanging = changingVote.has(awardId);
   if (window.awardVoted[awardId] && !isChanging) return;
   try {
-    await setDoc(doc(db,'awards',awardId,'votes',u.uid), {
-      nominee,
-      votedAt: serverTimestamp()
-    });
+    const voteRef = doc(db,'awards',awardId,'votes',u.uid);
+    // delete old vote first when changing — clean delete + recreate
+    if (isChanging) await deleteDoc(voteRef);
+    // create fresh vote doc — immutable, never an overwrite
+    await setDoc(voteRef, { nominee, votedAt: serverTimestamp() });
     window.awardVoted[awardId] = true;
     changingVote.delete(awardId);
     // onSnapshot auto re-renders
