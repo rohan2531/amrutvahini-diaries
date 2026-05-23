@@ -625,20 +625,23 @@ onAuthStateChanged(auth, async user => {
 window.googleLogin  = async () => { try { await signInWithPopup(auth, provider); } catch(e) { alert(e.message); } };
 window.googleLogout = async () => { if (confirm('Sign out?')) await signOut(auth); };
 
-// ── LOGO — load saved logo on startup ─────────────────
-onSnapshot(doc(db,'settings','site'), snap => {
-  if (snap.exists() && snap.data().logoUrl) {
-    const url  = snap.data().logoUrl;
-    // topbar logo
-    const img  = document.getElementById('logoImg');
-    const wrap = document.getElementById('logoWrap');
-    if (img && wrap) { img.src = url; wrap.style.display = 'block'; }
-    // lock screen logo
-    const lockImg  = document.getElementById('lockLogoImg');
-    const lockWrap = document.getElementById('lockLogo');
-    if (lockImg && lockWrap) { lockImg.src = url; lockWrap.style.display = 'block'; }
-  }
-});
+// ── LOAD BATCH PHOTO BEFORE LOGIN (public REST fetch) ──
+// Runs immediately — no auth needed
+fetch('https://firestore.googleapis.com/v1/projects/amrutvahini-diaries/databases/(default)/documents/settings/site')
+  .then(r => r.json())
+  .then(data => {
+    const url = data?.fields?.logoUrl?.stringValue;
+    if (url) {
+      // lock screen banner
+      const lockImg  = document.getElementById('lockLogoImg');
+      const lockWrap = document.getElementById('lockLogo');
+      if (lockImg && lockWrap) { lockImg.src = url; lockWrap.style.display = 'block'; }
+      // topbar logo (in case already signed in)
+      const img  = document.getElementById('logoImg');
+      const wrap = document.getElementById('logoWrap');
+      if (img && wrap) { img.src = url; wrap.style.display = 'block'; }
+    }
+  }).catch(() => {});
 
 window.saveLogoToCloud = async (file, btn) => {
   const u = auth.currentUser;
