@@ -486,11 +486,12 @@ function toggleAdmin() {
   const entered = prompt('🛡 Enter admin password:');
   if (entered === ADMIN_PASS) {
     adminMode = true;
-    // hide all main pages before showing admin
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('mainNav').style.display = 'none';
     document.getElementById('adminNav').style.display = 'flex';
     showAdmin('a-confessions', document.querySelector('#adminNav .nav-item'));
+    // start admin listeners only now — lazy load
+    if (window.startAdminListeners) window.startAdminListeners();
   } else if (entered !== null) {
     alert('❌ Wrong password!');
   }
@@ -1281,47 +1282,54 @@ window.toggleRevealResults = async () => {
   await setDoc(doc(db,'settings','awards'), { revealResults: !resultsRevealed }, { merge: true });
 };
 
-// ── ADMIN MEMBERS ──────────────────────────────────────
-onSnapshot(collection(db,'members'), snap => {
-  const list=document.getElementById('memberList'); if(!list) return; list.innerHTML='';
-  if(snap.size===0){list.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No members yet</div>';return;}
-  snap.forEach(d => {
-    const m=d.data();
-    const isMe=auth.currentUser && d.id===auth.currentUser.uid;
-    const initials=(m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const joined=m.joinedAt?new Date(m.joinedAt.seconds*1000).toLocaleDateString():'Recently';
-    const safeName=(m.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    const div=document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;gap:12px;margin-bottom:10px;';
-    div.innerHTML=`<div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${initials}</div>
-      <div style="flex:1;"><div style="font-size:14px;font-weight:500;">${m.name}</div><div style="font-size:12px;color:var(--muted);">Joined ${joined}</div></div>
-      ${isMe?'<span class="badge badge-gold">You</span>':`<button class="btn btn-danger" style="font-size:11px;padding:5px 12px;" onclick="window.adminRemoveMember('${d.id}','${safeName}')">Remove</button>`}`;
-    list.appendChild(div);
-  });
-});
+// ── ADMIN LISTENERS — lazy loaded only when admin panel opens ──
+let adminListenersStarted = false;
+window.startAdminListeners = function() {
+  if (adminListenersStarted) return;
+  adminListenersStarted = true;
 
-// ── ACCESS CONTROL — ALLOWLIST ─────────────────────────
-onSnapshot(collection(db,'allowlist'), snap => {
-  const list = document.getElementById('approvedList'); if (!list) return;
-  list.innerHTML = '';
-  if (snap.size === 0) {
-    list.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No emails added yet. Add your batchmates above.</div>';
-    return;
-  }
-  snap.forEach(d => {
-    const data = d.data();
-    const div  = document.createElement('div');
-    div.className = 'card';
-    div.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:8px;';
-    div.innerHTML = `
-      <div style="width:34px;height:34px;border-radius:50%;background:rgba(76,175,125,0.12);border:1px solid rgba(76,175,125,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div>
-      <div style="flex:1;">
-        <div style="font-size:13px;font-weight:500;">${data.name||'Pending'}</div>
-        <div style="font-size:12px;color:var(--muted);">${data.email}</div>
-      </div>
-      ${d.id !== ADMIN_UID ? `<button class="btn btn-danger" style="font-size:11px;padding:4px 10px;flex-shrink:0;" onclick="window.removeApprovedEmail('${d.id}','${(data.email||'').replace(/'/g,"\\'")}')">Remove</button>` : '<span class="badge badge-gold">Admin</span>'}`;
-    list.appendChild(div);
+  // Members list
+  onSnapshot(collection(db,'members'), snap => {
+    const list=document.getElementById('memberList'); if(!list) return; list.innerHTML='';
+    if(snap.size===0){list.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No members yet</div>';return;}
+    snap.forEach(d => {
+      const m=d.data();
+      const isMe=auth.currentUser && d.id===auth.currentUser.uid;
+      const initials=(m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const joined=m.joinedAt?new Date(m.joinedAt.seconds*1000).toLocaleDateString():'Recently';
+      const safeName=(m.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      const div=document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;gap:12px;margin-bottom:10px;';
+      div.innerHTML=`<div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${initials}</div>
+        <div style="flex:1;"><div style="font-size:14px;font-weight:500;">${m.name}</div><div style="font-size:12px;color:var(--muted);">Joined ${joined}</div></div>
+        ${isMe?'<span class="badge badge-gold">You</span>':`<button class="btn btn-danger" style="font-size:11px;padding:5px 12px;" onclick="window.adminRemoveMember('${d.id}','${safeName}')">Remove</button>`}`;
+      list.appendChild(div);
+    });
   });
-});
+
+  // Allowlist
+  onSnapshot(collection(db,'allowlist'), snap => {
+    const list = document.getElementById('approvedList'); if (!list) return;
+    list.innerHTML = '';
+    if (snap.size === 0) {
+      list.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No emails added yet. Add your batchmates above.</div>';
+      return;
+    }
+    snap.forEach(d => {
+      const data = d.data();
+      const div  = document.createElement('div');
+      div.className = 'card';
+      div.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:8px;';
+      div.innerHTML = `
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(76,175,125,0.12);border:1px solid rgba(76,175,125,0.3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">✓</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;">${data.name||'Pending'}</div>
+          <div style="font-size:12px;color:var(--muted);">${data.email}</div>
+        </div>
+        ${d.id !== ADMIN_UID ? `<button class="btn btn-danger" style="font-size:11px;padding:4px 10px;flex-shrink:0;" onclick="window.removeApprovedEmail('${d.id}','${(data.email||'').replace(/'/g,"\\'")}')">Remove</button>` : '<span class="badge badge-gold">Admin</span>'}`;
+      list.appendChild(div);
+    });
+  });
+}
 
 window.addApprovedEmail = async () => {
   const u = auth.currentUser;
