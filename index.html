@@ -116,6 +116,7 @@
   </div>
   <div class="topbar-right">
     <div class="countdown-pill" id="countdownPill">⏳ 14 days to farewell</div>
+    <button class="admin-btn" id="authBtn" onclick="window._userUID ? googleLogout() : googleLogin()">🔑 Sign in</button>
     <button class="admin-btn" onclick="toggleAdmin()">🛡 Admin</button>
   </div>
 </div>
@@ -155,8 +156,8 @@
   </div>
   <div class="card" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
     <div style="font-size:28px;">🎓</div>
-    <div style="flex:1;"><div style="font-size:14px;font-weight:500;margin-bottom:4px;">New here? Set your name first</div><div style="font-size:13px;color:var(--muted);">Enter your name + batch code so everyone knows it's you when you post</div></div>
-    <button class="btn btn-primary" onclick="showJoinModal()">Set my name</button>
+    <div style="flex:1;"><div style="font-size:14px;font-weight:500;margin-bottom:4px;">New here?</div><div style="font-size:13px;color:var(--muted);">Sign in with Google to join and start posting memories</div></div>
+    <button class="btn btn-primary" onclick="googleLogin()">Sign in with Google</button>
   </div>
   <div class="card" style="margin-top:12px;">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;">
@@ -416,11 +417,9 @@
 
 <div class="admin-page" id="a-members">
   <div class="section-title">Manage members</div>
-  <div class="section-sub">Remove or manage access</div>
-  <div>
-    <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);">AK</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Arjun Kulkarni</div><div style="font-size:12px;color:var(--muted);">IT · 12 posts · Admin</div></div><span class="badge badge-gold">You</span></div>
-    <div class="card" style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><div class="avatar" style="width:36px;height:36px;background:rgba(77,184,164,0.12);color:var(--teal);">PS</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Priya Sharma</div><div style="font-size:12px;color:var(--muted);">IT · 8 posts</div></div><button class="btn btn-danger" onclick="dismissCard(this)">Remove</button></div>
-    <div class="card" style="display:flex;align-items:center;gap:12px;"><div class="avatar" style="width:36px;height:36px;background:rgba(155,127,232,0.12);color:var(--purple);">RP</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Rahul Patil</div><div style="font-size:12px;color:var(--muted);">IT · 3 posts</div></div><button class="btn btn-danger" onclick="dismissCard(this)">Remove</button></div>
+  <div class="section-sub">All members who joined via Google login</div>
+  <div id="memberList">
+    <div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading members...</div>
   </div>
 </div>
 
@@ -438,13 +437,14 @@
 
 <!-- JOIN MODAL -->
 <div id="joinModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;width:90%;max-width:400px;">
-    <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--gold);margin-bottom:6px;">Set your name</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Amrutvahini Diaries — IT 2022–26</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;">Your name will appear on your posts and memories. Batch code is <strong style="color:var(--gold2);">AVCOE-IT-2026</strong></div>
-    <div class="form-row"><label class="form-label">Your full name</label><input id="joinName" type="text" placeholder="Enter your name"/></div>
-    <div class="form-row"><label class="form-label">Batch code</label><input id="joinCode" type="text" placeholder="Ask your admin for the code"/></div>
-    <div style="display:flex;gap:10px;margin-top:4px;"><button class="btn btn-primary" onclick="joinBatch()" style="flex:1;">Join</button><button class="btn" onclick="closeJoin()">Cancel</button></div>
+  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;width:90%;max-width:400px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);margin-bottom:8px;">Welcome 🎓</div>
+    <div style="font-size:14px;color:var(--muted2);margin-bottom:6px;">Amrutvahini Diaries — IT 2022–26</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">Sign in with your Google account to join your batch</div>
+    <button class="btn btn-primary" onclick="googleLogin()" style="width:100%;padding:12px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;"/> Sign in with Google
+    </button>
+    <div style="font-size:11px;color:var(--muted);margin-top:16px;">Only Amrutvahini IT batch members can access this site</div>
   </div>
 </div>
 
@@ -612,7 +612,8 @@ function createAward(){
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, setDoc, doc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCPEOUhvYSh3cTgWPUtFfyb4rkK_fqDfc0",
@@ -623,23 +624,69 @@ const firebaseConfig = {
   appId: "1:127069684860:web:bb1feae1d97ea4909935f9"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app  = initializeApp(firebaseConfig);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-// expose to global
 window.db = db;
 window.collection = collection;
 window.addDoc = addDoc;
 window.serverTimestamp = serverTimestamp;
 
-// ── STATS — real time ─────────────────────────────────
-const statMap = [
-  {col:'members', id:'s-members'},
-  {col:'posts',   id:'s-memories'},
-  {col:'photos',  id:'s-photos'},
-  {col:'letters', id:'s-letters'},
-];
-statMap.forEach(({col,id}) => {
+let currentUser = null;
+
+// ── AUTH STATE ─────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if(user){
+    window._userName = user.displayName;
+    window._userUID  = user.uid;
+    // auto-fill name fields everywhere
+    ['pName','lName','vName'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.value = user.displayName;
+    });
+    // update topbar
+    document.getElementById('joinModal').style.display = 'none';
+    document.getElementById('authBtn').textContent = '👤 ' + user.displayName.split(' ')[0];
+    document.getElementById('authBtn').style.color = 'var(--gold)';
+    // save member doc using UID as document ID
+    const memberRef = doc(db, 'members', user.uid);
+    const memberSnap = await getDoc(memberRef);
+    if(!memberSnap.exists()){
+      await setDoc(memberRef, {name: user.displayName, createdAt: serverTimestamp(), joinedAt: serverTimestamp()});
+    }
+  } else {
+    window._userName = null;
+    window._userUID  = null;
+    document.getElementById('authBtn').textContent = '🔑 Sign in';
+    document.getElementById('authBtn').style.color = '';
+    setTimeout(()=>{ showGoogleLogin(); }, 800);
+  }
+});
+
+// ── GOOGLE LOGIN ───────────────────────────────────────
+window.googleLogin = async function(){
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(err){ alert('Sign in failed: ' + err.message); }
+};
+
+window.googleLogout = async function(){
+  if(confirm('Sign out?')){ await signOut(auth); }
+};
+
+function showGoogleLogin(){
+  document.getElementById('joinModal').style.display = 'flex';
+}
+
+// replace old joinBatch with google login trigger
+window.joinBatch = window.googleLogin;
+
+// ── STATS ──────────────────────────────────────────────
+[{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
+.forEach(({col,id}) => {
   onSnapshot(collection(db,col), snap => {
     const el = document.getElementById(id);
     if(el) el.textContent = snap.size;
@@ -653,23 +700,33 @@ onSnapshot(postQ, snap => {
   feed.innerHTML = '';
   snap.forEach(d => {
     const p = d.data();
-    const div = document.createElement('div'); div.className='post';
     const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : 'Just now';
-    div.innerHTML=`<div class="post-header"><div class="avatar" style="width:34px;height:34px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:12px;">${(p.name||'?').slice(0,2).toUpperCase()}</div><div><div style="font-size:13px;font-weight:500;">${p.name||'Anonymous'}</div><div style="font-size:11px;color:var(--muted);">${time}</div></div></div><div style="font-size:14px;color:var(--muted2);">${p.text}</div><div class="post-actions"><span class="post-action" onclick="likeFirePost('${d.id}',this)">❤️ <span class="like-count">${p.likes||0}</span></span><span class="post-action" onclick="flagPost(this)" style="margin-left:auto;">🚩 Report</span></div>`;
+    const isMe = currentUser && p.uid === currentUser.uid;
+    const div = document.createElement('div'); div.className='post';
+    div.innerHTML=`<div class="post-header"><div class="avatar" style="width:34px;height:34px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:12px;">${(p.name||'?').slice(0,2).toUpperCase()}</div><div><div style="font-size:13px;font-weight:500;">${p.name||'Batchmate'}</div><div style="font-size:11px;color:var(--muted);">${time}</div></div></div><div style="font-size:14px;color:var(--muted2);">${p.text}</div><div class="post-actions"><span class="post-action" onclick="likeFirePost('${d.id}',this)">❤️ <span class="like-count">${p.likes||0}</span></span>${isMe?`<span class="post-action btn-danger" onclick="deletePost('${d.id}')" style="margin-left:auto;color:var(--red);">🗑 Delete</span>`:'<span class="post-action" onclick="flagPost(this)" style="margin-left:auto;">🚩 Report</span>'}</div>`;
     feed.appendChild(div);
   });
 });
 
 window.addPost = async function(){
+  if(!currentUser){showGoogleLogin();return;}
   const text = document.getElementById('newPost').value.trim();
   if(!text) return;
-  await addDoc(collection(db,'posts'),{text, likes:0, createdAt:serverTimestamp()});
+  await addDoc(collection(db,'posts'),{text, name:currentUser.displayName, uid:currentUser.uid, likes:0, createdAt:serverTimestamp()});
   document.getElementById('newPost').value='';
 };
 
 window.likeFirePost = async function(id, el){
+  if(!currentUser){showGoogleLogin();return;}
   await updateDoc(doc(db,'posts',id),{likes: increment(1)});
   el.style.color='var(--red)';
+};
+
+window.deletePost = async function(id){
+  if(!currentUser) return;
+  if(!confirm('Delete this post?')) return;
+  const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+  await deleteDoc(doc(db,'posts',id));
 };
 
 // ── PROFILES ───────────────────────────────────────────
@@ -682,26 +739,48 @@ onSnapshot(profileQ, snap => {
     const p = d.data();
     const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const c = cols[Math.floor(Math.random()*cols.length)].split(';');
+    const isMe = currentUser && d.id === currentUser.uid;
     const div = document.createElement('div'); div.className='profile-card'; div.dataset.name=(p.name||'').toLowerCase();
     div.innerHTML=`<div class="profile-avatar" style="background:${c[0]};${c[1]};">${i}</div>
       <div style="font-size:15px;font-weight:500;margin-bottom:3px;">${p.name}</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">IT${p.nick?' — "'+p.nick+'"':''}</div>
       <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"${p.bio||'IT Batch 2022–26'}"</div>
-      <span class="badge badge-gold">IT</span>`;
+      <span class="badge badge-gold">IT</span>
+      ${isMe ? `<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="editProfile('${d.id}','${p.name}','${p.nick||''}','${(p.bio||'').replace(/'/g,"\\'")}')">✏️ Edit my profile</button></div>` : ''}`;
     grid.appendChild(div);
   });
 });
 
 window.addProfile = async function(){
-  const name=document.getElementById('pName').value.trim();
-  if(!name){alert('Please enter your name!');return;}
-  const nick=document.getElementById('pNick').value.trim();
-  const bio=document.getElementById('pBio').value.trim();
-  await addDoc(collection(db,'profiles'),{name, nick, bio, createdAt:serverTimestamp(), joinedAt:serverTimestamp()});
-  window._userName = name;
+  if(!currentUser){showGoogleLogin();return;}
+  const name = currentUser.displayName;
+  const nick = document.getElementById('pNick').value.trim();
+  const bio  = document.getElementById('pBio').value.trim();
+  // use UID as document ID so only one profile per person
+  await setDoc(doc(db,'profiles',currentUser.uid),{name, nick, bio, createdAt:serverTimestamp(), joinedAt:serverTimestamp()});
   ['pName','pNick','pBio','pMemory'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('addProfileForm').style.display='none';
   alert('Profile saved! 🎓');
+};
+
+window.editProfile = function(id, name, nick, bio){
+  document.getElementById('pName').value = name;
+  document.getElementById('pNick').value = nick;
+  document.getElementById('pBio').value  = bio;
+  document.getElementById('addProfileForm').style.display = 'block';
+  document.getElementById('addProfileForm').scrollIntoView({behavior:'smooth'});
+  // switch save button to update
+  const btn = document.querySelector('#addProfileForm .btn-primary');
+  btn.textContent = 'Update profile';
+  btn.onclick = async function(){
+    const newNick = document.getElementById('pNick').value.trim();
+    const newBio  = document.getElementById('pBio').value.trim();
+    await updateDoc(doc(db,'profiles',currentUser.uid),{nick:newNick, bio:newBio});
+    ['pName','pNick','pBio','pMemory'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('addProfileForm').style.display='none';
+    btn.textContent='Save profile'; btn.onclick=window.addProfile;
+    alert('Profile updated! 🎓');
+  };
 };
 
 // ── CONFESSIONS ────────────────────────────────────────
@@ -711,15 +790,15 @@ onSnapshot(confQ, snap => {
   feed.innerHTML = '';
   snap.forEach(d => {
     const p = d.data();
-    if(p.pending) return;
     const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : '';
     const div = document.createElement('div'); div.className='confession'; div.style.marginTop='10px';
-    div.innerHTML=`<div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:8px;">"${p.text}"</div><div style="font-size:11px;color:var(--muted);">Anonymous · ${time} · ❤️ ${p.likes||0}</div>`;
+    div.innerHTML=`<div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:8px;">"${p.text}"</div><div style="font-size:11px;color:var(--muted);">Anonymous · ${time}</div>`;
     feed.appendChild(div);
   });
 });
 
 window.submitConfession = async function(){
+  if(!currentUser){showGoogleLogin();return;}
   const text = document.getElementById('newConfession').value.trim();
   if(!text) return;
   await addDoc(collection(db,'confessions'),{text, createdAt:serverTimestamp()});
@@ -734,20 +813,20 @@ onSnapshot(letterQ, snap => {
   list.innerHTML = '';
   snap.forEach(d => {
     const p = d.data();
-    const unlockDate = p.unlockDate || 'farewell day';
     const colorMap = ['rgba(201,168,76,0.12)','rgba(77,184,164,0.12)','rgba(155,127,232,0.12)'];
     const bg = colorMap[Math.floor(Math.random()*colorMap.length)];
     const div = document.createElement('div'); div.className='letter-card'; div.style.marginTop='10px';
-    div.innerHTML=`<div class="letter-icon" style="background:${bg};">🔒</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">${p.name}'s letter</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Sealed · Opens on ${unlockDate}</div></div><span class="badge badge-gold">Locked</span>`;
+    div.innerHTML=`<div class="letter-icon" style="background:${bg};">🔒</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">${p.name}'s letter</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Sealed · Opens on ${p.unlockDate||'farewell day'}</div></div><span class="badge badge-gold">Locked</span>`;
     list.appendChild(div);
   });
 });
 
 window.sealLetter = async function(){
-  const name=document.getElementById('lName').value.trim();
-  const text=document.getElementById('lText').value.trim();
-  if(!name||!text){alert('Please fill in your name and letter!');return;}
-  await addDoc(collection(db,'letters'),{name, text, createdAt:serverTimestamp()});
+  if(!currentUser){showGoogleLogin();return;}
+  const text = document.getElementById('lText').value.trim();
+  const date = document.getElementById('lDate').value;
+  if(!text){alert('Please write your letter!');return;}
+  await addDoc(collection(db,'letters'),{name:currentUser.displayName, text, unlockDate:date||'farewell day', uid:currentUser.uid, createdAt:serverTimestamp()});
   ['lName','lText','lDate'].forEach(id=>document.getElementById(id).value='');
   alert('Your letter has been sealed! 🔒');
 };
@@ -760,24 +839,41 @@ onSnapshot(visionQ, snap => {
   snap.forEach(d => {
     const p = d.data();
     const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const isMe = currentUser && p.uid === currentUser.uid;
     const div = document.createElement('div'); div.className='card'; div.style.marginBottom='10px';
-    div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:12px;">${i}</div><div><div style="font-size:14px;font-weight:500;">${p.name}</div><span class="badge badge-gold" style="margin-top:3px;">${p.path||'IT'}${p.location?' · '+p.location:''}</span></div></div><div style="font-size:13px;color:var(--muted2);font-style:italic;margin-bottom:${p.msg?'10px':'0'};">"${p.dream}"</div>${p.msg?`<div style="font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:10px;">"${p.msg}"</div>`:''}`;
+    div.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:12px;">${i}</div>
+        <div><div style="font-size:14px;font-weight:500;">${p.name}</div>
+        <span class="badge badge-gold" style="margin-top:3px;">${p.path||'IT'}${p.location?' · '+p.location:''}</span></div>
+      </div>
+      ${isMe?`<button class="btn" style="font-size:12px;padding:4px 10px;" onclick="editVision('${d.id}')">✏️ Edit</button>`:''}
+    </div>
+    <div style="font-size:13px;color:var(--muted2);font-style:italic;margin-bottom:${p.msg?'10px':'0'};">"${p.dream}"</div>
+    ${p.msg?`<div style="font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:10px;">"${p.msg}"</div>`:''}`;
     feed.appendChild(div);
   });
 });
 
 window.addVision = async function(){
-  const name=document.getElementById('vName').value.trim();
-  const dream=document.getElementById('vDream').value.trim();
-  if(!name||!dream){alert('Please fill in your name and dream!');return;}
-  await addDoc(collection(db,'visions'),{name, dream, createdAt:serverTimestamp()});
+  if(!currentUser){showGoogleLogin();return;}
+  const dream = document.getElementById('vDream').value.trim();
+  if(!dream){alert('Please write your dream!');return;}
+  const path     = document.getElementById('vPath').value;
+  const location = document.getElementById('vLocation').value;
+  const msg      = document.getElementById('vMsg').value.trim();
+  await addDoc(collection(db,'visions'),{name:currentUser.displayName, dream, path, location, msg, uid:currentUser.uid, createdAt:serverTimestamp()});
   ['vName','vDream','vMsg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('vPath').value=''; document.getElementById('vLocation').value='';
   alert('Vision submitted! 🚀');
 };
 
-// ── PHOTO GALLERY — Cloudinary (free, no card) ─────────
-const CLOUDINARY_CLOUD = 'dluc4n5m6';
+window.editVision = function(id){
+  alert('Edit vision — coming soon! For now contact admin to update.');
+};
+
+// ── PHOTO GALLERY ──────────────────────────────────────
+const CLOUDINARY_CLOUD  = 'dluc4n5m6';
 const CLOUDINARY_PRESET = 'batch_photos';
 
 const photoQ = query(collection(db,'photos'), orderBy('createdAt','desc'));
@@ -787,30 +883,41 @@ onSnapshot(photoQ, snap => {
   document.getElementById('photoCount').textContent = snap.size + ' photos';
   snap.forEach(d => {
     const p = d.data();
+    const isMe = currentUser && p.uid === currentUser.uid;
     const div = document.createElement('div');
     div.style.cssText='aspect-ratio:1;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);position:relative;';
-    div.innerHTML=`<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/><div style="position:absolute;bottom:6px;left:6px;font-size:11px;color:rgba(255,255,255,0.7);background:rgba(0,0,0,0.5);padding:2px 8px;border-radius:10px;">${p.uploadedBy||'Batchmate'}</div>`;
+    div.innerHTML=`<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
+      <div style="position:absolute;bottom:6px;left:6px;font-size:11px;color:rgba(255,255,255,0.8);background:rgba(0,0,0,0.5);padding:2px 8px;border-radius:10px;">${p.uploadedBy||'Batchmate'}</div>
+      ${isMe?`<div style="position:absolute;top:6px;right:6px;background:rgba(224,82,82,0.85);border-radius:6px;padding:2px 8px;font-size:11px;color:white;cursor:pointer;" onclick="deletePhoto('${d.id}')">🗑</div>`:''}`;
     grid.appendChild(div);
   });
 });
 
 window.uploadPhoto = async function(e){
+  if(!currentUser){showGoogleLogin();return;}
   const file = e.target.files[0]; if(!file) return;
   const btn = document.querySelector('#gallery .btn-primary');
-  btn.textContent = 'Uploading...'; btn.disabled = true;
+  btn.textContent='Uploading...'; btn.disabled=true;
   try {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_PRESET);
-    formData.append('folder', 'amrutvahini-diaries');
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {method:'POST', body:formData});
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_PRESET);
+    fd.append('folder','amrutvahini-diaries');
+    const res  = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,{method:'POST',body:fd});
     const data = await res.json();
     if(data.secure_url){
-      await addDoc(collection(db,'photos'),{url:data.secure_url, caption:'', createdAt:serverTimestamp()});
+      await addDoc(collection(db,'photos'),{url:data.secure_url, uploadedBy:currentUser.displayName, uid:currentUser.uid, caption:'', createdAt:serverTimestamp()});
       alert('Photo uploaded! 📸');
     } else { alert('Upload failed. Please try again.'); }
-  } catch(err){ alert('Upload failed: ' + err.message); }
+  } catch(err){ alert('Upload failed: '+err.message); }
   finally { btn.textContent='+ Upload photo'; btn.disabled=false; }
+};
+
+window.deletePhoto = async function(id){
+  if(!currentUser) return;
+  if(!confirm('Delete this photo?')) return;
+  const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+  await deleteDoc(doc(db,'photos',id));
 };
 
 // ── HOMETOWN MAP ───────────────────────────────────────
@@ -821,51 +928,78 @@ onSnapshot(hometownQ, snap => {
   snap.forEach(d => {
     const p = d.data();
     const div = document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;gap:10px;';
-    div.innerHTML=`<div>📍</div><div><div style="font-size:13px;font-weight:500;">${p.city}</div><div style="font-size:12px;color:var(--muted);">${p.name||'Batchmate'} · ${p.state}</div></div>`;
+    div.innerHTML=`<div>📍</div><div><div style="font-size:13px;font-weight:500;">${p.city}</div><div style="font-size:12px;color:var(--muted);">${p.name||'Batchmate'} · ${p.state||''}</div></div>`;
     list.appendChild(div);
   });
 });
 
 window.pinHometown = async function(){
-  const city=document.getElementById('mapCity').value.trim();
-  const state=document.getElementById('mapState').value;
+  if(!currentUser){showGoogleLogin();return;}
+  const city  = document.getElementById('mapCity').value.trim();
+  const state = document.getElementById('mapState').value;
   if(!city){alert('Please enter your city!');return;}
-  await addDoc(collection(db,'hometowns'),{city, state, createdAt:serverTimestamp()});
+  await addDoc(collection(db,'hometowns'),{city, state, name:currentUser.displayName, uid:currentUser.uid, createdAt:serverTimestamp()});
   document.getElementById('mapCity').value='';
   alert('Hometown pinned! 📍');
 };
 
-window.joinBatch = async function(){
-  const name=document.getElementById('joinName').value.trim();
-  const code=document.getElementById('joinCode').value.trim();
-  if(!name){alert('Please enter your name!');return;}
-  if(code!=='AVCOE-IT-2026'){alert('Wrong batch code! Ask your batch admin for the correct code.');return;}
-  try {
-    await addDoc(collection(db,'members'),{name, nick:'', bio:'', createdAt:serverTimestamp(), joinedAt:serverTimestamp()});
-    window._userName = name;
-    document.getElementById('joinModal').style.display='none';
-    alert('Welcome to Amrutvahini Diaries, '+name+'! 🎓');
-  } catch(err){ alert('Error joining: '+err.message); }
-};
-
-// ── AWARDS (save custom) ───────────────────────────────
+// ── AWARDS ─────────────────────────────────────────────
 const awardsQ = query(collection(db,'awards'), orderBy('createdAt','desc'));
 onSnapshot(awardsQ, snap => {
   snap.docChanges().forEach(change => {
-    if(change.type === 'added'){
+    if(change.type==='added'){
       const p = change.doc.data();
       if(!document.getElementById('award_'+change.doc.id)){
         const id = 'award_'+change.doc.id;
-        const optionsHTML = (p.options||[]).map(o=>`<div class="vote-option" onclick="castVote(this,'${id}')">${o}<div class="vote-bar"><div class="vote-bar-fill" style="width:0%;"></div></div></div>`).join('');
-        const card = document.createElement('div'); card.className='award-card'; card.id=id;
-        card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div style="font-size:24px;">${p.emoji||'🏆'}</div><button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="this.closest('.award-card').remove()">Remove</button></div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${p.desc||''}</div>${optionsHTML}`;
+        const optionsHTML=(p.options||[]).map(o=>`<div class="vote-option" onclick="castVote(this,'${id}')">${o}<div class="vote-bar"><div class="vote-bar-fill" style="width:0%;"></div></div></div>`).join('');
+        const card=document.createElement('div'); card.className='award-card'; card.id=id;
+        card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div style="font-size:24px;">${p.emoji||'🏆'}</div></div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${p.description||''}</div>${optionsHTML}`;
         document.getElementById('awardsGrid').appendChild(card);
       }
     }
   });
 });
 
-console.log('🔥 Firebase connected — Amrutvahini Diaries is live!');
+// ── ADMIN MEMBERS — real data ──────────────────────────
+onSnapshot(collection(db,'members'), snap => {
+  const list = document.getElementById('memberList');
+  if(!list) return;
+  list.innerHTML = '';
+  const colors=['rgba(201,168,76,0.12);color:var(--gold)','rgba(77,184,164,0.12);color:var(--teal)','rgba(155,127,232,0.12);color:var(--purple)','rgba(76,175,125,0.12);color:var(--green)','rgba(224,82,82,0.12);color:var(--red)'];
+  snap.forEach(d => {
+    const p = d.data();
+    const initials = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const c = colors[Math.floor(Math.random()*colors.length)].split(';');
+    const joined = p.joinedAt ? new Date(p.joinedAt.seconds*1000).toLocaleDateString() : 'Recently';
+    const isMe = currentUser && d.id === currentUser.uid;
+    const div = document.createElement('div');
+    div.className='card';
+    div.style.cssText='display:flex;align-items:center;gap:12px;margin-bottom:10px;';
+    div.innerHTML=`
+      <div class="avatar" style="width:36px;height:36px;background:${c[0]};${c[1]};">${initials}</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:500;">${p.name}</div>
+        <div style="font-size:12px;color:var(--muted);">IT · Joined ${joined}</div>
+      </div>
+      ${isMe
+        ? '<span class="badge badge-gold">You (Admin)</span>'
+        : `<button class="btn btn-danger" style="font-size:12px;padding:5px 12px;" onclick="removeMember('${d.id}','${p.name}')">Remove</button>`
+      }`;
+    list.appendChild(div);
+  });
+  if(snap.size === 0){
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No members yet</div>';
+  }
+});
+
+window.removeMember = async function(uid, name){
+  if(!confirm('Remove '+name+' from the batch?')) return;
+  try {
+    const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    await deleteDoc(doc(db,'members',uid));
+    alert(name+' has been removed.');
+  } catch(err){ alert('Error: '+err.message); }
+};
 </script>
 </body>
 </html>
