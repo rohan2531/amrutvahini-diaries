@@ -469,11 +469,26 @@ function showAdmin(id,el){
   if(el)el.classList.add('active');
 }
 let adminMode=false;
+const ADMIN_PASS='AVCOEITBATCH2022-26';
 function toggleAdmin(){
-  adminMode=!adminMode;
-  const mn=document.getElementById('mainNav'),an=document.getElementById('adminNav');
-  if(adminMode){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));mn.style.display='none';an.style.display='flex';showAdmin('a-flagged',an.querySelector('.nav-item'));}
-  else{an.style.display='none';mn.style.display='flex';showPage('home',mn.querySelector('.nav-item'));}
+  if(adminMode){
+    adminMode=false;
+    const an=document.getElementById('adminNav'),mn=document.getElementById('mainNav');
+    an.style.display='none';mn.style.display='flex';
+    showPage('home',mn.querySelector('.nav-item'));
+    return;
+  }
+  const entered=prompt('🛡 Enter admin password:');
+  if(entered===null)return;
+  if(entered===ADMIN_PASS){
+    adminMode=true;
+    const mn=document.getElementById('mainNav'),an=document.getElementById('adminNav');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    mn.style.display='none';an.style.display='flex';
+    showAdmin('a-flagged',an.querySelector('.nav-item'));
+  } else {
+    alert('❌ Wrong password! Access denied.');
+  }
 }
 function toggleSwitch(el){el.classList.toggle('on');el.classList.toggle('off');}
 function likePost(el){const c=el.querySelector('.like-count');c.textContent=parseInt(c.textContent)+1;el.style.color='var(--red)';}
