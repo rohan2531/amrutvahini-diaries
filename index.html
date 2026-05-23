@@ -469,16 +469,8 @@ function castVote(el,id){
   el.classList.add('voted');
 }
 
-// placeholder stubs — real functions defined in Firebase module below
-function addPost(){}
-function submitConfession(){}
-function sealLetter(){}
-function addVision(){}
-function addProfile(){}
-function uploadPhoto(){}
-function pinHometown(){}
-function googleLogin(){}
-function googleLogout(){}
+// placeholder stubs replaced by Firebase module via window.* assignments
+function showGoogleLoginFallback(){ document.getElementById('joinModal').style.display='flex'; }
 </script>
 
 <!-- FIREBASE -->
@@ -831,19 +823,28 @@ window.pinHometown = async function(){
 };
 
 // ── AWARDS ─────────────────────────────────────────────
+const renderedAwardIds = new Set();
 const awardsQ = query(collection(db,'awards'), orderBy('createdAt','desc'));
 onSnapshot(awardsQ, snap => {
-  snap.docChanges().forEach(change => {
-    if(change.type==='added'){
-      const p = change.doc.data();
-      if(!document.getElementById('award_'+change.doc.id)){
-        const id = 'award_'+change.doc.id;
-        const optionsHTML=(p.options||[]).map(o=>`<div class="vote-option" onclick="castVote(this,'${id}')">${o}<div class="vote-bar"><div class="vote-bar-fill" style="width:0%;"></div></div></div>`).join('');
-        const card=document.createElement('div'); card.className='award-card'; card.id=id;
-        card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div style="font-size:24px;">${p.emoji||'🏆'}</div></div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${p.description||''}</div>${optionsHTML}`;
-        document.getElementById('awardsGrid').appendChild(card);
-      }
-    }
+  const grid = document.getElementById('awardsGrid');
+  if(!grid) return;
+  snap.forEach(d => {
+    const cardId = 'award_' + d.id;
+    if(renderedAwardIds.has(d.id)) return;
+    renderedAwardIds.add(d.id);
+    const p = d.data();
+    const optionsHTML = (p.options||[]).map(o =>
+      `<div class="vote-option" onclick="castVote(this,'${cardId}')">${o}<div class="vote-bar"><div class="vote-bar-fill" style="width:0%;"></div></div></div>`
+    ).join('');
+    const card = document.createElement('div');
+    card.className = 'award-card';
+    card.id = cardId;
+    card.innerHTML = `
+      <div style="font-size:24px;margin-bottom:10px;">${p.emoji||'🏆'}</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${p.description||''}</div>
+      ${optionsHTML}`;
+    grid.appendChild(card);
   });
 });
 
@@ -957,7 +958,7 @@ onSnapshot(collection(db,'members'), snap => {
       </div>
       ${isMe
         ? '<span class="badge badge-gold">You (Admin)</span>'
-        : `<button class="btn btn-danger" style="font-size:12px;padding:5px 12px;" onclick="removeMember('${d.id}','${p.name}')">Remove</button>`
+        : `<button class="btn btn-danger" style="font-size:12px;padding:5px 12px;" onclick="window.removeMember && window.removeMember('${d.id}','${p.name.replace(/'/g,"\\'")}')">Remove</button>`
       }`;
     list.appendChild(div);
   });
@@ -967,14 +968,14 @@ onSnapshot(collection(db,'members'), snap => {
 });
 
 window.removeMember = async function(uid, name){
-  if(!currentUser){alert('Please sign in first!');return;}
+  if(!currentUser){ alert('Please sign in first!'); return; }
   if(!confirm('Remove '+name+' from the batch?')) return;
   try {
     await deleteDoc(doc(db,'members',uid));
     try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
-    alert(name+' has been removed.');
+    alert(name+' has been removed successfully.');
   } catch(err){
-    alert('DEBUG — Your UID: ' + (currentUser ? currentUser.uid : 'NOT SIGNED IN') + '\nExpected: WEz2oV7i4fMbm075oAqSSioTUEm2\nMatch: ' + (currentUser && currentUser.uid === 'WEz2oV7i4fMbm075oAqSSioTUEm2') + '\nError: ' + err.message);
+    alert('Error removing member: ' + err.message + ' (code: ' + err.code + ')');
   }
 };
 </script>
