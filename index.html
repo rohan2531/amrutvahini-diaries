@@ -567,23 +567,22 @@ onAuthStateChanged(auth, async user => {
 
     // ── STEP 1: CHECK ALLOWLIST ONLY ─────────────────────
     // Do NOT read members/profiles yet — they require isApproved()
-    const tempId = 'pending_' + user.email.replace(/[@.]/g,'_');
     let approved = user.uid === ADMIN_UID;
+    const email  = (user.email || '').toLowerCase().trim();
+    const tempId = 'pending_' + email.replace(/[@.]/g,'_');
 
     if (!approved) {
       try {
         const [uidSnap, emailSnap] = await Promise.all([
           getDoc(doc(db,'allowlist',user.uid)),
-          getDoc(doc(db,'allowlist',tempId))
+          email ? getDoc(doc(db,'allowlist',tempId)) : Promise.resolve({exists:()=>false})
         ]);
-        alert('DEBUG\nUID: ' + user.uid + '\ntempId: ' + tempId + '\nuidSnap exists: ' + uidSnap.exists() + '\nemailSnap exists: ' + emailSnap.exists());
         if (uidSnap.exists() || emailSnap.exists()) {
           approved = true;
         }
       } catch(err) {
-        alert('DEBUG ERROR: ' + err.message + '\nCode: ' + err.code);
         try { const s = await getDoc(doc(db,'allowlist',user.uid)); if(s.exists()) approved=true; } catch(e){}
-        if (!approved) {
+        if (!approved && email) {
           try { const s = await getDoc(doc(db,'allowlist',tempId)); if(s.exists()) approved=true; } catch(e){}
         }
       }
