@@ -6,13 +6,7 @@
 <title>Amrutvahini Diaries — IT Batch (2022–26)</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg:#0d0d0d; --bg2:#141414; --bg3:#1a1a1a; --card:#181818;
-    --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
-    --gold:#c9a84c; --gold2:#e8c87a; --text:#f0ece4; --muted:#888; --muted2:#bbb;
-    --red:#e05252; --green:#4caf7d; --teal:#4db8a4; --purple:#9b7fe8;
-    --radius:14px; --radius-sm:8px;
-  }
+  :root{--bg:#0d0d0d;--bg2:#141414;--bg3:#1a1a1a;--card:#181818;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--gold:#c9a84c;--gold2:#e8c87a;--text:#f0ece4;--muted:#888;--muted2:#bbb;--red:#e05252;--green:#4caf7d;--teal:#4db8a4;--purple:#9b7fe8;--radius:14px;--radius-sm:8px;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;}
   .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;}
@@ -98,7 +92,7 @@
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;">
       <div style="font-size:15px;font-weight:500;margin-bottom:8px;color:var(--text);">Sign in to continue</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">Only for AVCOE IT Batch 2022–26 members</div>
-      <button onclick="googleLogin()" style="width:100%;padding:12px;background:white;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;color:#333;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <button onclick="window.googleLogin()" style="width:100%;padding:12px;background:white;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;color:#333;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
         <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;"/>Sign in with Google
       </button>
       <div style="font-size:11px;color:var(--muted);margin-top:16px;">Four years. One family. Forever. 🎓</div>
@@ -110,14 +104,11 @@
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
     <div id="logoWrap" style="display:none;"><img id="logoImg" src="" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(201,168,76,0.4);"/></div>
-    <div>
-      <div class="topbar-logo">Amrutvahini Diaries</div>
-      <div class="topbar-sub">IT Batch 2022–26</div>
-    </div>
+    <div><div class="topbar-logo">Amrutvahini Diaries</div><div class="topbar-sub">IT Batch 2022–26</div></div>
   </div>
   <div class="topbar-right">
     <div class="countdown-pill" id="countdownPill">⏳ Loading...</div>
-    <button class="admin-btn" id="authBtn" onclick="window._userUID ? googleLogout() : googleLogin()">🔑 Sign in</button>
+    <button class="admin-btn" id="authBtn" onclick="window._userUID ? window.googleLogout() : window.googleLogin()">🔑 Sign in</button>
     <button class="admin-btn" onclick="toggleAdmin()">🛡 Admin</button>
   </div>
 </div>
@@ -160,11 +151,8 @@
   <div class="card" style="margin-bottom:12px;">
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
       <div style="font-size:28px;">🎓</div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:500;margin-bottom:2px;" id="homeWelcome">Welcome to Amrutvahini Diaries!</div>
-        <div style="font-size:13px;color:var(--muted);" id="homeWelcomeSub">You are signed in and part of the batch.</div>
-      </div>
-      <button class="btn btn-danger" onclick="googleLogout()" style="font-size:12px;">Sign out</button>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:500;margin-bottom:2px;" id="homeWelcome">Welcome to Amrutvahini Diaries!</div><div style="font-size:13px;color:var(--muted);" id="homeWelcomeSub">You are signed in and part of the batch.</div></div>
+      <button class="btn btn-danger" onclick="window.googleLogout()" style="font-size:12px;">Sign out</button>
     </div>
   </div>
   <div class="card">
@@ -190,7 +178,7 @@
       <div class="form-row"><label class="form-label">Nickname</label><input id="pNick" type="text" placeholder="What your friends call you"/></div>
       <div class="form-row"><label class="form-label">Your vibe in one line</label><input id="pBio" type="text" placeholder="e.g. The one who always had chai ready"/></div>
       <div style="display:flex;gap:10px;">
-        <button class="btn btn-primary" onclick="addProfile()">Save profile</button>
+        <button class="btn btn-primary" id="profileSaveBtn" onclick="window.addProfile()">Save profile</button>
         <button class="btn" onclick="toggleAddProfile()">Cancel</button>
       </div>
     </div>
@@ -205,7 +193,7 @@
   <div class="card" style="margin-bottom:16px;">
     <textarea id="newPost" placeholder="Share a memory, a moment, an inside joke..."></textarea>
     <div style="display:flex;justify-content:flex-end;margin-top:10px;">
-      <button class="btn btn-primary" onclick="addPost()">Post memory</button>
+      <button class="btn btn-primary" onclick="window.addPost()">Post memory</button>
     </div>
   </div>
   <div id="postFeed"></div>
@@ -216,7 +204,7 @@
   <div class="section-title">Photo gallery</div>
   <div class="section-sub">4 years of moments — all in one place</div>
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-    <input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="uploadPhoto(event)"/>
+    <input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="window.uploadPhoto(event)"/>
     <button class="btn btn-primary" onclick="document.getElementById('photoUpload').click()">+ Upload photo</button>
     <span style="font-size:13px;color:var(--muted);" id="photoCount">0 photos</span>
   </div>
@@ -230,7 +218,7 @@
   <div class="card" style="margin-bottom:16px;">
     <textarea id="newConfession" placeholder="Confess something... no one will know it's you 🤫"></textarea>
     <div style="display:flex;justify-content:flex-end;margin-top:10px;">
-      <button class="btn btn-primary" onclick="submitConfession()">Post anonymously</button>
+      <button class="btn btn-primary" onclick="window.submitConfession()">Post anonymously</button>
     </div>
   </div>
   <div id="confessionFeed"></div>
@@ -243,7 +231,7 @@
   <div class="card" style="margin-bottom:16px;">
     <div class="form-row"><label class="form-label">Your letter</label><textarea id="lText" placeholder="Dear future me..." style="min-height:140px;"></textarea></div>
     <div class="form-row"><label class="form-label">Unlock date</label><input id="lDate" type="date"/></div>
-    <button class="btn btn-primary" onclick="sealLetter()">Seal my letter 🔒</button>
+    <button class="btn btn-primary" onclick="window.sealLetter()">Seal my letter 🔒</button>
   </div>
   <div id="letterList"></div>
 </div>
@@ -263,7 +251,7 @@
     </div>
     <div class="form-row"><label class="form-label">Your 5-year dream</label><textarea id="vDream" placeholder="Where do you honestly see yourself in 5 years?"></textarea></div>
     <div class="form-row"><label class="form-label">Message to the batch</label><textarea id="vMsg" placeholder="What do you want to say to everyone before you part ways?"></textarea></div>
-    <button class="btn btn-primary" onclick="addVision()">Submit vision</button>
+    <button class="btn btn-primary" onclick="window.addVision()">Submit vision</button>
   </div>
   <div id="visionFeed"></div>
 </div>
@@ -277,7 +265,7 @@
     <div class="form-row"><label class="form-label">State</label>
       <select id="mapState"><option>Maharashtra</option><option>Karnataka</option><option>Gujarat</option><option>Madhya Pradesh</option><option>Other</option></select>
     </div>
-    <button class="btn btn-primary" onclick="pinHometown()">Pin my hometown 📍</button>
+    <button class="btn btn-primary" onclick="window.pinHometown()">Pin my hometown 📍</button>
   </div>
   <div class="grid-3" id="hometownList"></div>
 </div>
@@ -297,7 +285,7 @@
       <div class="form-row"><label class="form-label">Description</label><input id="aDesc" type="text" placeholder="Short description"/></div>
       <div class="form-row"><label class="form-label">Nominees (one per line, min 2)</label><textarea id="aOptions" style="min-height:100px;"></textarea></div>
       <div style="display:flex;gap:10px;">
-        <button class="btn btn-primary" onclick="createAward()">Add award</button>
+        <button class="btn btn-primary" onclick="window.createAward()">Add award</button>
         <button class="btn" onclick="toggleCreateAward()">Cancel</button>
       </div>
     </div>
@@ -344,7 +332,7 @@
   </div>
 </div>
 
-<!-- UI SCRIPT -->
+<!-- UI SCRIPT — plain script, no module, handles navigation + UI only -->
 <script>
 const ADMIN_PASS = 'AVCOEITBATCH2022-26';
 let adminMode = false;
@@ -356,48 +344,85 @@ window.addEventListener('load', () => {
 
 function showPage(id, el) {
   if (adminMode) return;
+  // hide all pages AND all admin pages
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('#mainNav .nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (el) el.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
 }
+
 function showAdmin(id, el) {
+  // hide all pages AND all admin pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('#adminNav .nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (el) el.classList.add('active');
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
 }
+
 function toggleAdmin() {
   if (adminMode) {
     adminMode = false;
+    // hide everything, go back to home
+    document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
     document.getElementById('adminNav').style.display = 'none';
     document.getElementById('mainNav').style.display = 'flex';
     showPage('home', document.querySelector('#mainNav .nav-item'));
-    window.scrollTo({top: 0, behavior: 'smooth'});
     return;
   }
   if (!window._userUID) { alert('Please sign in with Google first!'); return; }
   const entered = prompt('🛡 Enter admin password:');
   if (entered === ADMIN_PASS) {
     adminMode = true;
+    // hide all main pages before showing admin
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('mainNav').style.display = 'none';
     document.getElementById('adminNav').style.display = 'flex';
     showAdmin('a-confessions', document.querySelector('#adminNav .nav-item'));
-    window.scrollTo({top: 0, behavior: 'smooth'});
   } else if (entered !== null) {
     alert('❌ Wrong password!');
   }
 }
-function filterProfiles(q) { document.querySelectorAll('.profile-card').forEach(c => { c.style.display = c.dataset.name.includes(q.toLowerCase()) ? '' : 'none'; }); }
-function toggleAddProfile() { const f = document.getElementById('addProfileForm'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; }
-function toggleCreateAward() { const f = document.getElementById('createAwardForm'); f.style.display = f.style.display === 'none' ? 'block' : 'none'; }
-function uploadLogo(e) { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = ev => { document.getElementById('logoImg').src = ev.target.result; document.getElementById('logoWrap').style.display = 'block'; }; r.readAsDataURL(f); }
+
+function filterProfiles(q) {
+  document.querySelectorAll('.profile-card').forEach(c => {
+    c.style.display = c.dataset.name.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+function toggleAddProfile() {
+  const f = document.getElementById('addProfileForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  // reset button to Save when opening
+  if (f.style.display === 'block') {
+    const btn = document.getElementById('profileSaveBtn');
+    btn.textContent = 'Save profile';
+    btn.onclick = () => window.addProfile();
+  }
+}
+function toggleCreateAward() {
+  const f = document.getElementById('createAwardForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+function uploadLogo(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => { document.getElementById('logoImg').src = ev.target.result; document.getElementById('logoWrap').style.display = 'block'; };
+  r.readAsDataURL(f);
+}
 const awardVoted = {};
-function castVote(el, id) { if (!window._userUID) { alert('Please sign in first!'); return; } if (awardVoted[id]) return; awardVoted[id] = true; el.closest('.award-card').querySelectorAll('.vote-option').forEach(o => o.style.pointerEvents = 'none'); el.classList.add('voted'); }
+function castVote(el, id) {
+  if (!window._userUID) { alert('Please sign in first!'); return; }
+  if (awardVoted[id]) return;
+  awardVoted[id] = true;
+  el.closest('.award-card').querySelectorAll('.vote-option').forEach(o => o.style.pointerEvents = 'none');
+  el.classList.add('voted');
+}
 </script>
 
-<!-- FIREBASE MODULE -->
+<!-- FIREBASE MODULE — type=module, handles all Firebase operations -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, setDoc, doc, increment, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -446,7 +471,7 @@ window.googleLogout = async () => { if (confirm('Sign out?')) await signOut(auth
 
 // ── STATS ──────────────────────────────────────────────
 [{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
-.forEach(({col,id}) => onSnapshot(collection(db,col), snap => { const el = document.getElementById(id); if (el) el.textContent = snap.size; }));
+.forEach(({col,id}) => onSnapshot(collection(db,col), snap => { const el=document.getElementById(id); if(el) el.textContent=snap.size; }));
 
 // ── MEMORY WALL ────────────────────────────────────────
 onSnapshot(query(collection(db,'posts'), orderBy('createdAt','desc')), snap => {
@@ -465,7 +490,7 @@ onSnapshot(query(collection(db,'posts'), orderBy('createdAt','desc')), snap => {
       <div style="font-size:14px;color:var(--muted2);">${p.text}</div>
       <div class="post-actions">
         <span class="post-action" onclick="window.likePost('${d.id}')">❤️ ${p.likes||0}</span>
-        ${isMe ? `<span class="post-action" style="margin-left:auto;color:var(--red);" onclick="window.deletePost('${d.id}')">🗑 Delete</span>` : ''}
+        ${isMe?`<span class="post-action" style="margin-left:auto;color:var(--red);" onclick="window.deletePost('${d.id}')">🗑 Delete</span>`:''}
       </div>`;
     feed.appendChild(div);
   });
@@ -475,24 +500,26 @@ window.likePost  = async (id) => { await updateDoc(doc(db,'posts',id),{likes:inc
 window.deletePost= async (id) => { if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',id)); };
 
 // ── PROFILES ───────────────────────────────────────────
+const profileColors = ['rgba(201,168,76,0.12);color:var(--gold)','rgba(77,184,164,0.12);color:var(--teal)','rgba(155,127,232,0.12);color:var(--purple)','rgba(76,175,125,0.12);color:var(--green)','rgba(224,82,82,0.12);color:var(--red)'];
 onSnapshot(query(collection(db,'profiles'), orderBy('createdAt','desc')), snap => {
   const grid = document.getElementById('profileGrid'); if (!grid) return;
   grid.innerHTML = '';
-  const cols = ['rgba(201,168,76,0.12);color:var(--gold)','rgba(77,184,164,0.12);color:var(--teal)','rgba(155,127,232,0.12);color:var(--purple)','rgba(76,175,125,0.12);color:var(--green)','rgba(224,82,82,0.12);color:var(--red)'];
   snap.forEach(d => {
     const p = d.data();
     const isMe = auth.currentUser && d.id === auth.currentUser.uid;
-    const c = cols[Math.floor(Math.random()*cols.length)].split(';');
+    const c = profileColors[Math.floor(Math.random()*profileColors.length)].split(';');
     const avatarHTML = p.photo
       ? `<img src="${p.photo}" style="width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;border:2px solid rgba(201,168,76,0.4);" referrerpolicy="no-referrer"/>`
       : `<div class="profile-avatar" style="background:${c[0]};${c[1]};">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
+    const safeNick = (p.nick||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safeBio  = (p.bio||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     const div = document.createElement('div'); div.className='profile-card'; div.dataset.name=(p.name||'').toLowerCase();
     div.innerHTML = `${avatarHTML}
       <div style="font-size:15px;font-weight:500;margin-bottom:3px;">${p.name}</div>
       <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">IT${p.nick?' — "'+p.nick+'"':''}</div>
       <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"${p.bio||'IT Batch 2022–26'}"</div>
       <span class="badge badge-gold">IT</span>
-      ${isMe ? `<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="window.editProfileForm('${(p.nick||'').replace(/'/g,"\\'")}','${(p.bio||'').replace(/'/g,"\\'")}')">✏️ Edit</button></div>` : ''}`;
+      ${isMe?`<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="window.editProfileForm('${safeNick}','${safeBio}')">✏️ Edit my profile</button></div>`:''}`;
     grid.appendChild(div);
   });
 });
@@ -510,7 +537,7 @@ window.editProfileForm = (nick, bio) => {
   document.getElementById('pBio').value  = bio;
   document.getElementById('addProfileForm').style.display = 'block';
   document.getElementById('addProfileForm').scrollIntoView({behavior:'smooth'});
-  const btn = document.querySelector('#addProfileForm .btn-primary');
+  const btn = document.getElementById('profileSaveBtn');
   btn.textContent = 'Update profile';
   btn.onclick = async () => {
     const u = auth.currentUser; if (!u) return;
@@ -519,18 +546,22 @@ window.editProfileForm = (nick, bio) => {
     await updateDoc(doc(db,'profiles',u.uid), upd);
     ['pNick','pBio'].forEach(i => document.getElementById(i).value = '');
     document.getElementById('addProfileForm').style.display = 'none';
-    btn.textContent = 'Save profile'; btn.onclick = window.addProfile;
+    btn.textContent = 'Save profile';
+    btn.onclick = () => window.addProfile();
     alert('Profile updated! 🎓');
   };
 };
 
 // ── CONFESSIONS ────────────────────────────────────────
 onSnapshot(query(collection(db,'confessions'), orderBy('createdAt','desc')), snap => {
-  const feed = document.getElementById('confessionFeed');
+  const feed      = document.getElementById('confessionFeed');
   const adminList = document.getElementById('adminConfList');
   if (feed) feed.innerHTML = '';
   if (adminList) adminList.innerHTML = '';
-  if (snap.size === 0 && adminList) { adminList.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No confessions yet</div>'; return; }
+  if (snap.size === 0) {
+    if (adminList) adminList.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No confessions yet</div>';
+    return;
+  }
   snap.forEach(d => {
     const p = d.data();
     const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : '';
@@ -570,8 +601,7 @@ onSnapshot(query(collection(db,'visions'), orderBy('createdAt','desc')), snap =>
     const div = document.createElement('div'); div.className = 'vision-card';
     div.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
       <div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${i}</div>
-      <div><div style="font-size:14px;font-weight:500;">${p.name}</div>
-      <span class="badge badge-gold">${p.path||'IT'}${p.location?' · '+p.location:''}</span></div></div>
+      <div><div style="font-size:14px;font-weight:500;">${p.name}</div><span class="badge badge-gold">${p.path||'IT'}${p.location?' · '+p.location:''}</span></div></div>
       <div style="font-size:13px;color:var(--muted2);font-style:italic;">"${p.dream}"</div>
       ${p.msg?`<div style="font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:10px;margin-top:10px;">"${p.msg}"</div>`:''}`;
     feed.appendChild(div);
@@ -581,24 +611,24 @@ window.addVision = async () => { const u=auth.currentUser; if(!u) return; const 
 
 // ── PHOTOS ─────────────────────────────────────────────
 onSnapshot(query(collection(db,'photos'), orderBy('createdAt','desc')), snap => {
-  const grid = document.getElementById('photoGrid');
+  const grid      = document.getElementById('photoGrid');
   const adminGrid = document.getElementById('adminPhotoGrid');
-  if (grid) { grid.innerHTML = ''; document.getElementById('photoCount').textContent = snap.size + ' photos'; }
-  if (adminGrid) adminGrid.innerHTML = '';
-  if (snap.size === 0 && adminGrid) { adminGrid.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;grid-column:1/-1;">No photos yet</div>'; }
+  if (grid) { grid.innerHTML=''; document.getElementById('photoCount').textContent=snap.size+' photos'; }
+  if (adminGrid) adminGrid.innerHTML='';
+  if (snap.size===0 && adminGrid) { adminGrid.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;grid-column:1/-1;">No photos yet</div>'; }
   snap.forEach(d => {
     const p = d.data();
     const isMe = auth.currentUser && p.uid === auth.currentUser.uid;
     if (grid) {
-      const div = document.createElement('div'); div.style.cssText = 'aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;';
-      div.innerHTML = `<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
+      const div = document.createElement('div'); div.style.cssText='aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;';
+      div.innerHTML=`<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
         <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.55);padding:4px 8px;font-size:11px;color:rgba(255,255,255,0.85);">${p.uploadedBy||'Batchmate'}</div>
         ${isMe?`<div style="position:absolute;top:6px;right:6px;background:rgba(224,82,82,0.85);border-radius:6px;padding:2px 8px;font-size:11px;color:white;cursor:pointer;" onclick="window.deletePhoto('${d.id}')">🗑</div>`:''}`;
       grid.appendChild(div);
     }
     if (adminGrid) {
-      const div = document.createElement('div'); div.style.cssText = 'aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;';
-      div.innerHTML = `<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
+      const div = document.createElement('div'); div.style.cssText='aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;';
+      div.innerHTML=`<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
         <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);padding:4px 8px;font-size:11px;color:rgba(255,255,255,0.85);">${p.uploadedBy||'Batchmate'}</div>
         <button class="btn btn-danger" style="position:absolute;top:6px;right:6px;font-size:11px;padding:3px 8px;" onclick="window.adminDelete('photos','${d.id}',this)">🗑</button>`;
       adminGrid.appendChild(div);
@@ -606,28 +636,28 @@ onSnapshot(query(collection(db,'photos'), orderBy('createdAt','desc')), snap => 
   });
 });
 window.uploadPhoto = async (e) => {
-  const u = auth.currentUser; if (!u) return;
-  const file = e.target.files[0]; if (!file) return;
-  const btn = document.querySelector('#gallery .btn-primary');
-  btn.textContent = 'Uploading...'; btn.disabled = true;
+  const u=auth.currentUser; if(!u) return;
+  const file=e.target.files[0]; if(!file) return;
+  const btn=document.querySelector('#gallery .btn-primary');
+  btn.textContent='Uploading...'; btn.disabled=true;
   try {
-    const fd = new FormData(); fd.append('file',file); fd.append('upload_preset','batch_photos'); fd.append('folder','amrutvahini-diaries');
-    const res = await fetch('https://api.cloudinary.com/v1_1/dluc4n5m6/image/upload',{method:'POST',body:fd});
-    const data = await res.json();
-    if (data.secure_url) await addDoc(collection(db,'photos'),{url:data.secure_url,uploadedBy:u.displayName,uid:u.uid,caption:'',createdAt:serverTimestamp()});
+    const fd=new FormData(); fd.append('file',file); fd.append('upload_preset','batch_photos'); fd.append('folder','amrutvahini-diaries');
+    const res=await fetch('https://api.cloudinary.com/v1_1/dluc4n5m6/image/upload',{method:'POST',body:fd});
+    const data=await res.json();
+    if(data.secure_url) await addDoc(collection(db,'photos'),{url:data.secure_url,uploadedBy:u.displayName,uid:u.uid,caption:'',createdAt:serverTimestamp()});
     else alert('Upload failed. Try again.');
   } catch(err){ alert('Upload failed: '+err.message); }
-  finally { btn.textContent = '+ Upload photo'; btn.disabled = false; }
+  finally { btn.textContent='+ Upload photo'; btn.disabled=false; }
 };
 window.deletePhoto = async (id) => { if(confirm('Delete this photo?')) await deleteDoc(doc(db,'photos',id)); };
 
 // ── HOMETOWN MAP ───────────────────────────────────────
 onSnapshot(query(collection(db,'hometowns'), orderBy('createdAt','desc')), snap => {
-  const list = document.getElementById('hometownList'); if (!list) return; list.innerHTML = '';
+  const list=document.getElementById('hometownList'); if(!list) return; list.innerHTML='';
   snap.forEach(d => {
-    const p = d.data();
-    const div = document.createElement('div'); div.className = 'hometown-card';
-    div.innerHTML = `<div style="font-size:18px;">📍</div><div><div style="font-size:13px;font-weight:500;">${p.city}</div><div style="font-size:12px;color:var(--muted);">${p.name||'Batchmate'} · ${p.state||''}</div></div>`;
+    const p=d.data();
+    const div=document.createElement('div'); div.className='hometown-card';
+    div.innerHTML=`<div style="font-size:18px;">📍</div><div><div style="font-size:13px;font-weight:500;">${p.city}</div><div style="font-size:12px;color:var(--muted);">${p.name||'Batchmate'} · ${p.state||''}</div></div>`;
     list.appendChild(div);
   });
 });
@@ -636,70 +666,69 @@ window.pinHometown = async () => { const u=auth.currentUser; if(!u) return; cons
 // ── AWARDS ─────────────────────────────────────────────
 const renderedAwards = new Set();
 onSnapshot(query(collection(db,'awards'), orderBy('createdAt','desc')), snap => {
-  const grid = document.getElementById('awardsGrid'); if (!grid) return;
+  const grid=document.getElementById('awardsGrid'); if(!grid) return;
   snap.forEach(d => {
-    if (renderedAwards.has(d.id)) return;
+    if(renderedAwards.has(d.id)) return;
     renderedAwards.add(d.id);
-    const p = d.data(); const cardId = 'award_' + d.id;
-    const optionsHTML = (p.options||[]).map(o => `<div class="vote-option" onclick="castVote(this,'${cardId}')">${o}<div class="vote-bar"><div class="vote-bar-fill"></div></div></div>`).join('');
-    const card = document.createElement('div'); card.className = 'award-card'; card.id = cardId;
-    card.innerHTML = `<div style="font-size:26px;margin-bottom:8px;">${p.emoji||'🏆'}</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${p.description||''}</div>${optionsHTML}`;
+    const p=d.data(); const cardId='award_'+d.id;
+    const optionsHTML=(p.options||[]).map(o=>`<div class="vote-option" onclick="castVote(this,'${cardId}')">${o}<div class="vote-bar"><div class="vote-bar-fill"></div></div></div>`).join('');
+    const card=document.createElement('div'); card.className='award-card'; card.id=cardId;
+    card.innerHTML=`<div style="font-size:26px;margin-bottom:8px;">${p.emoji||'🏆'}</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${p.description||''}</div>${optionsHTML}`;
     grid.appendChild(card);
   });
 });
 window.createAward = async () => {
-  const u = auth.currentUser; if (!u) return;
-  const title = document.getElementById('aTitle').value.trim(); if (!title) { alert('Please enter a title!'); return; }
-  const opts = document.getElementById('aOptions').value.trim().split('\n').map(o=>o.trim()).filter(o=>o);
-  if (opts.length < 2) { alert('Please add at least 2 nominees!'); return; }
+  const u=auth.currentUser; if(!u) return;
+  const title=document.getElementById('aTitle').value.trim(); if(!title){alert('Please enter a title!');return;}
+  const opts=document.getElementById('aOptions').value.trim().split('\n').map(o=>o.trim()).filter(o=>o);
+  if(opts.length<2){alert('Please add at least 2 nominees!');return;}
   await addDoc(collection(db,'awards'),{title,description:document.getElementById('aDesc').value.trim(),emoji:document.getElementById('aEmoji').value.trim()||'🏆',options:opts,uid:u.uid,createdAt:serverTimestamp()});
   ['aEmoji','aTitle','aDesc','aOptions'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('createAwardForm').style.display = 'none';
+  document.getElementById('createAwardForm').style.display='none';
   alert('Award created! 🏆');
 };
 
 // ── ADMIN MEMBERS ──────────────────────────────────────
 onSnapshot(collection(db,'members'), snap => {
-  const list = document.getElementById('memberList'); if (!list) return; list.innerHTML = '';
-  if (snap.size === 0) { list.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No members yet</div>'; return; }
+  const list=document.getElementById('memberList'); if(!list) return; list.innerHTML='';
+  if(snap.size===0){list.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No members yet</div>';return;}
   snap.forEach(d => {
-    const m = d.data();
-    const isMe = auth.currentUser && d.id === auth.currentUser.uid;
-    const initials = (m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const joined = m.joinedAt ? new Date(m.joinedAt.seconds*1000).toLocaleDateString() : 'Recently';
-    const div = document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;gap:12px;margin-bottom:10px;';
-    div.innerHTML = `<div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${initials}</div>
+    const m=d.data();
+    const isMe=auth.currentUser && d.id===auth.currentUser.uid;
+    const initials=(m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const joined=m.joinedAt?new Date(m.joinedAt.seconds*1000).toLocaleDateString():'Recently';
+    const safeName=(m.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const div=document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;gap:12px;margin-bottom:10px;';
+    div.innerHTML=`<div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${initials}</div>
       <div style="flex:1;"><div style="font-size:14px;font-weight:500;">${m.name}</div><div style="font-size:12px;color:var(--muted);">Joined ${joined}</div></div>
-      ${isMe ? '<span class="badge badge-gold">You</span>' : `<button class="btn btn-danger" style="font-size:11px;padding:5px 12px;" onclick="window.adminRemoveMember('${d.id}','${(m.name||'').replace(/'/g,"\\'")}')">Remove</button>`}`;
+      ${isMe?'<span class="badge badge-gold">You</span>':`<button class="btn btn-danger" style="font-size:11px;padding:5px 12px;" onclick="window.adminRemoveMember('${d.id}','${safeName}')">Remove</button>`}`;
     list.appendChild(div);
   });
 });
 
 // ── ADMIN ACTIONS ──────────────────────────────────────
-// Key fix: checks ADMIN_UID client-side before calling Firestore
 window.adminDelete = async (col, id, btn) => {
-  const u = auth.currentUser;
-  if (!u || u.uid !== ADMIN_UID) { alert('Admin access required. Make sure you are signed in as admin.'); return; }
-  if (!confirm('Delete this permanently?')) return;
+  const u=auth.currentUser;
+  if(!u||u.uid!==ADMIN_UID){alert('Admin access required.');return;}
+  if(!confirm('Delete this permanently?')) return;
   try {
-    await deleteDoc(doc(db, col, id));
-    const card = btn.closest('.card,.confession,.post');
-    if (card) { card.style.opacity = '0.3'; card.style.pointerEvents = 'none'; }
-    btn.textContent = 'Deleted';
-  } catch(err) { alert('Error: ' + err.message + ' (' + err.code + ')'); }
+    await deleteDoc(doc(db,col,id));
+    // remove from DOM immediately — snapshot listener will also update
+    const card=btn.closest('.card,.confession,.post,[style*="aspect-ratio"]');
+    if(card) card.remove();
+  } catch(err){alert('Error: '+err.message+' ('+err.code+')');}
 };
 
 window.adminRemoveMember = async (uid, name) => {
-  const u = auth.currentUser;
-  if (!u || u.uid !== ADMIN_UID) { alert('Admin access required.'); return; }
-  if (!confirm('Remove ' + name + ' from the batch?')) return;
+  const u=auth.currentUser;
+  if(!u||u.uid!==ADMIN_UID){alert('Admin access required.');return;}
+  if(!confirm('Remove '+name+' from the batch?')) return;
   try {
     await deleteDoc(doc(db,'members',uid));
-    try { await deleteDoc(doc(db,'profiles',uid)); } catch(e) {}
-    alert(name + ' has been removed.');
-  } catch(err) { alert('Error: ' + err.message + ' (' + err.code + ')'); }
+    try{await deleteDoc(doc(db,'profiles',uid));}catch(e){}
+    alert(name+' has been removed.');
+  } catch(err){alert('Error: '+err.message+' ('+err.code+')');}
 };
-
 </script>
 </body>
 </html>
