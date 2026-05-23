@@ -484,7 +484,7 @@ function googleLogout(){}
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, setDoc, doc, increment, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, setDoc, doc, increment, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -606,7 +606,7 @@ window.likeFirePost = async function(id, el){
 window.deletePost = async function(id){
   if(!currentUser) return;
   if(!confirm('Delete this post?')) return;
-  const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+  
   await deleteDoc(doc(db,'posts',id));
 };
 
@@ -803,7 +803,7 @@ window.uploadPhoto = async function(e){
 window.deletePhoto = async function(id){
   if(!currentUser) return;
   if(!confirm('Delete this photo?')) return;
-  const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+  
   await deleteDoc(doc(db,'photos',id));
 };
 
@@ -867,7 +867,7 @@ window.adminDeleteDoc = async function(collectionName, docId, btn){
   if(!currentUser){alert('Please sign in first!');return;}
   if(!confirm('Delete this permanently?')) return;
   try {
-    const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    
     await deleteDoc(doc(db, collectionName, docId));
     const card = btn.closest('.card,.flagged-post,.confession,.letter-card,.post');
     if(card){card.style.opacity='0.3';card.style.pointerEvents='none';}
@@ -905,7 +905,7 @@ window.adminDeletePhoto = async function(id, btn){
   if(!currentUser){alert('Please sign in!');return;}
   if(!confirm('Delete this photo permanently?')) return;
   try {
-    const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    
     await deleteDoc(doc(db,'photos',id));
     btn.closest('div[style*="aspect-ratio"]').remove();
   } catch(err){
@@ -970,7 +970,7 @@ window.removeMember = async function(uid, name){
   if(!currentUser){alert('Please sign in first!');return;}
   if(!confirm('Remove '+name+' from the batch? This will delete their member record and profile.')) return;
   try {
-    const { deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    
     await deleteDoc(doc(db,'members',uid));
     try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
     alert(name+' has been removed.');
