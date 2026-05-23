@@ -568,22 +568,15 @@ onAuthStateChanged(auth, async user => {
     // ── STEP 1: CHECK ALLOWLIST ONLY ─────────────────────
     // Do NOT read members/profiles yet — they require isApproved()
     const tempId = 'pending_' + user.email.replace(/[@.]/g,'_');
-    let approved   = user.uid === ADMIN_UID;
-    let isNewPending = false;
+    let approved = user.uid === ADMIN_UID;
 
     if (!approved) {
       const [uidSnap, emailSnap] = await Promise.all([
         getDoc(doc(db,'allowlist',user.uid)),
         getDoc(doc(db,'allowlist',tempId))
       ]);
-      if (uidSnap.exists()) {
+      if (uidSnap.exists() || emailSnap.exists()) {
         approved = true;
-      } else if (emailSnap.exists()) {
-        approved = true;
-        isNewPending = true;
-        // upgrade pending → UID in background
-        setDoc(doc(db,'allowlist',user.uid),{email:user.email,name:user.displayName,addedAt:serverTimestamp()})
-          .then(() => deleteDoc(doc(db,'allowlist',tempId)));
       }
     }
 
