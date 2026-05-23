@@ -323,7 +323,14 @@
       <button class="btn btn-primary" onclick="document.getElementById('logoUpload').click()">Upload batch photo</button>
     </div>
     <div class="card">
-      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">Batch invite link</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">Batch awards results</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Reveal voting results to everyone on farewell day</div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-success" id="revealBtn" onclick="window.toggleRevealResults()">🏆 Reveal results</button>
+        <button class="btn btn-danger" id="hideBtn" onclick="window.toggleRevealResults()" style="display:none;">🔒 Hide results</button>
+        <span id="revealStatus" style="font-size:12px;color:var(--muted);">Results currently hidden</span>
+      </div>
+    </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <code style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;color:var(--gold);">rohan2531.github.io/amrutvahini-diaries</code>
         <button class="btn" onclick="navigator.clipboard.writeText('https://rohan2531.github.io/amrutvahini-diaries/').then(()=>alert('Copied!'))">Copy</button>
@@ -413,12 +420,10 @@ function uploadLogo(e) {
   r.readAsDataURL(f);
 }
 const awardVoted = {};
-function castVote(el, id) {
+function castVote(el, awardId, nominee) {
   if (!window._userUID) { alert('Please sign in first!'); return; }
-  if (awardVoted[id]) return;
-  awardVoted[id] = true;
-  el.closest('.award-card').querySelectorAll('.vote-option').forEach(o => o.style.pointerEvents = 'none');
-  el.classList.add('voted');
+  if (awardVoted[awardId]) { alert('You already voted in this award!'); return; }
+  if (window.submitVote) window.submitVote(awardId, nominee, el);
 }
 </script>
 
@@ -663,20 +668,136 @@ onSnapshot(query(collection(db,'hometowns'), orderBy('createdAt','desc')), snap 
 });
 window.pinHometown = async () => { const u=auth.currentUser; if(!u) return; const city=document.getElementById('mapCity').value.trim(); if(!city){alert('Please enter your city!');return;} await addDoc(collection(db,'hometowns'),{city,state:document.getElementById('mapState').value,name:u.displayName,uid:u.uid,createdAt:serverTimestamp()}); document.getElementById('mapCity').value=''; alert('Hometown pinned! 📍'); };
 
-// ── AWARDS ─────────────────────────────────────────────
+// ── AWARDS — proper voting system ──────────────────────
 const renderedAwards = new Set();
+let resultsRevealed = false;
+
+// Listen to settings doc for reveal state
+onSnapshot(doc(db,'settings','awards'), snap => {
+  resultsRevealed = snap.exists() ? (snap.data().revealed || false) : false;
+  // re-render all awards with updated reveal state
+  renderedAwards.forEach(awardId => {
+    renderAwardVotes(awardId);
+  });
+  // update admin button state
+  const revealBtn  = document.getElementById('revealBtn');
+  const hideBtn    = document.getElementById('hideBtn');
+  const revealStatus = document.getElementById('revealStatus');
+  if (revealBtn && hideBtn && revealStatus) {
+    if (resultsRevealed) {
+      revealBtn.style.display = 'none'; hideBtn.style.display = '';
+      revealStatus.textContent = '✅ Results visible to everyone';
+      revealStatus.style.color = 'var(--green)';
+    } else {
+      revealBtn.style.display = ''; hideBtn.style.display = 'none';
+      revealStatus.textContent = '🔒 Results currently hidden';
+      revealStatus.style.color = 'var(--muted)';
+    }
+  }
+});
+
+// Load awards
 onSnapshot(query(collection(db,'awards'), orderBy('createdAt','desc')), snap => {
-  const grid=document.getElementById('awardsGrid'); if(!grid) return;
+  const grid = document.getElementById('awardsGrid'); if (!grid) return;
   snap.forEach(d => {
-    if(renderedAwards.has(d.id)) return;
+    if (renderedAwards.has(d.id)) return;
     renderedAwards.add(d.id);
-    const p=d.data(); const cardId='award_'+d.id;
-    const optionsHTML=(p.options||[]).map(o=>`<div class="vote-option" onclick="castVote(this,'${cardId}')">${o}<div class="vote-bar"><div class="vote-bar-fill"></div></div></div>`).join('');
-    const card=document.createElement('div'); card.className='award-card'; card.id=cardId;
-    card.innerHTML=`<div style="font-size:26px;margin-bottom:8px;">${p.emoji||'🏆'}</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${p.description||''}</div>${optionsHTML}`;
+    const p = d.data(); const cardId = 'award_' + d.id;
+    const card = document.createElement('div'); card.className = 'award-card'; card.id = cardId;
+    card.dataset.options = JSON.stringify(p.options||[]);
+    card.dataset.emoji   = p.emoji||'🏆';
+    card.dataset.title   = p.title||'';
+    card.dataset.desc    = p.description||'';
+    card.dataset.awardid = d.id;
     grid.appendChild(card);
+    renderAwardVotes(d.id);
+    // listen to votes for this award
+    onSnapshot(collection(db,'awards',d.id,'votes'), () => renderAwardVotes(d.id));
   });
 });
+
+async function renderAwardVotes(awardId) {
+  const card = document.getElementById('award_' + awardId); if (!card) return;
+  const options  = JSON.parse(card.dataset.options || '[]');
+  const emoji    = card.dataset.emoji;
+  const title    = card.dataset.title;
+  const desc     = card.dataset.desc;
+  const uid      = auth.currentUser ? auth.currentUser.uid : null;
+
+  // fetch votes
+  let votesSnap;
+  try { votesSnap = await getDoc(doc(db,'awards',awardId,'votes','__counts')); } catch(e) {}
+  const counts = (votesSnap && votesSnap.exists()) ? votesSnap.data() : {};
+  const total  = Object.values(counts).reduce((a,b)=>a+b, 0);
+
+  // check if current user already voted
+  let myVote = null;
+  if (uid) {
+    try {
+      const mySnap = await getDoc(doc(db,'awards',awardId,'votes',uid));
+      if (mySnap.exists()) myVote = mySnap.data().nominee;
+    } catch(e) {}
+  }
+  if (myVote) awardVoted[awardId] = true;
+
+  let optionsHTML = '';
+  options.forEach(nominee => {
+    const count   = counts[nominee] || 0;
+    const pct     = total > 0 ? Math.round((count/total)*100) : 0;
+    const isMyVote = myVote === nominee;
+    const showBar  = resultsRevealed || isMyVote;
+
+    optionsHTML += `<div class="vote-option ${isMyVote?'voted':''}"
+      style="${myVote||awardVoted[awardId]?'pointer-events:none;':''}"
+      onclick="castVote(this,'${awardId}','${nominee.replace(/'/g,"\\'")}')">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        ${isMyVote?'<span style="color:var(--gold);font-size:12px;">✓</span>':''}
+        <span>${nominee}</span>
+      </div>
+      ${resultsRevealed?`<span style="font-size:12px;color:var(--muted);margin-left:8px;">${pct}%</span>`:''}
+    </div>
+    ${showBar?`<div class="vote-bar" style="margin-bottom:4px;"><div class="vote-bar-fill" style="width:${pct}%;transition:width 0.6s;"></div></div>`:''}`;
+  });
+
+  // winner badge when revealed
+  let winnerHTML = '';
+  if (resultsRevealed && total > 0) {
+    const winner = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+    if (winner) {
+      const winPct = Math.round((winner[1]/total)*100);
+      winnerHTML = `<div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm);padding:8px 12px;margin-top:12px;font-size:13px;">
+        🏆 <strong style="color:var(--gold);">${winner[0]}</strong> wins with ${winPct}% (${winner[1]} vote${winner[1]!==1?'s':''})
+      </div>`;
+    }
+  }
+
+  const totalText = total > 0
+    ? `<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${total} vote${total!==1?'s':''} · ${resultsRevealed?'Results revealed':'Voting open'}</div>`
+    : `<div style="font-size:11px;color:var(--muted);margin-bottom:8px;">No votes yet · Be the first!</div>`;
+
+  card.innerHTML = `
+    <div style="font-size:26px;margin-bottom:6px;">${emoji}</div>
+    <div style="font-size:14px;font-weight:500;margin-bottom:2px;">${title}</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${desc}</div>
+    ${totalText}
+    ${optionsHTML}
+    ${winnerHTML}`;
+}
+
+window.submitVote = async (awardId, nominee, el) => {
+  const u = auth.currentUser; if (!u) return;
+  if (awardVoted[awardId]) return;
+  try {
+    // save individual vote under user UID
+    await setDoc(doc(db,'awards',awardId,'votes',u.uid), { nominee, votedAt: serverTimestamp() });
+    // increment count in __counts doc
+    await setDoc(doc(db,'awards',awardId,'votes','__counts'),
+      { [nominee]: increment(1) }, { merge: true });
+    awardVoted[awardId] = true;
+    await renderAwardVotes(awardId);
+  } catch(err) { alert('Vote failed: '+err.message); }
+};
+
 window.createAward = async () => {
   const u=auth.currentUser; if(!u) return;
   const title=document.getElementById('aTitle').value.trim(); if(!title){alert('Please enter a title!');return;}
@@ -686,6 +807,12 @@ window.createAward = async () => {
   ['aEmoji','aTitle','aDesc','aOptions'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('createAwardForm').style.display='none';
   alert('Award created! 🏆');
+};
+
+window.toggleRevealResults = async () => {
+  const u = auth.currentUser;
+  if(!u||u.uid!==ADMIN_UID){alert('Admin access required.');return;}
+  await setDoc(doc(db,'settings','awards'), { revealed: !resultsRevealed }, { merge: true });
 };
 
 // ── ADMIN MEMBERS ──────────────────────────────────────
