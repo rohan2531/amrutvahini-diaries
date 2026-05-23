@@ -207,29 +207,7 @@
       </div>
     </div>
   </div>
-  <div class="grid-3" id="profileGrid">
-    <div class="profile-card" data-name="arjun kulkarni">
-      <div class="profile-avatar" style="background:rgba(201,168,76,0.12);color:var(--gold);">AK</div>
-      <div style="font-size:15px;font-weight:500;margin-bottom:3px;">Arjun Kulkarni</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">IT — "The debugger"</div>
-      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"Survived 4 years on chai and Stack Overflow"</div>
-      <span class="badge badge-gold">IT</span>
-    </div>
-    <div class="profile-card" data-name="priya sharma">
-      <div class="profile-avatar" style="background:rgba(77,184,164,0.12);color:var(--teal);">PS</div>
-      <div style="font-size:15px;font-weight:500;margin-bottom:3px;">Priya Sharma</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">IT — "The planner"</div>
-      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"Made a timetable every sem, followed it never"</div>
-      <span class="badge badge-teal">IT</span>
-    </div>
-    <div class="profile-card" data-name="rahul patil">
-      <div class="profile-avatar" style="background:rgba(155,127,232,0.12);color:var(--purple);">RP</div>
-      <div style="font-size:15px;font-weight:500;margin-bottom:3px;">Rahul Patil</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">IT — "The sleeper"</div>
-      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"Attended 40% classes, passed 100% exams"</div>
-      <span class="badge badge-purple">IT</span>
-    </div>
-  </div>
+  <div class="grid-3" id="profileGrid"></div>
 </div>
 
 <!-- MEMORY WALL -->
@@ -242,32 +220,7 @@
       <button class="btn btn-primary" onclick="addPost()">Post memory</button>
     </div>
   </div>
-  <div id="postFeed">
-    <div class="post">
-      <div class="post-header">
-        <div class="avatar" style="width:34px;height:34px;background:rgba(201,168,76,0.12);color:var(--gold);">AK</div>
-        <div><div style="font-size:13px;font-weight:500;">Arjun Kulkarni</div><div style="font-size:11px;color:var(--muted);">2 hours ago</div></div>
-      </div>
-      <div style="font-size:14px;color:var(--muted2);">Remember when we all pulled an all-nighter before the Networks exam and Rahul still showed up 30 mins late with samosas? Best exam day ever 😂</div>
-      <div class="post-actions">
-        <span class="post-action" onclick="likePost(this)">❤️ <span class="like-count">24</span></span>
-        <span class="post-action">💬 6 replies</span>
-        <span class="post-action" onclick="flagPost(this)" style="margin-left:auto;">🚩 Report</span>
-      </div>
-    </div>
-    <div class="post">
-      <div class="post-header">
-        <div class="avatar" style="width:34px;height:34px;background:rgba(77,184,164,0.12);color:var(--teal);">PS</div>
-        <div><div style="font-size:13px;font-weight:500;">Priya Sharma</div><div style="font-size:11px;color:var(--muted);">Yesterday</div></div>
-      </div>
-      <div style="font-size:14px;color:var(--muted2);">I'm going to miss the canteen aunty the most. She always gave extra and never judged us for coming at 11pm. 🥺</div>
-      <div class="post-actions">
-        <span class="post-action" onclick="likePost(this)">❤️ <span class="like-count">51</span></span>
-        <span class="post-action">💬 14 replies</span>
-        <span class="post-action" onclick="flagPost(this)" style="margin-left:auto;">🚩 Report</span>
-      </div>
-    </div>
-  </div>
+  <div id="postFeed"></div>
 </div>
 
 <!-- GALLERY -->
@@ -277,13 +230,9 @@
   <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center;">
     <input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="uploadPhoto(event)"/>
     <button class="btn btn-primary" onclick="document.getElementById('photoUpload').click()">+ Upload photo</button>
-    <span style="font-size:13px;color:var(--muted);" id="photoCount">3 photos</span>
+    <span style="font-size:13px;color:var(--muted);" id="photoCount">0 photos</span>
   </div>
-  <div class="grid-3" id="photoGrid">
-    <div style="aspect-ratio:1;background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:40px;">📸</div>
-    <div style="aspect-ratio:1;background:rgba(77,184,164,0.08);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:40px;">🎓</div>
-    <div style="aspect-ratio:1;background:rgba(155,127,232,0.08);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:40px;">🏫</div>
-  </div>
+  <div class="grid-3" id="photoGrid"></div>
 </div>
 
 <!-- CONFESSIONS -->
@@ -292,16 +241,11 @@
   <div class="section-sub">No names. Just truth.</div>
   <div class="card" style="margin-bottom:16px;">
     <textarea id="newConfession" placeholder="Confess something... no one will know it's you 🤫"></textarea>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px;">
-      <span style="font-size:12px;color:var(--muted);">Goes to admin for approval first</span>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px;">
       <button class="btn btn-primary" onclick="submitConfession()">Post anonymously</button>
     </div>
   </div>
-  <div id="confessionFeed">
-    <div class="confession"><div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:8px;">"I copied Priya's assignment 7 times across 4 semesters. Sorry Priya. Also thank you."</div><div style="font-size:11px;color:var(--muted);">Anonymous · 3 days ago · ❤️ 34</div></div>
-    <div class="confession" style="margin-top:10px;"><div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:8px;">"I actually enjoyed the DSA lab. I was just pretending to hate it so I fit in."</div><div style="font-size:11px;color:var(--muted);">Anonymous · 1 week ago · ❤️ 61</div></div>
-    <div class="confession" style="margin-top:10px;"><div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:8px;">"I set the fire alarm off in 2nd year by accident. Told no one. Until now."</div><div style="font-size:11px;color:var(--muted);">Anonymous · 2 weeks ago · ❤️ 89</div></div>
-  </div>
+  <div id="confessionFeed"></div>
 </div>
 
 <!-- LETTERS -->
@@ -314,10 +258,7 @@
     <div class="form-row"><label class="form-label">Unlock date</label><input id="lDate" type="date"/></div>
     <button class="btn btn-primary" onclick="sealLetter()">Seal my letter 🔒</button>
   </div>
-  <div id="letterList">
-    <div class="letter-card"><div class="letter-icon" style="background:rgba(201,168,76,0.12);">🔒</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Arjun's letter</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Sealed · Opens on farewell day</div></div><span class="badge badge-gold">Locked</span></div>
-    <div class="letter-card" style="margin-top:10px;"><div class="letter-icon" style="background:rgba(77,184,164,0.12);">🔒</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">Priya's letter</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Sealed · Opens on farewell day</div></div><span class="badge badge-teal">Locked</span></div>
-  </div>
+  <div id="letterList"></div>
 </div>
 
 <!-- 5-YEAR VISION -->
@@ -338,16 +279,7 @@
     <div class="form-row"><label class="form-label">Message to the batch</label><textarea id="vMsg" placeholder="What do you want to say to everyone before you part ways?"></textarea></div>
     <button class="btn btn-primary" onclick="addVision()">Submit my entry</button>
   </div>
-  <div id="visionFeed">
-    <div class="card" style="margin-bottom:10px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-        <div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:12px;">AK</div>
-        <div><div style="font-size:14px;font-weight:500;">Arjun Kulkarni</div><span class="badge badge-gold" style="margin-top:3px;">Software engineer · Abroad</span></div>
-      </div>
-      <div style="font-size:13px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"Working at a product company, probably in Germany. Maybe married, maybe not."</div>
-      <div style="font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:10px;">"To every person in this batch — you made the hard days bearable and the good days unforgettable."</div>
-    </div>
-  </div>
+  <div id="visionFeed"></div>
 </div>
 
 
@@ -374,11 +306,7 @@
     </div>
     <button class="btn btn-primary" onclick="pinHometown()">Pin my hometown 📍</button>
   </div>
-  <div class="grid-3" id="hometownList" style="margin-top:14px;">
-    <div class="card" style="display:flex;align-items:center;gap:10px;"><div>📍</div><div><div style="font-size:13px;font-weight:500;">Sangamner</div><div style="font-size:12px;color:var(--muted);">Arjun · Maharashtra</div></div></div>
-    <div class="card" style="display:flex;align-items:center;gap:10px;"><div>📍</div><div><div style="font-size:13px;font-weight:500;">Nashik</div><div style="font-size:12px;color:var(--muted);">Priya · Maharashtra</div></div></div>
-    <div class="card" style="display:flex;align-items:center;gap:10px;"><div>📍</div><div><div style="font-size:13px;font-weight:500;">Pune</div><div style="font-size:12px;color:var(--muted);">Rahul · Maharashtra</div></div></div>
-  </div>
+  <div class="grid-3" id="hometownList" style="margin-top:14px;"></div>
 </div>
 
 <!-- BATCH AWARDS -->
@@ -440,6 +368,7 @@
     <div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading photos...</div>
   </div>
 </div>
+<div class="admin-page" id="a-members">
   <div class="section-title">Manage members</div>
   <div class="section-sub">All members who joined via Google login</div>
   <div id="memberList">
