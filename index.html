@@ -35,19 +35,16 @@
   .section-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;}
   .card+.card{margin-top:12px;}
-  .grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+  .grid-3{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
   .grid-2{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
   .grid-4{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
   .stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:center;}
   .stat-num{font-size:28px;font-weight:500;color:var(--gold);font-family:'Playfair Display',serif;}
   .stat-label{font-size:12px;color:var(--muted);margin-top:4px;}
-  .avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500;flex-shrink:0;font-size:13px;}
+  .avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500;flex-shrink:0;}
   .badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;display:inline-block;}
   .badge-gold{background:rgba(201,168,76,0.15);color:var(--gold2);border:1px solid rgba(201,168,76,0.3);}
-  .badge-green{background:rgba(76,175,125,0.15);color:var(--green);}
   .badge-red{background:rgba(224,82,82,0.15);color:var(--red);}
-  .badge-purple{background:rgba(155,127,232,0.15);color:var(--purple);}
-  .badge-teal{background:rgba(77,184,164,0.15);color:var(--teal);}
   input,textarea,select{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;width:100%;outline:none;transition:border 0.2s;}
   input:focus,textarea:focus,select:focus{border-color:var(--gold);}
   textarea{resize:vertical;min-height:90px;}
@@ -65,79 +62,73 @@
   .toggle.on .toggle-dot{left:21px;}
   .toggle.off{background:#333;}
   .toggle.off .toggle-dot{left:3px;}
-  .post{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;}
-  .post+.post{margin-top:12px;}
+  .post{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px;}
   .post-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
   .post-actions{display:flex;gap:14px;margin-top:12px;}
   .post-action{font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;transition:color 0.2s;}
   .post-action:hover{color:var(--gold);}
-  .confession{background:var(--card);border-left:3px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;padding:14px 16px;}
-  .confession+.confession{margin-top:10px;}
+  .confession{background:var(--card);border-left:3px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;padding:14px 16px;margin-bottom:10px;}
   .profile-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;transition:border-color 0.2s;}
   .profile-card:hover{border-color:rgba(201,168,76,0.3);}
-  .profile-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;border:2px solid rgba(201,168,76,0.3);}
+  .profile-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;border:2px solid rgba(201,168,76,0.3);}
   .award-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
   .vote-option{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:var(--radius-sm);background:var(--bg3);margin-top:8px;cursor:pointer;border:1px solid transparent;transition:all 0.2s;font-size:13px;}
-  .vote-option:hover{border-color:rgba(201,168,76,0.3);background:rgba(201,168,76,0.06);}
+  .vote-option:hover{border-color:rgba(201,168,76,0.3);}
   .vote-option.voted{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold);}
   .vote-bar{height:4px;background:rgba(201,168,76,0.2);border-radius:2px;margin-top:4px;overflow:hidden;}
-  .vote-bar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.4s;}
-  .poll-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
-  .poll-option{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:var(--radius-sm);background:var(--bg3);margin-top:8px;cursor:pointer;border:1px solid transparent;transition:all 0.2s;font-size:13px;}
-  .poll-option:hover{border-color:rgba(201,168,76,0.3);}
-  .poll-option.voted{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold2);}
-  .map-placeholder{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);height:280px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted);position:relative;overflow:hidden;}
-  .map-dot{position:absolute;width:10px;height:10px;background:var(--gold);border-radius:50%;border:2px solid var(--bg);}
-  .map-dot::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;border:1px solid rgba(201,168,76,0.4);top:-7px;left:-7px;}
-  .letter-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;display:flex;align-items:center;gap:14px;}
+  .vote-bar-fill{height:100%;background:var(--gold);border-radius:2px;width:0%;}
+  .letter-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
   .letter-icon{width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
   .hero{text-align:center;padding:40px 20px 32px;border-bottom:1px solid var(--border);margin-bottom:28px;}
   .hero-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);margin-bottom:6px;}
   .hero-sub{font-size:14px;color:var(--muted);margin-bottom:4px;}
   .hero-college{font-size:13px;color:var(--muted2);font-style:italic;}
-  .flagged-post{background:var(--card);border-left:3px solid var(--red);border-radius:0 var(--radius) var(--radius) 0;padding:14px 16px;margin-bottom:10px;}
   .form-row{margin-bottom:14px;}
   .form-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block;}
+  .vision-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;}
+  .hometown-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:10px;}
   ::-webkit-scrollbar{width:6px;height:6px;}
   ::-webkit-scrollbar-track{background:var(--bg);}
   ::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
-  @media(max-width:600px){.page{padding:20px 16px;}.topbar{padding:0 16px;}.nav{padding:0 16px;}.hero-title{font-size:24px;}.grid-3,.grid-2,.grid-4{grid-template-columns:1fr;}}
+  @media(max-width:600px){.page,.admin-page{padding:20px 16px;}.topbar{padding:0 16px;}.nav{padding:0 16px;}.hero-title{font-size:24px;}.grid-3,.grid-2,.grid-4{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+<!-- LOCK SCREEN -->
+<div id="lockScreen" style="position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:40px;max-width:420px;width:90%;">
     <div style="font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);margin-bottom:8px;">Amrutvahini Diaries</div>
     <div style="font-size:14px;color:var(--muted2);margin-bottom:4px;">IT Batch 2022–26</div>
     <div style="font-size:13px;color:var(--muted);font-style:italic;margin-bottom:32px;">Amrutvahini College of Engineering, Sangamner</div>
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;">
-      <div style="font-size:16px;font-weight:500;margin-bottom:8px;color:var(--text);">Sign in to continue</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">This site is only for AVCOE IT Batch 2022–26 members</div>
-      <button onclick="googleLogin()" style="width:100%;padding:12px;background:white;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;color:#333;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-        <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;"/>
-        Sign in with Google
+      <div style="font-size:15px;font-weight:500;margin-bottom:8px;color:var(--text);">Sign in to continue</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">Only for AVCOE IT Batch 2022–26 members</div>
+      <button onclick="googleLogin()" style="width:100%;padding:12px;background:white;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;color:#333;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;"/>Sign in with Google
       </button>
       <div style="font-size:11px;color:var(--muted);margin-top:16px;">Four years. One family. Forever. 🎓</div>
     </div>
   </div>
 </div>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div style="display:flex;align-items:center;gap:12px;">
-    <div id="logoWrap" style="display:none;"><img id="logoImg" src="" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(201,168,76,0.5);"/></div>
+    <div id="logoWrap" style="display:none;"><img id="logoImg" src="" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(201,168,76,0.4);"/></div>
     <div>
       <div class="topbar-logo">Amrutvahini Diaries</div>
       <div class="topbar-sub">IT Batch 2022–26</div>
     </div>
   </div>
   <div class="topbar-right">
-    <div class="countdown-pill" id="countdownPill">⏳ 14 days to farewell</div>
+    <div class="countdown-pill" id="countdownPill">⏳ Loading...</div>
     <button class="admin-btn" id="authBtn" onclick="window._userUID ? googleLogout() : googleLogin()">🔑 Sign in</button>
     <button class="admin-btn" onclick="toggleAdmin()">🛡 Admin</button>
   </div>
 </div>
 
+<!-- MAIN NAV -->
 <div class="nav" id="mainNav">
   <div class="nav-item active" onclick="showPage('home',this)">Home</div>
   <div class="nav-item" onclick="showPage('profiles',this)">Profiles</div>
@@ -150,12 +141,12 @@
   <div class="nav-item" onclick="showPage('awards',this)">Batch Awards</div>
 </div>
 
+<!-- ADMIN NAV -->
 <div class="nav" id="adminNav" style="display:none;background:#1a0a0a;border-bottom-color:rgba(224,82,82,0.3);">
-  <div class="nav-item active" style="color:var(--red);" onclick="showAdmin('a-flagged',this)">🚨 Flagged</div>
-  <div class="nav-item" onclick="showAdmin('a-confessions',this)">Confessions</div>
-  <div class="nav-item" onclick="showAdmin('a-photos',this)">Photos</div>
-  <div class="nav-item" onclick="showAdmin('a-members',this)">Members</div>
-  <div class="nav-item" onclick="showAdmin('a-settings',this)">Settings</div>
+  <div class="nav-item active" style="color:var(--red);" onclick="showAdmin('a-confessions',this)">📝 Confessions</div>
+  <div class="nav-item" onclick="showAdmin('a-photos',this)">📸 Photos</div>
+  <div class="nav-item" onclick="showAdmin('a-members',this)">👥 Members</div>
+  <div class="nav-item" onclick="showAdmin('a-settings',this)">⚙️ Settings</div>
 </div>
 
 <!-- HOME -->
@@ -166,22 +157,26 @@
     <div class="hero-college">Amrutvahini College of Engineering, Sangamner</div>
     <div style="margin-top:16px;display:inline-block;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:20px;padding:8px 20px;font-size:13px;color:var(--gold2);">Four years. One family. Forever.</div>
   </div>
-  <div class="grid-4" style="margin-bottom:28px;">
+  <div class="grid-4" style="margin-bottom:24px;">
     <div class="stat-card"><div class="stat-num" id="s-members">0</div><div class="stat-label">Members joined</div></div>
     <div class="stat-card"><div class="stat-num" id="s-memories">0</div><div class="stat-label">Memories shared</div></div>
     <div class="stat-card"><div class="stat-num" id="s-photos">0</div><div class="stat-label">Photos uploaded</div></div>
     <div class="stat-card"><div class="stat-num" id="s-letters">0</div><div class="stat-label">Letters sealed</div></div>
   </div>
-  <div class="card" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-    <div style="font-size:28px;">🎓</div>
-    <div style="flex:1;"><div style="font-size:14px;font-weight:500;margin-bottom:4px;" id="homeWelcome">Welcome to Amrutvahini Diaries!</div><div style="font-size:13px;color:var(--muted);" id="homeWelcomeSub">You are signed in and part of the batch</div></div>
-    <button class="btn btn-danger" onclick="googleLogout()" id="homeSignOutBtn">Sign out</button>
+  <div class="card" id="homeWelcomeCard">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div style="font-size:14px;font-weight:500;" id="homeWelcome">Welcome to Amrutvahini Diaries!</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;">You are signed in and part of the batch 🎓</div>
+      </div>
+      <button class="btn btn-danger" onclick="googleLogout()" style="font-size:12px;">Sign out</button>
+    </div>
   </div>
   <div class="card" style="margin-top:12px;">
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between;">
       <div style="font-size:13px;color:var(--muted);">Share with your batch</div>
       <code style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;color:var(--gold);">rohan2531.github.io/amrutvahini-diaries</code>
-      <button class="btn" onclick="copyLink()">Copy link</button>
+      <button class="btn" onclick="navigator.clipboard.writeText('https://rohan2531.github.io/amrutvahini-diaries/').then(()=>alert('Link copied! 🎓'))">Copy link</button>
     </div>
   </div>
 </div>
@@ -196,11 +191,9 @@
   </div>
   <div id="addProfileForm" style="display:none;margin-bottom:16px;">
     <div class="card">
-      <div style="font-size:15px;font-weight:500;margin-bottom:14px;color:var(--gold);">Add your profile</div>
-      <div class="form-row"><label class="form-label">Your name</label><input id="pName" type="text" placeholder="Full name"/></div>
+      <div style="font-size:15px;font-weight:500;margin-bottom:14px;color:var(--gold);">Your profile</div>
       <div class="form-row"><label class="form-label">Nickname</label><input id="pNick" type="text" placeholder="What your friends call you"/></div>
       <div class="form-row"><label class="form-label">Your vibe in one line</label><input id="pBio" type="text" placeholder="e.g. The one who always had chai ready"/></div>
-      <div class="form-row"><label class="form-label">Funniest memory</label><textarea id="pMemory" placeholder="That one incident everyone still laughs about..."></textarea></div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-primary" onclick="addProfile()">Save profile</button>
         <button class="btn" onclick="toggleAddProfile()">Cancel</button>
@@ -227,7 +220,7 @@
 <div class="page" id="gallery">
   <div class="section-title">Photo gallery</div>
   <div class="section-sub">4 years of moments — all in one place</div>
-  <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
     <input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="uploadPhoto(event)"/>
     <button class="btn btn-primary" onclick="document.getElementById('photoUpload').click()">+ Upload photo</button>
     <span style="font-size:13px;color:var(--muted);" id="photoCount">0 photos</span>
@@ -253,8 +246,7 @@
   <div class="section-title">Letters to future self</div>
   <div class="section-sub">Sealed until your chosen date. Open it when the time comes.</div>
   <div class="card" style="margin-bottom:16px;">
-    <div class="form-row"><label class="form-label">Your name</label><input id="lName" type="text" placeholder="Your name"/></div>
-    <div class="form-row"><label class="form-label">Your letter</label><textarea id="lText" placeholder="Dear future me... write whatever you want to remember." style="min-height:140px;"></textarea></div>
+    <div class="form-row"><label class="form-label">Your letter</label><textarea id="lText" placeholder="Dear future me..." style="min-height:140px;"></textarea></div>
     <div class="form-row"><label class="form-label">Unlock date</label><input id="lDate" type="date"/></div>
     <button class="btn btn-primary" onclick="sealLetter()">Seal my letter 🔒</button>
   </div>
@@ -266,47 +258,54 @@
   <div class="section-title">5-year vision</div>
   <div class="section-sub">Where do you see yourself? Leave a message to the batch.</div>
   <div class="card" style="margin-bottom:16px;">
-    <div class="form-row"><label class="form-label">Your name</label><input id="vName" type="text" placeholder="Your name"/></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-      <div><label class="form-label">Your path</label>
-        <select id="vPath"><option value="">Choose...</option><option>Software engineer</option><option>Entrepreneur</option><option>Higher studies / Masters</option><option>Core IT / Infra</option><option>Government / PSU</option><option>Research</option><option>Still figuring out</option></select>
+      <div>
+        <label class="form-label">Your path</label>
+        <select id="vPath">
+          <option value="">Choose...</option>
+          <option>Software engineer</option>
+          <option>Entrepreneur</option>
+          <option>Higher studies / Masters</option>
+          <option>Core IT / Infra</option>
+          <option>Government / PSU</option>
+          <option>Research</option>
+          <option>Still figuring out</option>
+        </select>
       </div>
-      <div><label class="form-label">Location</label>
-        <select id="vLocation"><option value="">Choose...</option><option>Same city</option><option>Different city in India</option><option>Abroad</option><option>No idea yet</option></select>
+      <div>
+        <label class="form-label">Location</label>
+        <select id="vLocation">
+          <option value="">Choose...</option>
+          <option>Same city</option>
+          <option>Different city in India</option>
+          <option>Abroad</option>
+          <option>No idea yet</option>
+        </select>
       </div>
     </div>
     <div class="form-row"><label class="form-label">Your 5-year dream</label><textarea id="vDream" placeholder="Where do you honestly see yourself in 5 years?"></textarea></div>
     <div class="form-row"><label class="form-label">Message to the batch</label><textarea id="vMsg" placeholder="What do you want to say to everyone before you part ways?"></textarea></div>
-    <button class="btn btn-primary" onclick="addVision()">Submit my entry</button>
+    <button class="btn btn-primary" onclick="addVision()">Submit vision</button>
   </div>
   <div id="visionFeed"></div>
 </div>
-
-
 
 <!-- HOMETOWN MAP -->
 <div class="page" id="map">
   <div class="section-title">Hometown map</div>
   <div class="section-sub">See where your entire batch comes from</div>
-  <div class="map-placeholder">
-    <div class="map-dot" style="top:40%;left:48%;"></div>
-    <div class="map-dot" style="top:30%;left:35%;"></div>
-    <div class="map-dot" style="top:60%;left:55%;"></div>
-    <div class="map-dot" style="top:25%;left:62%;"></div>
-    <div class="map-dot" style="top:55%;left:30%;"></div>
-    <div class="map-dot" style="top:70%;left:45%;"></div>
-    <div style="font-size:32px;margin-bottom:8px;">🗺️</div>
-    <div style="font-size:14px;font-weight:500;color:var(--muted2);">Interactive map — connect Firebase to activate</div>
-    <div style="font-size:12px;color:var(--muted);text-align:center;max-width:260px;">Each dot = one batchmate's hometown. Everyone pins their city when they join.</div>
-  </div>
-  <div class="card" style="margin-top:16px;">
-    <div class="form-row"><label class="form-label">Your hometown</label><input id="mapCity" type="text" placeholder="Enter your city or village name"/></div>
-    <div class="form-row"><label class="form-label">State</label>
-      <select id="mapState"><option>Maharashtra</option><option>Karnataka</option><option>Gujarat</option><option>Madhya Pradesh</option><option>Other</option></select>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="form-row"><label class="form-label">Your hometown</label><input id="mapCity" type="text" placeholder="City or village name"/></div>
+    <div class="form-row">
+      <label class="form-label">State</label>
+      <select id="mapState">
+        <option>Maharashtra</option><option>Karnataka</option><option>Gujarat</option>
+        <option>Madhya Pradesh</option><option>Other</option>
+      </select>
     </div>
     <button class="btn btn-primary" onclick="pinHometown()">Pin my hometown 📍</button>
   </div>
-  <div class="grid-3" id="hometownList" style="margin-top:14px;"></div>
+  <div class="grid-3" id="hometownList"></div>
 </div>
 
 <!-- BATCH AWARDS -->
@@ -315,165 +314,137 @@
     <div class="section-title" style="margin-bottom:0;">Batch awards</div>
     <button class="btn btn-primary" onclick="toggleCreateAward()">+ Create award</button>
   </div>
-  <div class="section-sub">Vote for your batchmates — results revealed on farewell day 🏆</div>
-
-  <!-- CREATE AWARD FORM -->
+  <div class="section-sub">Vote for your batchmates 🏆</div>
   <div id="createAwardForm" style="display:none;margin-bottom:20px;">
     <div class="card">
       <div style="font-size:15px;font-weight:500;margin-bottom:14px;color:var(--gold);">Create a new award</div>
-      <div class="form-row"><label class="form-label">Award emoji</label><input id="aEmoji" type="text" placeholder="e.g. 🏆 👑 😂 💻" style="max-width:100px;"/></div>
-      <div class="form-row"><label class="form-label">Award title</label><input id="aTitle" type="text" placeholder="e.g. Most likely to be a CEO"/></div>
-      <div class="form-row"><label class="form-label">Description</label><input id="aDesc" type="text" placeholder="Short description of this award"/></div>
-      <div style="margin-bottom:14px;">
-        <label class="form-label">Nominee options (one per line, min 2)</label>
-        <textarea id="aOptions" placeholder="Arjun Kulkarni&#10;Priya Sharma&#10;Rahul Patil" style="min-height:100px;"></textarea>
-      </div>
+      <div class="form-row"><label class="form-label">Emoji</label><input id="aEmoji" type="text" placeholder="🏆" style="max-width:80px;"/></div>
+      <div class="form-row"><label class="form-label">Award title</label><input id="aTitle" type="text" placeholder="Most likely to be a CEO"/></div>
+      <div class="form-row"><label class="form-label">Description</label><input id="aDesc" type="text" placeholder="Short description"/></div>
+      <div class="form-row"><label class="form-label">Nominees (one per line, min 2)</label><textarea id="aOptions" style="min-height:100px;"></textarea></div>
       <div style="display:flex;gap:10px;">
         <button class="btn btn-primary" onclick="createAward()">Add award</button>
         <button class="btn" onclick="toggleCreateAward()">Cancel</button>
       </div>
     </div>
   </div>
-
-  <div class="grid-2" id="awardsGrid">
-    <div class="award-card"><div style="font-size:24px;margin-bottom:10px;">👑</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">Most likely to be a CEO</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Vote for who you think will lead a company</div><div class="vote-option" onclick="castVote(this,'ceo')">Arjun Kulkarni<div class="vote-bar"><div class="vote-bar-fill" style="width:45%;"></div></div></div><div class="vote-option" onclick="castVote(this,'ceo')">Priya Sharma<div class="vote-bar"><div class="vote-bar-fill" style="width:35%;"></div></div></div><div class="vote-option" onclick="castVote(this,'ceo')">Rahul Patil<div class="vote-bar"><div class="vote-bar-fill" style="width:20%;"></div></div></div></div>
-    <div class="award-card"><div style="font-size:24px;margin-bottom:10px;">😴</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">Forever late award</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Who was always last to arrive?</div><div class="vote-option" onclick="castVote(this,'late')">Arjun Kulkarni<div class="vote-bar"><div class="vote-bar-fill" style="width:20%;"></div></div></div><div class="vote-option" onclick="castVote(this,'late')">Priya Sharma<div class="vote-bar"><div class="vote-bar-fill" style="width:25%;"></div></div></div><div class="vote-option" onclick="castVote(this,'late')">Rahul Patil<div class="vote-bar"><div class="vote-bar-fill" style="width:55%;"></div></div></div></div>
-    <div class="award-card"><div style="font-size:24px;margin-bottom:10px;">📚</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">Topper who pretended not to study</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">"I haven't studied at all" — then gets 9 CGPA</div><div class="vote-option" onclick="castVote(this,'topper')">Arjun Kulkarni<div class="vote-bar"><div class="vote-bar-fill" style="width:30%;"></div></div></div><div class="vote-option" onclick="castVote(this,'topper')">Priya Sharma<div class="vote-bar"><div class="vote-bar-fill" style="width:55%;"></div></div></div><div class="vote-option" onclick="castVote(this,'topper')">Rahul Patil<div class="vote-bar"><div class="vote-bar-fill" style="width:15%;"></div></div></div></div>
-    <div class="award-card"><div style="font-size:24px;margin-bottom:10px;">🤝</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">Most likely to stay in touch</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">The one who will keep the group alive</div><div class="vote-option" onclick="castVote(this,'touch')">Arjun Kulkarni<div class="vote-bar"><div class="vote-bar-fill" style="width:25%;"></div></div></div><div class="vote-option" onclick="castVote(this,'touch')">Priya Sharma<div class="vote-bar"><div class="vote-bar-fill" style="width:60%;"></div></div></div><div class="vote-option" onclick="castVote(this,'touch')">Rahul Patil<div class="vote-bar"><div class="vote-bar-fill" style="width:15%;"></div></div></div></div>
-    <div class="award-card"><div style="font-size:24px;margin-bottom:10px;">😂</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">Class entertainer</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Always had everyone laughing</div><div class="vote-option" onclick="castVote(this,'funny')">Arjun Kulkarni<div class="vote-bar"><div class="vote-bar-fill" style="width:40%;"></div></div></div><div class="vote-option" onclick="castVote(this,'funny')">Priya Sharma<div class="vote-bar"><div class="vote-bar-fill" style="width:20%;"></div></div></div><div class="vote-option" onclick="castVote(this,'funny')">Rahul Patil<div class="vote-bar"><div class="vote-bar-fill" style="width:40%;"></div></div></div></div>
-    <div class="award-card"><div style="font-size:24px;margin-bottom:10px;">💻</div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">Best coder in the batch</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">The one everyone asked for help</div><div class="vote-option" onclick="castVote(this,'coder')">Arjun Kulkarni<div class="vote-bar"><div class="vote-bar-fill" style="width:50%;"></div></div></div><div class="vote-option" onclick="castVote(this,'coder')">Priya Sharma<div class="vote-bar"><div class="vote-bar-fill" style="width:30%;"></div></div></div><div class="vote-option" onclick="castVote(this,'coder')">Rahul Patil<div class="vote-bar"><div class="vote-bar-fill" style="width:20%;"></div></div></div></div>
-  </div>
+  <div class="grid-2" id="awardsGrid"></div>
 </div>
 
 <!-- ADMIN PAGES -->
-<div class="admin-page" id="a-flagged">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;"><span style="font-size:20px;">🚨</span><div><div class="section-title" style="margin-bottom:0;">Flagged content</div><div style="font-size:13px;color:var(--muted);">Reported by your batchmates</div></div></div>
-  <div id="flaggedList">
-    <div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No flagged content yet</div>
-  </div>
-</div>
-
 <div class="admin-page" id="a-confessions">
-  <div class="section-title">All confessions</div>
+  <div class="section-title">Manage confessions</div>
   <div class="section-sub">Delete any inappropriate confession</div>
-  <div id="adminConfList">
-    <div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading confessions...</div>
-  </div>
+  <div id="adminConfList"><div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading...</div></div>
 </div>
 
 <div class="admin-page" id="a-photos">
-  <div class="section-title">Photo gallery</div>
+  <div class="section-title">Manage photos</div>
   <div class="section-sub">Delete any inappropriate photo</div>
-  <div class="grid-3" id="adminPhotoGrid">
-    <div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading photos...</div>
-  </div>
+  <div class="grid-3" id="adminPhotoGrid"><div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading...</div></div>
 </div>
+
 <div class="admin-page" id="a-members">
   <div class="section-title">Manage members</div>
   <div class="section-sub">All members who joined via Google login</div>
-  <div id="memberList">
-    <div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading members...</div>
-  </div>
+  <div id="memberList"><div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">Loading...</div></div>
 </div>
 
 <div class="admin-page" id="a-settings">
-  <div class="section-title">Website settings</div>
-  <div class="section-sub">Control how the site behaves</div>
+  <div class="section-title">Settings</div>
+  <div class="section-sub">Website controls</div>
   <div style="display:flex;flex-direction:column;gap:10px;">
-    <div class="card" style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:500;">Confession approval mode</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Every confession needs your approval before going live</div></div><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div></div>
-    <div class="card" style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:500;">Allow photo uploads</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Members can add to the gallery</div></div><div class="toggle on" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div></div>
-    <div class="card" style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:500;">Lock website (read-only)</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">No new posts or signups</div></div><div class="toggle off" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div></div>
-    <div class="card" style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:14px;font-weight:500;">Reveal batch awards</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Show voting results to everyone on farewell day</div></div><div class="toggle off" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div></div>
-    <div class="card"><div style="font-size:14px;font-weight:500;margin-bottom:8px;">Batch photo logo</div><div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Upload your batch photo — it appears as the logo in the topbar</div><input type="file" id="logoUpload" accept="image/*" style="display:none;" onchange="uploadLogo(event)"/><button class="btn btn-primary" onclick="document.getElementById('logoUpload').click()">Upload batch photo</button></div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><input type="text" value="AVCOE-IT-2026" style="max-width:200px;" readonly/><button class="btn" onclick="copyCode()">Copy</button></div><div style="font-size:12px;color:var(--muted);margin-top:8px;">Share this with your batch to let them join</div></div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">Batch photo logo</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Appears as the logo in the topbar</div>
+      <input type="file" id="logoUpload" accept="image/*" style="display:none;" onchange="uploadLogo(event)"/>
+      <button class="btn btn-primary" onclick="document.getElementById('logoUpload').click()">Upload batch photo</button>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px;">Batch invite link</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <code style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;color:var(--gold);">rohan2531.github.io/amrutvahini-diaries</code>
+        <button class="btn" onclick="navigator.clipboard.writeText('https://rohan2531.github.io/amrutvahini-diaries/').then(()=>alert('Copied!'))">Copy</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- JOIN MODAL -->
-<div id="joinModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:28px;width:90%;max-width:400px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);margin-bottom:8px;">Welcome 🎓</div>
-    <div style="font-size:14px;color:var(--muted2);margin-bottom:6px;">Amrutvahini Diaries — IT 2022–26</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:24px;">Sign in with your Google account to join your batch</div>
-    <button class="btn btn-primary" onclick="googleLogin()" style="width:100%;padding:12px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;">
-      <img src="https://www.google.com/favicon.ico" style="width:18px;height:18px;"/> Sign in with Google
-    </button>
-    <div style="font-size:11px;color:var(--muted);margin-top:16px;">Only Amrutvahini IT batch members can access this site</div>
-  </div>
-</div>
-
+<!-- UI SCRIPT -->
 <script>
-// ── UI ONLY — navigation, countdown, toggles ──────────
+const ADMIN_PASS = 'AVCOEITBATCH2022-26';
+let adminMode = false;
 
-window.addEventListener('load',()=>{
-  const d=new Date(); d.setDate(d.getDate()+14);
-  document.getElementById('countdownPill').textContent='⏳ '+Math.ceil((d-new Date())/86400000)+' days to farewell';
+window.addEventListener('load', () => {
+  const d = new Date(); d.setDate(d.getDate() + 14);
+  document.getElementById('countdownPill').textContent = '⏳ ' + Math.ceil((d - new Date()) / 86400000) + ' days to farewell';
 });
 
-function showPage(id,el){
-  if(adminMode) return;
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('#mainNav .nav-item').forEach(n=>n.classList.remove('active'));
+function showPage(id, el) {
+  if (adminMode) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#mainNav .nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if(el) el.classList.add('active');
+  if (el) el.classList.add('active');
 }
-function showAdmin(id,el){
-  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('#adminNav .nav-item').forEach(n=>n.classList.remove('active'));
+function showAdmin(id, el) {
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#adminNav .nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  if(el) el.classList.add('active');
+  if (el) el.classList.add('active');
 }
-
-let adminMode=false;
-const ADMIN_PASS='AVCOEITBATCH2022-26';
-function toggleAdmin(){
-  if(adminMode){
-    adminMode=false;
-    const an=document.getElementById('adminNav'),mn=document.getElementById('mainNav');
-    an.style.display='none'; mn.style.display='flex';
-    showPage('home',mn.querySelector('.nav-item'));
+function toggleAdmin() {
+  if (adminMode) {
+    adminMode = false;
+    document.getElementById('adminNav').style.display = 'none';
+    document.getElementById('mainNav').style.display = 'flex';
+    showPage('home', document.querySelector('#mainNav .nav-item'));
     return;
   }
-  if(!window._userUID){
-    alert('Please sign in with Google first before accessing admin panel!');
-    return;
-  }
-  const entered=prompt('🛡 Enter admin password:');
-  if(entered===null) return;
-  if(entered===ADMIN_PASS){
-    adminMode=true;
-    const mn=document.getElementById('mainNav'),an=document.getElementById('adminNav');
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    mn.style.display='none'; an.style.display='flex';
-    showAdmin('a-flagged',an.querySelector('.nav-item'));
-  } else {
-    alert('❌ Wrong password! Access denied.');
+  if (!window._userUID) { alert('Please sign in with Google first!'); return; }
+  const entered = prompt('🛡 Enter admin password:');
+  if (entered === ADMIN_PASS) {
+    adminMode = true;
+    document.getElementById('mainNav').style.display = 'none';
+    document.getElementById('adminNav').style.display = 'flex';
+    showAdmin('a-confessions', document.querySelector('#adminNav .nav-item'));
+  } else if (entered !== null) {
+    alert('❌ Wrong password!');
   }
 }
-
-function toggleSwitch(el){el.classList.toggle('on');el.classList.toggle('off');}
-function filterProfiles(q){document.querySelectorAll('.profile-card').forEach(c=>{c.style.display=c.dataset.name.includes(q.toLowerCase())?'':'none';});}
-function toggleAddProfile(){const f=document.getElementById('addProfileForm');f.style.display=f.style.display==='none'?'block':'none';}
-function flagPost(el){el.textContent='🚩 Reported';el.style.color='var(--red)';el.style.pointerEvents='none';}
-function toggleCreateAward(){const f=document.getElementById('createAwardForm');f.style.display=f.style.display==='none'?'block':'none';}
-function copyLink(){navigator.clipboard.writeText('https://rohan2531.github.io/amrutvahini-diaries/').then(()=>alert('Link copied! Share it with your batch 🎓'));}
-function copyCode(){navigator.clipboard.writeText('AVCOE-IT-2026').then(()=>alert('Batch code copied!'));}
-function uploadLogo(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const img=document.getElementById('logoImg');img.src=ev.target.result;document.getElementById('logoWrap').style.display='block';};r.readAsDataURL(f);}
-
-const awardVoted={};
-function castVote(el,id){
-  if(!window._userUID){alert('Please sign in first!');return;}
-  if(awardVoted[id])return;
-  awardVoted[id]=true;
-  el.closest('.award-card').querySelectorAll('.vote-option').forEach(o=>o.style.pointerEvents='none');
+function filterProfiles(q) {
+  document.querySelectorAll('.profile-card').forEach(c => {
+    c.style.display = c.dataset.name.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+function toggleAddProfile() {
+  const f = document.getElementById('addProfileForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+function toggleCreateAward() {
+  const f = document.getElementById('createAwardForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+function uploadLogo(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    document.getElementById('logoImg').src = ev.target.result;
+    document.getElementById('logoWrap').style.display = 'block';
+  };
+  r.readAsDataURL(f);
+}
+const awardVoted = {};
+function castVote(el, id) {
+  if (!window._userUID) { alert('Please sign in first!'); return; }
+  if (awardVoted[id]) return;
+  awardVoted[id] = true;
+  el.closest('.award-card').querySelectorAll('.vote-option').forEach(o => o.style.pointerEvents = 'none');
   el.classList.add('voted');
 }
-
-// placeholder stubs replaced by Firebase module via window.* assignments
-function showGoogleLoginFallback(){ document.getElementById('joinModal').style.display='flex'; }
 </script>
 
-<!-- FIREBASE -->
+<!-- FIREBASE MODULE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, updateDoc, setDoc, doc, increment, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -488,513 +459,343 @@ const firebaseConfig = {
   appId: "1:127069684860:web:bb1feae1d97ea4909935f9"
 };
 
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+const ADMIN_UID = 'WEz2oV7i4fMbm075oAqSSioTUEm2';
 
-// ── EXPOSE ALL WINDOW FUNCTIONS IMMEDIATELY ────────────
-// Define ALL functions that HTML onclick= attributes call
-// BEFORE any async operations so they are always available
+// ── AUTH ───────────────────────────────────────────────
+onAuthStateChanged(auth, async user => {
+  const lock = document.getElementById('lockScreen');
+  if (user) {
+    if (lock) lock.style.display = 'none';
+    window._userUID = user.uid;
+    document.getElementById('authBtn').textContent = '👤 ' + user.displayName.split(' ')[0];
+    document.getElementById('authBtn').style.color = 'var(--gold)';
+    const hw = document.getElementById('homeWelcome');
+    if (hw) hw.textContent = 'Welcome, ' + user.displayName.split(' ')[0] + '! 🎓';
+    const ref = doc(db, 'members', user.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      await setDoc(ref, { name: user.displayName, createdAt: serverTimestamp(), joinedAt: serverTimestamp() });
+    }
+  } else {
+    if (lock) lock.style.display = 'flex';
+    window._userUID = null;
+    document.getElementById('authBtn').textContent = '🔑 Sign in';
+    document.getElementById('authBtn').style.color = '';
+  }
+});
 
-window.googleLogin = async function(){
-  try { await signInWithPopup(auth, provider); }
-  catch(err){ alert('Sign in failed: ' + err.message); }
-};
+window.googleLogin  = async () => { try { await signInWithPopup(auth, provider); } catch(e){ alert(e.message); } };
+window.googleLogout = async () => { if (confirm('Sign out?')) await signOut(auth); };
 
-window.googleLogout = async function(){
-  if(confirm('Sign out?')){ await signOut(auth); }
-};
+// ── STATS ──────────────────────────────────────────────
+[{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
+.forEach(({col,id}) => onSnapshot(collection(db,col), snap => { const el=document.getElementById(id); if(el) el.textContent=snap.size; }));
 
-window.addPost = async function(){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
-  const text = document.getElementById('newPost').value.trim();
-  if(!text) return;
-  await addDoc(collection(db,'posts'),{text, name:user.displayName, uid:user.uid, likes:0, createdAt:serverTimestamp()});
-  document.getElementById('newPost').value='';
-};
+// ── MEMORY WALL ────────────────────────────────────────
+onSnapshot(query(collection(db,'posts'), orderBy('createdAt','desc')), snap => {
+  const feed = document.getElementById('postFeed'); if (!feed) return;
+  feed.innerHTML = '';
+  snap.forEach(d => {
+    const p = d.data();
+    const isMe = auth.currentUser && p.uid === auth.currentUser.uid;
+    const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : 'Just now';
+    const div = document.createElement('div'); div.className = 'post';
+    div.innerHTML = `
+      <div class="post-header">
+        <div class="avatar" style="width:34px;height:34px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${(p.name||'?').slice(0,2).toUpperCase()}</div>
+        <div><div style="font-size:13px;font-weight:500;">${p.name||'Batchmate'}</div><div style="font-size:11px;color:var(--muted);">${time}</div></div>
+      </div>
+      <div style="font-size:14px;color:var(--muted2);">${p.text}</div>
+      <div class="post-actions">
+        <span class="post-action" onclick="window.likePost('${d.id}',this)">❤️ ${p.likes||0}</span>
+        ${isMe ? `<span class="post-action" style="margin-left:auto;color:var(--red);" onclick="window.deletePost('${d.id}')">🗑 Delete</span>` : ''}
+      </div>`;
+    feed.appendChild(div);
+  });
+});
+window.addPost  = async () => { const u=auth.currentUser; if(!u) return; const t=document.getElementById('newPost').value.trim(); if(!t) return; await addDoc(collection(db,'posts'),{text:t,name:u.displayName,uid:u.uid,likes:0,createdAt:serverTimestamp()}); document.getElementById('newPost').value=''; };
+window.likePost = async (id) => { await updateDoc(doc(db,'posts',id),{likes:increment(1)}); };
+window.deletePost = async (id) => { if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',id)); };
 
-window.likeFirePost = async function(id, el){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
-  await updateDoc(doc(db,'posts',id),{likes: increment(1)});
-  el.style.color='var(--red)';
-};
-
-window.deletePost = async function(id){
-  const user = auth.currentUser;
-  if(!user) return;
-  if(!confirm('Delete this post?')) return;
-  await deleteDoc(doc(db,'posts',id));
-};
-
-window.addProfile = async function(){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
-  const nick = document.getElementById('pNick').value.trim();
-  const bio  = document.getElementById('pBio').value.trim();
-  const data = {name:user.displayName, nick, bio, createdAt:serverTimestamp(), joinedAt:serverTimestamp()};
-  if(user.photoURL) data.photo = user.photoURL;
-  await setDoc(doc(db,'profiles',user.uid), data);
-  ['pName','pNick','pBio','pMemory'].forEach(id=>document.getElementById(id).value='');
+// ── PROFILES ───────────────────────────────────────────
+onSnapshot(query(collection(db,'profiles'), orderBy('createdAt','desc')), snap => {
+  const grid = document.getElementById('profileGrid'); if (!grid) return;
+  grid.innerHTML = '';
+  const cols = ['rgba(201,168,76,0.12);color:var(--gold)','rgba(77,184,164,0.12);color:var(--teal)','rgba(155,127,232,0.12);color:var(--purple)','rgba(76,175,125,0.12);color:var(--green)','rgba(224,82,82,0.12);color:var(--red)'];
+  snap.forEach(d => {
+    const p = d.data();
+    const isMe = auth.currentUser && d.id === auth.currentUser.uid;
+    const c = cols[Math.floor(Math.random()*cols.length)].split(';');
+    const avatarHTML = p.photo
+      ? `<img src="${p.photo}" style="width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;border:2px solid rgba(201,168,76,0.4);" referrerpolicy="no-referrer"/>`
+      : `<div class="profile-avatar" style="background:${c[0]};${c[1]};">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
+    const div = document.createElement('div'); div.className='profile-card'; div.dataset.name=(p.name||'').toLowerCase();
+    div.innerHTML = `${avatarHTML}
+      <div style="font-size:15px;font-weight:500;margin-bottom:3px;">${p.name}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">IT${p.nick?' — "'+p.nick+'"':''}</div>
+      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"${p.bio||'IT Batch 2022–26'}"</div>
+      <span class="badge badge-gold">IT</span>
+      ${isMe ? `<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="window.editProfileForm('${d.id}','${(p.nick||'').replace(/'/g,"\\'")}','${(p.bio||'').replace(/'/g,"\\'")}')">✏️ Edit</button></div>` : ''}`;
+    grid.appendChild(div);
+  });
+});
+window.addProfile = async () => {
+  const u = auth.currentUser; if (!u) return;
+  const data = { name:u.displayName, nick:document.getElementById('pNick').value.trim(), bio:document.getElementById('pBio').value.trim(), createdAt:serverTimestamp(), joinedAt:serverTimestamp() };
+  if (u.photoURL) data.photo = u.photoURL;
+  await setDoc(doc(db,'profiles',u.uid), data);
+  ['pNick','pBio'].forEach(id => document.getElementById(id).value='');
   document.getElementById('addProfileForm').style.display='none';
   alert('Profile saved! 🎓');
 };
-
-window.editProfile = function(id, name, nick, bio){
-  document.getElementById('pName').value = name;
+window.editProfileForm = (id, nick, bio) => {
   document.getElementById('pNick').value = nick;
   document.getElementById('pBio').value  = bio;
   document.getElementById('addProfileForm').style.display = 'block';
   document.getElementById('addProfileForm').scrollIntoView({behavior:'smooth'});
   const btn = document.querySelector('#addProfileForm .btn-primary');
   btn.textContent = 'Update profile';
-  btn.onclick = async function(){
-    const user = auth.currentUser;
-    if(!user) return;
-    const newNick = document.getElementById('pNick').value.trim();
-    const newBio  = document.getElementById('pBio').value.trim();
-    const updateData = {nick:newNick, bio:newBio};
-    if(user.photoURL) updateData.photo = user.photoURL;
-    await updateDoc(doc(db,'profiles',user.uid), updateData);
-    ['pName','pNick','pBio','pMemory'].forEach(i=>document.getElementById(i).value='');
+  btn.onclick = async () => {
+    const u = auth.currentUser; if (!u) return;
+    const upd = { nick:document.getElementById('pNick').value.trim(), bio:document.getElementById('pBio').value.trim() };
+    if (u.photoURL) upd.photo = u.photoURL;
+    await updateDoc(doc(db,'profiles',u.uid), upd);
+    ['pNick','pBio'].forEach(i => document.getElementById(i).value='');
     document.getElementById('addProfileForm').style.display='none';
     btn.textContent='Save profile'; btn.onclick=window.addProfile;
     alert('Profile updated! 🎓');
   };
 };
 
-window.submitConfession = async function(){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
-  const text = document.getElementById('newConfession').value.trim();
-  if(!text) return;
+// ── CONFESSIONS ────────────────────────────────────────
+onSnapshot(query(collection(db,'confessions'), orderBy('createdAt','desc')), snap => {
+  const feed = document.getElementById('confessionFeed');
+  const adminList = document.getElementById('adminConfList');
+  if (feed) feed.innerHTML = '';
+  if (adminList) adminList.innerHTML = '';
+  if (snap.size === 0 && adminList) { adminList.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No confessions yet</div>'; return; }
+  snap.forEach(d => {
+    const p = d.data();
+    const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : '';
+    if (feed) {
+      const div = document.createElement('div'); div.className='confession';
+      div.innerHTML=`<div style="font-size:14px;font-style:italic;color:var(--muted2);">"${p.text}"</div><div style="font-size:11px;color:var(--muted);margin-top:6px;">Anonymous · ${time}</div>`;
+      feed.appendChild(div);
+    }
+    if (adminList) {
+      const div = document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;';
+      div.innerHTML=`<div style="font-size:13px;font-style:italic;flex:1;">"${p.text}"</div><button class="btn btn-danger" style="font-size:11px;padding:4px 10px;flex-shrink:0;" onclick="window.adminDelete('confessions','${d.id}',this)">🗑 Delete</button>`;
+      adminList.appendChild(div);
+    }
+  });
+});
+window.submitConfession = async () => {
+  const u = auth.currentUser; if (!u) return;
+  const text = document.getElementById('newConfession').value.trim(); if (!text) return;
   await addDoc(collection(db,'confessions'),{text, createdAt:serverTimestamp()});
   document.getElementById('newConfession').value='';
-  alert('Confession posted! 🤫');
 };
 
-window.sealLetter = async function(){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+// ── LETTERS ────────────────────────────────────────────
+onSnapshot(query(collection(db,'letters'), orderBy('createdAt','desc')), snap => {
+  const list = document.getElementById('letterList'); if (!list) return;
+  list.innerHTML = '';
+  const colors = ['rgba(201,168,76,0.12)','rgba(77,184,164,0.12)','rgba(155,127,232,0.12)'];
+  snap.forEach(d => {
+    const p = d.data();
+    const div = document.createElement('div'); div.className='letter-card';
+    div.innerHTML=`<div class="letter-icon" style="background:${colors[Math.floor(Math.random()*colors.length)]};">🔒</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">${p.name}'s letter</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Sealed · Opens on ${p.unlockDate||'farewell day'}</div></div><span class="badge badge-gold">Locked</span>`;
+    list.appendChild(div);
+  });
+});
+window.sealLetter = async () => {
+  const u = auth.currentUser; if (!u) return;
   const text = document.getElementById('lText').value.trim();
   const date = document.getElementById('lDate').value;
-  if(!text){ alert('Please write your letter!'); return; }
-  await addDoc(collection(db,'letters'),{name:user.displayName, text, unlockDate:date||'farewell day', uid:user.uid, createdAt:serverTimestamp()});
-  ['lName','lText','lDate'].forEach(id=>document.getElementById(id).value='');
+  if (!text) { alert('Please write your letter!'); return; }
+  await addDoc(collection(db,'letters'),{name:u.displayName, text, unlockDate:date||'farewell day', uid:u.uid, createdAt:serverTimestamp()});
+  ['lText','lDate'].forEach(id => document.getElementById(id).value='');
   alert('Your letter has been sealed! 🔒');
 };
 
-window.addVision = async function(){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
+// ── 5-YEAR VISION ──────────────────────────────────────
+onSnapshot(query(collection(db,'visions'), orderBy('createdAt','desc')), snap => {
+  const feed = document.getElementById('visionFeed'); if (!feed) return;
+  feed.innerHTML = '';
+  snap.forEach(d => {
+    const p = d.data();
+    const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const div = document.createElement('div'); div.className='vision-card';
+    div.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${i}</div>
+      <div><div style="font-size:14px;font-weight:500;">${p.name}</div>
+      <span class="badge badge-gold">${p.path||'IT'}${p.location?' · '+p.location:''}</span></div></div>
+      <div style="font-size:13px;color:var(--muted2);font-style:italic;">"${p.dream}"</div>
+      ${p.msg?`<div style="font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:10px;margin-top:10px;">"${p.msg}"</div>`:''}`;
+    feed.appendChild(div);
+  });
+});
+window.addVision = async () => {
+  const u = auth.currentUser; if (!u) return;
   const dream = document.getElementById('vDream').value.trim();
-  if(!dream){ alert('Please write your dream!'); return; }
-  const path     = document.getElementById('vPath').value;
-  const location = document.getElementById('vLocation').value;
-  const msg      = document.getElementById('vMsg').value.trim();
-  await addDoc(collection(db,'visions'),{name:user.displayName, dream, path, location, msg, uid:user.uid, createdAt:serverTimestamp()});
-  ['vName','vDream','vMsg'].forEach(id=>document.getElementById(id).value='');
+  if (!dream) { alert('Please write your dream!'); return; }
+  await addDoc(collection(db,'visions'),{
+    name:u.displayName, dream,
+    path:document.getElementById('vPath').value,
+    location:document.getElementById('vLocation').value,
+    msg:document.getElementById('vMsg').value.trim(),
+    uid:u.uid, createdAt:serverTimestamp()
+  });
+  ['vDream','vMsg'].forEach(id => document.getElementById(id).value='');
   document.getElementById('vPath').value=''; document.getElementById('vLocation').value='';
   alert('Vision submitted! 🚀');
 };
 
-window.uploadPhoto = async function(e){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
-  const file = e.target.files[0]; if(!file) return;
+// ── PHOTOS ─────────────────────────────────────────────
+onSnapshot(query(collection(db,'photos'), orderBy('createdAt','desc')), snap => {
+  const grid = document.getElementById('photoGrid');
+  const adminGrid = document.getElementById('adminPhotoGrid');
+  if (grid) { grid.innerHTML=''; document.getElementById('photoCount').textContent = snap.size+' photos'; }
+  if (adminGrid) adminGrid.innerHTML='';
+  if (snap.size===0 && adminGrid) { adminGrid.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;grid-column:1/-1;">No photos yet</div>'; }
+  snap.forEach(d => {
+    const p = d.data();
+    const isMe = auth.currentUser && p.uid === auth.currentUser.uid;
+    if (grid) {
+      const div = document.createElement('div'); div.style.cssText='aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;';
+      div.innerHTML=`<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.55);padding:4px 8px;font-size:11px;color:rgba(255,255,255,0.85);">${p.uploadedBy||'Batchmate'}</div>
+        ${isMe?`<div style="position:absolute;top:6px;right:6px;background:rgba(224,82,82,0.85);border-radius:6px;padding:2px 8px;font-size:11px;color:white;cursor:pointer;" onclick="window.deletePhoto('${d.id}')">🗑</div>`:''}`;
+      grid.appendChild(div);
+    }
+    if (adminGrid) {
+      const div = document.createElement('div'); div.style.cssText='aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;';
+      div.innerHTML=`<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
+        <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);padding:4px 8px;font-size:11px;color:rgba(255,255,255,0.85);">${p.uploadedBy||'Batchmate'}</div>
+        <button class="btn btn-danger" style="position:absolute;top:6px;right:6px;font-size:11px;padding:3px 8px;" onclick="window.adminDelete('photos','${d.id}',this)">🗑 Delete</button>`;
+      adminGrid.appendChild(div);
+    }
+  });
+});
+window.uploadPhoto = async (e) => {
+  const u = auth.currentUser; if (!u) return;
+  const file = e.target.files[0]; if (!file) return;
   const btn = document.querySelector('#gallery .btn-primary');
   btn.textContent='Uploading...'; btn.disabled=true;
   try {
     const fd = new FormData();
-    fd.append('file', file);
-    fd.append('upload_preset', 'batch_photos');
-    fd.append('folder','amrutvahini-diaries');
-    const res  = await fetch(`https://api.cloudinary.com/v1_1/dluc4n5m6/image/upload`,{method:'POST',body:fd});
+    fd.append('file', file); fd.append('upload_preset','batch_photos'); fd.append('folder','amrutvahini-diaries');
+    const res  = await fetch('https://api.cloudinary.com/v1_1/dluc4n5m6/image/upload',{method:'POST',body:fd});
     const data = await res.json();
-    if(data.secure_url){
-      await addDoc(collection(db,'photos'),{url:data.secure_url, uploadedBy:user.displayName, uid:user.uid, caption:'', createdAt:serverTimestamp()});
-      alert('Photo uploaded! 📸');
-    } else { alert('Upload failed. Please try again.'); }
+    if (data.secure_url) {
+      await addDoc(collection(db,'photos'),{url:data.secure_url, uploadedBy:u.displayName, uid:u.uid, caption:'', createdAt:serverTimestamp()});
+    } else { alert('Upload failed. Try again.'); }
   } catch(err){ alert('Upload failed: '+err.message); }
   finally { btn.textContent='+ Upload photo'; btn.disabled=false; }
 };
+window.deletePhoto = async (id) => { if(confirm('Delete this photo?')) await deleteDoc(doc(db,'photos',id)); };
 
-window.deletePhoto = async function(id){
-  const user = auth.currentUser;
-  if(!user) return;
-  if(!confirm('Delete this photo?')) return;
-  await deleteDoc(doc(db,'photos',id));
-};
-
-window.adminDeletePhoto = async function(id, btn){
-  const user = auth.currentUser;
-  if(!user){ alert('Please sign in first!'); return; }
-  if(!confirm('Delete this photo permanently?')) return;
-  try {
-    await deleteDoc(doc(db,'photos',id));
-    const card = btn.closest('div[style*="aspect-ratio"]');
-    if(card) card.remove();
-  } catch(err){ alert('Delete failed: ' + err.message + ' ('+err.code+')'); }
-};
-
-window.adminDeleteDoc = async function(collectionName, docId, btn){
-  const user = auth.currentUser;
-  if(!user){ alert('Please sign in first!'); return; }
-  if(!confirm('Delete this permanently?')) return;
-  try {
-    await deleteDoc(doc(db, collectionName, docId));
-    const card = btn.closest('.card,.flagged-post,.confession,.letter-card,.post');
-    if(card){ card.style.opacity='0.3'; card.style.pointerEvents='none'; }
-    btn.textContent='Deleted';
-  } catch(err){ alert('Delete failed: ' + err.message + ' ('+err.code+')'); }
-};
-
-window.removeMember = async function(uid, name){
-  const user = auth.currentUser;
-  if(!user){ alert('Please sign in first!'); return; }
-  if(!confirm('Remove '+name+' from the batch?')) return;
-  try {
-    await deleteDoc(doc(db,'members',uid));
-    try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
-    alert(name+' has been removed.');
-  } catch(err){ alert('Remove failed: ' + err.message + ' ('+err.code+')'); }
-};
-
-window.pinHometown = async function(){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
-  const city  = document.getElementById('mapCity').value.trim();
-  const state = document.getElementById('mapState').value;
-  if(!city){ alert('Please enter your city!'); return; }
-  await addDoc(collection(db,'hometowns'),{city, state, name:user.displayName, uid:user.uid, createdAt:serverTimestamp()});
+// ── HOMETOWN MAP ───────────────────────────────────────
+onSnapshot(query(collection(db,'hometowns'), orderBy('createdAt','desc')), snap => {
+  const list = document.getElementById('hometownList'); if (!list) return;
+  list.innerHTML = '';
+  snap.forEach(d => {
+    const p = d.data();
+    const div = document.createElement('div'); div.className='hometown-card';
+    div.innerHTML=`<div style="font-size:18px;">📍</div><div><div style="font-size:13px;font-weight:500;">${p.city}</div><div style="font-size:12px;color:var(--muted);">${p.name||'Batchmate'} · ${p.state||''}</div></div>`;
+    list.appendChild(div);
+  });
+});
+window.pinHometown = async () => {
+  const u = auth.currentUser; if (!u) return;
+  const city = document.getElementById('mapCity').value.trim();
+  if (!city) { alert('Please enter your city!'); return; }
+  await addDoc(collection(db,'hometowns'),{city, state:document.getElementById('mapState').value, name:u.displayName, uid:u.uid, createdAt:serverTimestamp()});
   document.getElementById('mapCity').value='';
   alert('Hometown pinned! 📍');
 };
 
-window.createAward = async function(){
-  const user = auth.currentUser;
-  if(!user){ document.getElementById('joinModal').style.display='flex'; return; }
-  const emoji = document.getElementById('aEmoji').value.trim()||'🏆';
-  const title = document.getElementById('aTitle').value.trim();
-  const desc  = document.getElementById('aDesc').value.trim();
-  const opts  = document.getElementById('aOptions').value.trim().split('\n').map(o=>o.trim()).filter(o=>o.length>0);
-  if(!title){ alert('Please enter an award title!'); return; }
-  if(opts.length<2){ alert('Please add at least 2 nominees, one per line!'); return; }
-  await addDoc(collection(db,'awards'),{title, description:desc, emoji, options:opts, uid:user.uid, createdAt:serverTimestamp()});
-  ['aEmoji','aTitle','aDesc','aOptions'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('createAwardForm').style.display='none';
-  alert('Award created! 🏆');
-};
-
-window.editVision = function(id){
-  alert('Edit vision — coming soon!');
-};
-
-let currentUser = null;
-
-// ── AUTH STATE ─────────────────────────────────────────
-onAuthStateChanged(auth, async user => {
-  currentUser = user;
-  const lockScreen = document.getElementById('lockScreen');
-  if(user){
-    // hide lock screen
-    if(lockScreen) lockScreen.style.display = 'none';
-    window._userName = user.displayName;
-    window._userUID  = user.uid;
-    // auto-fill name fields everywhere
-    ['pName','lName','vName'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.value = user.displayName;
-    });
-    // update topbar auth button
-    document.getElementById('joinModal').style.display = 'none';
-    document.getElementById('authBtn').textContent = '👤 ' + user.displayName.split(' ')[0];
-    document.getElementById('authBtn').style.color = 'var(--gold)';
-    // update home welcome card
-    const welcome = document.getElementById('homeWelcome');
-    const welcomeSub = document.getElementById('homeWelcomeSub');
-    if(welcome) welcome.textContent = 'Welcome, ' + user.displayName.split(' ')[0] + '! 🎓';
-    if(welcomeSub) welcomeSub.textContent = 'You are signed in — explore, post and share memories!';
-    // save member doc using UID as document ID
-    const memberRef = doc(db, 'members', user.uid);
-    const memberSnap = await getDoc(memberRef);
-    if(!memberSnap.exists()){
-      await setDoc(memberRef, {name: user.displayName, createdAt: serverTimestamp(), joinedAt: serverTimestamp()});
-    }
-  } else {
-    // show lock screen — block everything
-    if(lockScreen) lockScreen.style.display = 'flex';
-    window._userName = null;
-    window._userUID  = null;
-    document.getElementById('authBtn').textContent = '🔑 Sign in';
-    document.getElementById('authBtn').style.color = '';
-  }
-});
-
-function showGoogleLogin(){
-  document.getElementById('joinModal').style.display = 'flex';
-}
-window.joinBatch = window.googleLogin;
-
-// ── STATS ──────────────────────────────────────────────
-[{col:'members',id:'s-members'},{col:'posts',id:'s-memories'},{col:'photos',id:'s-photos'},{col:'letters',id:'s-letters'}]
-.forEach(({col,id}) => {
-  onSnapshot(collection(db,col), snap => {
-    const el = document.getElementById(id);
-    if(el) el.textContent = snap.size;
-  });
-});
-
-// ── MEMORY WALL ────────────────────────────────────────
-const postQ = query(collection(db,'posts'), orderBy('createdAt','desc'));
-onSnapshot(postQ, snap => {
-  const feed = document.getElementById('postFeed');
-  feed.innerHTML = '';
-  snap.forEach(d => {
-    const p = d.data();
-    const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : 'Just now';
-    const isMe = currentUser && p.uid === currentUser.uid;
-    const div = document.createElement('div'); div.className='post';
-    div.innerHTML=`<div class="post-header"><div class="avatar" style="width:34px;height:34px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:12px;">${(p.name||'?').slice(0,2).toUpperCase()}</div><div><div style="font-size:13px;font-weight:500;">${p.name||'Batchmate'}</div><div style="font-size:11px;color:var(--muted);">${time}</div></div></div><div style="font-size:14px;color:var(--muted2);">${p.text}</div><div class="post-actions"><span class="post-action" onclick="likeFirePost('${d.id}',this)">❤️ <span class="like-count">${p.likes||0}</span></span>${isMe?`<span class="post-action btn-danger" onclick="deletePost('${d.id}')" style="margin-left:auto;color:var(--red);">🗑 Delete</span>`:'<span class="post-action" onclick="flagPost(this)" style="margin-left:auto;">🚩 Report</span>'}</div>`;
-    feed.appendChild(div);
-  });
-});
-
-
-
-// ── PROFILES ───────────────────────────────────────────
-const profileQ = query(collection(db,'profiles'), orderBy('createdAt','desc'));
-onSnapshot(profileQ, snap => {
-  const grid = document.getElementById('profileGrid');
-  grid.innerHTML = '';
-  const cols=['rgba(201,168,76,0.12);color:var(--gold)','rgba(77,184,164,0.12);color:var(--teal)','rgba(155,127,232,0.12);color:var(--purple)','rgba(76,175,125,0.12);color:var(--green)','rgba(224,82,82,0.12);color:var(--red)'];
-  snap.forEach(d => {
-    const p = d.data();
-    const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const c = cols[Math.floor(Math.random()*cols.length)].split(';');
-    const isMe = currentUser && d.id === currentUser.uid;
-    const avatarHTML = p.photo
-      ? `<img src="${p.photo}" style="width:60px;height:60px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;border:2px solid rgba(201,168,76,0.4);" referrerpolicy="no-referrer"/>`
-      : `<div class="profile-avatar" style="background:${c[0]};${c[1]};">${i}</div>`;
-    const div = document.createElement('div'); div.className='profile-card'; div.dataset.name=(p.name||'').toLowerCase();
-    div.innerHTML=`${avatarHTML}
-      <div style="font-size:15px;font-weight:500;margin-bottom:3px;">${p.name}</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">IT${p.nick?' — "'+p.nick+'"':''}</div>
-      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"${p.bio||'IT Batch 2022–26'}"</div>
-      <span class="badge badge-gold">IT</span>
-      ${isMe ? `<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="editProfile('${d.id}','${p.name}','${p.nick||''}','${(p.bio||'').replace(/'/g,"\\'")}')">✏️ Edit my profile</button></div>` : ''}`;
-    grid.appendChild(div);
-  });
-});
-
-
-
-// ── CONFESSIONS ────────────────────────────────────────
-const confQ = query(collection(db,'confessions'), orderBy('createdAt','desc'));
-onSnapshot(confQ, snap => {
-  const feed = document.getElementById('confessionFeed');
-  feed.innerHTML = '';
-  snap.forEach(d => {
-    const p = d.data();
-    const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : '';
-    const div = document.createElement('div'); div.className='confession'; div.style.marginTop='10px';
-    div.innerHTML=`<div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:8px;">"${p.text}"</div><div style="font-size:11px;color:var(--muted);">Anonymous · ${time}</div>`;
-    feed.appendChild(div);
-  });
-});
-
-
-// ── LETTERS ────────────────────────────────────────────
-const letterQ = query(collection(db,'letters'), orderBy('createdAt','desc'));
-onSnapshot(letterQ, snap => {
-  const list = document.getElementById('letterList');
-  list.innerHTML = '';
-  snap.forEach(d => {
-    const p = d.data();
-    const colorMap = ['rgba(201,168,76,0.12)','rgba(77,184,164,0.12)','rgba(155,127,232,0.12)'];
-    const bg = colorMap[Math.floor(Math.random()*colorMap.length)];
-    const div = document.createElement('div'); div.className='letter-card'; div.style.marginTop='10px';
-    div.innerHTML=`<div class="letter-icon" style="background:${bg};">🔒</div><div style="flex:1;"><div style="font-size:14px;font-weight:500;">${p.name}'s letter</div><div style="font-size:12px;color:var(--muted);margin-top:2px;">Sealed · Opens on ${p.unlockDate||'farewell day'}</div></div><span class="badge badge-gold">Locked</span>`;
-    list.appendChild(div);
-  });
-});
-
-
-// ── 5-YEAR VISION ──────────────────────────────────────
-const visionQ = query(collection(db,'visions'), orderBy('createdAt','desc'));
-onSnapshot(visionQ, snap => {
-  const feed = document.getElementById('visionFeed');
-  feed.innerHTML = '';
-  snap.forEach(d => {
-    const p = d.data();
-    const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const isMe = currentUser && p.uid === currentUser.uid;
-    const div = document.createElement('div'); div.className='card'; div.style.marginBottom='10px';
-    div.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:12px;">${i}</div>
-        <div><div style="font-size:14px;font-weight:500;">${p.name}</div>
-        <span class="badge badge-gold" style="margin-top:3px;">${p.path||'IT'}${p.location?' · '+p.location:''}</span></div>
-      </div>
-      ${isMe?`<button class="btn" style="font-size:12px;padding:4px 10px;" onclick="editVision('${d.id}')">✏️ Edit</button>`:''}
-    </div>
-    <div style="font-size:13px;color:var(--muted2);font-style:italic;margin-bottom:${p.msg?'10px':'0'};">"${p.dream}"</div>
-    ${p.msg?`<div style="font-size:14px;color:var(--text);border-top:1px solid var(--border);padding-top:10px;">"${p.msg}"</div>`:''}`;
-    feed.appendChild(div);
-  });
-});
-
-
-
-// ── PHOTO GALLERY ──────────────────────────────────────
-const CLOUDINARY_CLOUD  = 'dluc4n5m6';
-const CLOUDINARY_PRESET = 'batch_photos';
-
-const photoQ = query(collection(db,'photos'), orderBy('createdAt','desc'));
-onSnapshot(photoQ, snap => {
-  const grid = document.getElementById('photoGrid');
-  grid.innerHTML = '';
-  document.getElementById('photoCount').textContent = snap.size + ' photos';
-  snap.forEach(d => {
-    const p = d.data();
-    const isMe = currentUser && p.uid === currentUser.uid;
-    const div = document.createElement('div');
-    div.style.cssText='aspect-ratio:1;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.08);position:relative;';
-    div.innerHTML=`<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
-      <div style="position:absolute;bottom:6px;left:6px;font-size:11px;color:rgba(255,255,255,0.8);background:rgba(0,0,0,0.5);padding:2px 8px;border-radius:10px;">${p.uploadedBy||'Batchmate'}</div>
-      ${isMe?`<div style="position:absolute;top:6px;right:6px;background:rgba(224,82,82,0.85);border-radius:6px;padding:2px 8px;font-size:11px;color:white;cursor:pointer;" onclick="deletePhoto('${d.id}')">🗑</div>`:''}`;
-    grid.appendChild(div);
-  });
-});
-
-
-
-// ── HOMETOWN MAP ───────────────────────────────────────
-const hometownQ = query(collection(db,'hometowns'), orderBy('createdAt','desc'));
-onSnapshot(hometownQ, snap => {
-  const list = document.getElementById('hometownList');
-  list.innerHTML = '';
-  snap.forEach(d => {
-    const p = d.data();
-    const div = document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;gap:10px;';
-    div.innerHTML=`<div>📍</div><div><div style="font-size:13px;font-weight:500;">${p.city}</div><div style="font-size:12px;color:var(--muted);">${p.name||'Batchmate'} · ${p.state||''}</div></div>`;
-    list.appendChild(div);
-  });
-});
-
-
 // ── AWARDS ─────────────────────────────────────────────
-const renderedAwardIds = new Set();
-const awardsQ = query(collection(db,'awards'), orderBy('createdAt','desc'));
-onSnapshot(awardsQ, snap => {
-  const grid = document.getElementById('awardsGrid');
-  if(!grid) return;
+const renderedAwards = new Set();
+onSnapshot(query(collection(db,'awards'), orderBy('createdAt','desc')), snap => {
+  const grid = document.getElementById('awardsGrid'); if (!grid) return;
   snap.forEach(d => {
-    const cardId = 'award_' + d.id;
-    if(renderedAwardIds.has(d.id)) return;
-    renderedAwardIds.add(d.id);
+    if (renderedAwards.has(d.id)) return;
+    renderedAwards.add(d.id);
     const p = d.data();
+    const cardId = 'award_'+d.id;
     const optionsHTML = (p.options||[]).map(o =>
-      `<div class="vote-option" onclick="castVote(this,'${cardId}')">${o}<div class="vote-bar"><div class="vote-bar-fill" style="width:0%;"></div></div></div>`
+      `<div class="vote-option" onclick="castVote(this,'${cardId}')">${o}<div class="vote-bar"><div class="vote-bar-fill"></div></div></div>`
     ).join('');
-    const card = document.createElement('div');
-    card.className = 'award-card';
-    card.id = cardId;
-    card.innerHTML = `
-      <div style="font-size:24px;margin-bottom:10px;">${p.emoji||'🏆'}</div>
+    const card = document.createElement('div'); card.className='award-card'; card.id=cardId;
+    card.innerHTML=`<div style="font-size:26px;margin-bottom:8px;">${p.emoji||'🏆'}</div>
       <div style="font-size:14px;font-weight:500;margin-bottom:4px;">${p.title}</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${p.description||''}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">${p.description||''}</div>
       ${optionsHTML}`;
     grid.appendChild(card);
   });
 });
-
-// ── CREATE AWARD ───────────────────────────────────────
-
-// ── ADMIN DELETE ────────────────────────────────────────
-
-// ── ADMIN PHOTOS ───────────────────────────────────────
-const adminPhotoQ = query(collection(db,'photos'), orderBy('createdAt','desc'));
-onSnapshot(adminPhotoQ, snap => {
-  const grid = document.getElementById('adminPhotoGrid');
-  if(!grid) return;
-  grid.innerHTML = '';
-  if(snap.size === 0){
-    grid.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;grid-column:1/-1;">No photos yet</div>';
-    return;
-  }
-  snap.forEach(d => {
-    const p = d.data();
-    const div = document.createElement('div');
-    div.style.cssText='aspect-ratio:1;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);position:relative;';
-    div.innerHTML=`
-      <img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"/>
-      <div style="position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.5)';this.querySelector('.del-btn').style.display='flex';" onmouseout="this.style.background='rgba(0,0,0,0)';this.querySelector('.del-btn').style.display='none';">
-        <div class="del-btn" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">
-          <button class="btn btn-danger" style="font-size:12px;" onclick="adminDeletePhoto('${d.id}',this)">🗑 Delete</button>
-        </div>
-      </div>
-      <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);padding:6px 8px;font-size:11px;color:rgba(255,255,255,0.85);">${p.uploadedBy||'Batchmate'}</div>`;
-    grid.appendChild(div);
+window.createAward = async () => {
+  const u = auth.currentUser; if (!u) return;
+  const title = document.getElementById('aTitle').value.trim();
+  const opts  = document.getElementById('aOptions').value.trim().split('\n').map(o=>o.trim()).filter(o=>o);
+  if (!title) { alert('Please enter a title!'); return; }
+  if (opts.length < 2) { alert('Please add at least 2 nominees!'); return; }
+  await addDoc(collection(db,'awards'),{
+    title, description:document.getElementById('aDesc').value.trim(),
+    emoji:document.getElementById('aEmoji').value.trim()||'🏆',
+    options:opts, uid:u.uid, createdAt:serverTimestamp()
   });
-});
+  ['aEmoji','aTitle','aDesc','aOptions'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('createAwardForm').style.display='none';
+  alert('Award created! 🏆');
+};
 
-
-// ── ADMIN CONFESSIONS ──────────────────────────────────
-const adminConfQ = query(collection(db,'confessions'), orderBy('createdAt','desc'));
-onSnapshot(adminConfQ, snap => {
-  const list = document.getElementById('adminConfList');
-  if(!list) return;
-  list.innerHTML = '';
-  if(snap.size === 0){
-    list.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No confessions yet</div>';
-    return;
-  }
-  snap.forEach(d => {
-    const p = d.data();
-    const time = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString() : '';
-    const div = document.createElement('div');
-    div.className='confession';
-    div.style.cssText='display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;';
-    div.innerHTML=`<div style="flex:1;"><div style="font-size:14px;color:var(--muted2);font-style:italic;margin-bottom:6px;">"${p.text}"</div><div style="font-size:11px;color:var(--muted);">Anonymous · ${time}</div></div><button class="btn btn-danger" style="font-size:12px;padding:5px 12px;flex-shrink:0;" onclick="adminDeleteDoc('confessions','${d.id}',this)">🗑 Delete</button>`;
-    list.appendChild(div);
-  });
-});
-
-console.log('🔥 Firebase + Google Auth connected — Amrutvahini Diaries is live!');
+// ── ADMIN MEMBERS ──────────────────────────────────────
 onSnapshot(collection(db,'members'), snap => {
-  const list = document.getElementById('memberList');
-  if(!list) return;
+  const list = document.getElementById('memberList'); if (!list) return;
   list.innerHTML = '';
-  const colors=['rgba(201,168,76,0.12);color:var(--gold)','rgba(77,184,164,0.12);color:var(--teal)','rgba(155,127,232,0.12);color:var(--purple)','rgba(76,175,125,0.12);color:var(--green)','rgba(224,82,82,0.12);color:var(--red)'];
+  if (snap.size===0) { list.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No members yet</div>'; return; }
   snap.forEach(d => {
-    const p = d.data();
-    const initials = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const c = colors[Math.floor(Math.random()*colors.length)].split(';');
-    const joined = p.joinedAt ? new Date(p.joinedAt.seconds*1000).toLocaleDateString() : 'Recently';
-    const isMe = currentUser && d.id === currentUser.uid;
-    const div = document.createElement('div');
-    div.className='card';
-    div.style.cssText='display:flex;align-items:center;gap:12px;margin-bottom:10px;';
-    div.innerHTML=`
-      <div class="avatar" style="width:36px;height:36px;background:${c[0]};${c[1]};">${initials}</div>
-      <div style="flex:1;">
-        <div style="font-size:14px;font-weight:500;">${p.name}</div>
-        <div style="font-size:12px;color:var(--muted);">IT · Joined ${joined}</div>
-      </div>
-      ${isMe
-        ? '<span class="badge badge-gold">You (Admin)</span>'
-        : `<button class="btn btn-danger" style="font-size:12px;padding:5px 12px;" onclick="window.removeMember && window.removeMember('${d.id}','${p.name.replace(/'/g,"\\'")}')">Remove</button>`
-      }`;
+    const m = d.data();
+    const isMe = auth.currentUser && d.id === auth.currentUser.uid;
+    const initials = (m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const joined = m.joinedAt ? new Date(m.joinedAt.seconds*1000).toLocaleDateString() : 'Recently';
+    const div = document.createElement('div'); div.className='card'; div.style.cssText='display:flex;align-items:center;gap:12px;margin-bottom:10px;';
+    div.innerHTML=`<div class="avatar" style="width:36px;height:36px;background:rgba(201,168,76,0.12);color:var(--gold);font-size:13px;">${initials}</div>
+      <div style="flex:1;"><div style="font-size:14px;font-weight:500;">${m.name}</div><div style="font-size:12px;color:var(--muted);">Joined ${joined}</div></div>
+      ${isMe ? '<span class="badge badge-gold">You</span>' : `<button class="btn btn-danger" style="font-size:11px;padding:5px 12px;" onclick="window.adminRemoveMember('${d.id}','${(m.name||'').replace(/'/g,"\\'")}')">Remove</button>`}`;
     list.appendChild(div);
   });
-  if(snap.size === 0){
-    list.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">No members yet</div>';
-  }
 });
 
+// ── ADMIN ACTIONS ──────────────────────────────────────
+window.adminDelete = async (col, id, btn) => {
+  const u = auth.currentUser;
+  if (!u || u.uid !== ADMIN_UID) { alert('Admin access required.'); return; }
+  if (!confirm('Delete this permanently?')) return;
+  try {
+    await deleteDoc(doc(db, col, id));
+    const card = btn.closest('.card,.confession,.post');
+    if (card) { card.style.opacity='0.3'; card.style.pointerEvents='none'; }
+    btn.textContent = 'Deleted';
+  } catch(err){ alert('Error: '+err.message+' ('+err.code+')'); }
+};
+
+window.adminRemoveMember = async (uid, name) => {
+  const u = auth.currentUser;
+  if (!u || u.uid !== ADMIN_UID) { alert('Admin access required.'); return; }
+  if (!confirm('Remove '+name+' from the batch?')) return;
+  try {
+    await deleteDoc(doc(db,'members',uid));
+    try { await deleteDoc(doc(db,'profiles',uid)); } catch(e){}
+    alert(name+' has been removed.');
+  } catch(err){ alert('Error: '+err.message+' ('+err.code+')'); }
+};
 
 </script>
 </body>
