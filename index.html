@@ -603,7 +603,7 @@ function createAward(){
   const card=document.createElement('div');card.className='award-card';
   card.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div style="font-size:24px;">${emoji}</div><button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="this.closest('.award-card').remove()">Remove</button></div><div style="font-size:14px;font-weight:500;margin-bottom:4px;">${title}</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${desc}</div>${optionsHTML}`;
   document.getElementById('awardsGrid').appendChild(card);
-  if(window.db){window.addDoc(window.collection(window.db,'awards'),{title});}
+  if(window.db){window.addDoc(window.collection(window.db,'awards'),{title, description:desc, createdAt:Date.now()});}
   ['aEmoji','aTitle','aDesc','aOptions'].forEach(id=>document.getElementById(id).value='');
   toggleCreateAward();
 }
@@ -663,7 +663,7 @@ onSnapshot(postQ, snap => {
 window.addPost = async function(){
   const text = document.getElementById('newPost').value.trim();
   if(!text) return;
-  await addDoc(collection(db,'posts'),{text, likes:0});
+  await addDoc(collection(db,'posts'),{text, likes:0, createdAt:serverTimestamp()});
   document.getElementById('newPost').value='';
 };
 
@@ -683,7 +683,11 @@ onSnapshot(profileQ, snap => {
     const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const c = cols[Math.floor(Math.random()*cols.length)].split(';');
     const div = document.createElement('div'); div.className='profile-card'; div.dataset.name=(p.name||'').toLowerCase();
-    div.innerHTML=`<div class="profile-avatar" style="background:${c[0]};${c[1]};">${i}</div><div style="font-size:15px;font-weight:500;margin-bottom:3px;">${p.name}</div><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">IT${p.nick?' — "'+p.nick+'"':''}</div><div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"${p.bio||p.memory||'IT Batch 2022–26'}"</div><span class="badge badge-gold">IT</span>`;
+    div.innerHTML=`<div class="profile-avatar" style="background:${c[0]};${c[1]};">${i}</div>
+      <div style="font-size:15px;font-weight:500;margin-bottom:3px;">${p.name}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">IT${p.nick?' — "'+p.nick+'"':''}</div>
+      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">"${p.bio||'IT Batch 2022–26'}"</div>
+      <span class="badge badge-gold">IT</span>`;
     grid.appendChild(div);
   });
 });
@@ -691,7 +695,9 @@ onSnapshot(profileQ, snap => {
 window.addProfile = async function(){
   const name=document.getElementById('pName').value.trim();
   if(!name){alert('Please enter your name!');return;}
-  await addDoc(collection(db,'profiles'),{name});
+  const nick=document.getElementById('pNick').value.trim();
+  const bio=document.getElementById('pBio').value.trim();
+  await addDoc(collection(db,'profiles'),{name, nick, bio, createdAt:serverTimestamp(), joinedAt:serverTimestamp()});
   window._userName = name;
   ['pName','pNick','pBio','pMemory'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('addProfileForm').style.display='none';
@@ -716,7 +722,7 @@ onSnapshot(confQ, snap => {
 window.submitConfession = async function(){
   const text = document.getElementById('newConfession').value.trim();
   if(!text) return;
-  await addDoc(collection(db,'confessions'),{text});
+  await addDoc(collection(db,'confessions'),{text, createdAt:serverTimestamp()});
   document.getElementById('newConfession').value='';
   alert('Confession posted! 🤫');
 };
@@ -741,7 +747,7 @@ window.sealLetter = async function(){
   const name=document.getElementById('lName').value.trim();
   const text=document.getElementById('lText').value.trim();
   if(!name||!text){alert('Please fill in your name and letter!');return;}
-  await addDoc(collection(db,'letters'),{name});
+  await addDoc(collection(db,'letters'),{name, text, createdAt:serverTimestamp()});
   ['lName','lText','lDate'].forEach(id=>document.getElementById(id).value='');
   alert('Your letter has been sealed! 🔒');
 };
@@ -764,7 +770,7 @@ window.addVision = async function(){
   const name=document.getElementById('vName').value.trim();
   const dream=document.getElementById('vDream').value.trim();
   if(!name||!dream){alert('Please fill in your name and dream!');return;}
-  await addDoc(collection(db,'visions'),{name});
+  await addDoc(collection(db,'visions'),{name, dream, createdAt:serverTimestamp()});
   ['vName','vDream','vMsg'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('vPath').value=''; document.getElementById('vLocation').value='';
   alert('Vision submitted! 🚀');
@@ -800,7 +806,7 @@ window.uploadPhoto = async function(e){
     const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {method:'POST', body:formData});
     const data = await res.json();
     if(data.secure_url){
-      await addDoc(collection(db,'photos'),{url:data.secure_url});
+      await addDoc(collection(db,'photos'),{url:data.secure_url, caption:'', createdAt:serverTimestamp()});
       alert('Photo uploaded! 📸');
     } else { alert('Upload failed. Please try again.'); }
   } catch(err){ alert('Upload failed: ' + err.message); }
@@ -822,8 +828,9 @@ onSnapshot(hometownQ, snap => {
 
 window.pinHometown = async function(){
   const city=document.getElementById('mapCity').value.trim();
+  const state=document.getElementById('mapState').value;
   if(!city){alert('Please enter your city!');return;}
-  await addDoc(collection(db,'hometowns'),{city});
+  await addDoc(collection(db,'hometowns'),{city, state, createdAt:serverTimestamp()});
   document.getElementById('mapCity').value='';
   alert('Hometown pinned! 📍');
 };
@@ -834,7 +841,7 @@ window.joinBatch = async function(){
   if(!name){alert('Please enter your name!');return;}
   if(code!=='AVCOE-IT-2026'){alert('Wrong batch code! Ask your batch admin for the correct code.');return;}
   try {
-    await addDoc(collection(db,'members'),{name});
+    await addDoc(collection(db,'members'),{name, nick:'', bio:'', createdAt:serverTimestamp(), joinedAt:serverTimestamp()});
     window._userName = name;
     document.getElementById('joinModal').style.display='none';
     alert('Welcome to Amrutvahini Diaries, '+name+'! 🎓');
