@@ -94,11 +94,7 @@
   .profile-modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);max-width:420px;width:100%;max-height:90vh;overflow-y:auto;position:relative;}
   .profile-modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--muted);transition:all 0.2s;z-index:10;}
   .profile-modal-close:hover{color:var(--text);border-color:var(--border2);}
-  /* ── PROFILE GRID/LIST ── */
-  .profile-card-grid{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:all 0.2s;}
-  .profile-card-grid:hover{border-color:rgba(201,168,76,0.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
-  .profile-card-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s;margin-bottom:8px;}
-  .profile-card-list:hover{border-color:rgba(201,168,76,0.4);transform:translateX(3px);}
+
   /* ── LIGHTBOX ── */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:950;display:none;align-items:center;justify-content:center;flex-direction:column;}
   .lightbox.active{display:flex;}
@@ -109,40 +105,16 @@
   .lightbox-prev{left:16px;} .lightbox-next{right:16px;}
   .lightbox-prev:hover,.lightbox-next:hover{opacity:1;background:rgba(255,255,255,0.2);}
   .lightbox-info{color:rgba(255,255,255,0.7);font-size:13px;margin-top:12px;text-align:center;}
-  /* ── BOTTOM NAV (mobile only) ── */
-  .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);z-index:100;padding:0 4px env(safe-area-inset-bottom);}
-  .bottom-nav-inner{display:flex;justify-content:space-around;align-items:center;}
-  .bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;cursor:pointer;flex:1;min-width:0;transition:all 0.2s;}
-  .bottom-nav-item .bn-icon{font-size:20px;transition:transform 0.2s;}
-  .bottom-nav-item .bn-label{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center;}
-  .bottom-nav-item.active .bn-icon{transform:scale(1.15);}
-  .bottom-nav-item.active .bn-label{color:var(--gold);}
-  /* More menu */
-  .more-menu{position:fixed;bottom:60px;right:0;left:0;background:var(--bg2);border-top:1px solid var(--border);z-index:99;display:none;padding:12px 16px;flex-wrap:wrap;gap:8px;}
-  .more-menu.open{display:flex;}
-  .more-menu-item{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);background:var(--bg3);border:1px solid var(--border);cursor:pointer;font-size:13px;color:var(--muted2);flex:1;min-width:140px;transition:all 0.2s;}
-  .more-menu-item.active{color:var(--gold);border-color:rgba(201,168,76,0.3);}
-  .more-menu-item:hover{border-color:var(--gold);color:var(--gold);}
-  /* page padding on mobile for bottom nav */
-  @media(max-width:600px){
-    .bottom-nav{display:block;}
-    .page,.admin-page{padding:20px 16px 80px;}
-    .topbar{padding:0 16px;}
-    .nav{display:none!important;}
-    .hero-title{font-size:24px;}
-    .grid-3,.grid-2,.grid-4{grid-template-columns:1fr;}
-  }
-  /* ── PAGE FADE TRANSITION ── */
-  .page.active{animation:fadeInUp 0.25s ease;}
-  @keyframes fadeInUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
   /* ── SORT BUTTONS ── */
   .sort-btn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;white-space:nowrap;}
   .sort-btn.active{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.4);color:var(--gold);}
-  /* ── VIEW TOGGLE ── */
-  .view-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
-  .view-btn{padding:7px 12px;cursor:pointer;font-size:14px;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
-  .view-btn.active{background:rgba(201,168,76,0.12);color:var(--gold);}
-  @media(max-width:600px){.page,.admin-page{padding:20px 16px 80px;}.topbar{padding:0 16px;}.hero-title{font-size:24px;}.grid-3,.grid-2,.grid-4{grid-template-columns:1fr;}}
+  .sort-btn:hover{border-color:var(--gold);color:var(--gold);}
+  /* ── PAGE FADE TRANSITION ── */
+  .page.active{animation:fadeInUp 0.25s ease;}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  @media(max-width:600px){.page,.admin-page{padding:20px 16px;}.topbar{padding:0 16px;}.nav{padding:0 16px;}.hero-title{font-size:24px;}.grid-3,.grid-2,.grid-4{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -296,12 +268,8 @@
 <div class="page" id="profiles">
   <div class="section-title">Member profiles</div>
   <div class="section-sub">Everyone in the IT batch 2022–26</div>
-  <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center;flex-wrap:wrap;">
-    <input type="text" placeholder="Search by name or nickname..." style="flex:1;min-width:140px;" oninput="filterProfiles(this.value)"/>
-    <div class="view-toggle">
-      <div class="view-btn active" id="gridViewBtn" onclick="setProfileView('grid')" title="Grid view">⊞</div>
-      <div class="view-btn" id="listViewBtn" onclick="setProfileView('list')" title="List view">☰</div>
-    </div>
+  <div style="margin-bottom:12px;display:flex;gap:10px;">
+    <input type="text" placeholder="Search by name..." style="flex:1;" oninput="filterProfiles(this.value)"/>
     <button class="btn btn-primary" onclick="toggleAddProfile()">+ Add yours</button>
   </div>
   <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
@@ -520,30 +488,6 @@
   </div>
 </div>
 
-<!-- BOTTOM NAV (mobile) -->
-<div class="bottom-nav" id="bottomNav">
-  <div class="bottom-nav-inner">
-    <div class="bottom-nav-item active" onclick="showPage('home',null);setBottomNav(this)">
-      <div class="bn-icon">🏠</div><div class="bn-label">Home</div>
-    </div>
-    <div class="bottom-nav-item" onclick="showPage('profiles',null);setBottomNav(this)">
-      <div class="bn-icon">👤</div><div class="bn-label">Profiles</div>
-    </div>
-    <div class="bottom-nav-item" onclick="showPage('wall',null);setBottomNav(this)">
-      <div class="bn-icon">🧠</div><div class="bn-label">Wall</div>
-    </div>
-    <div class="bottom-nav-item" onclick="showPage('gallery',null);setBottomNav(this)">
-      <div class="bn-icon">📸</div><div class="bn-label">Gallery</div>
-    </div>
-    <div class="bottom-nav-item" onclick="toggleMoreMenu(this)">
-      <div class="bn-icon">☰</div><div class="bn-label">More</div>
-    </div>
-  </div>
-</div>
-
-<!-- MORE MENU (mobile) -->
-<div class="more-menu" id="moreMenu">
-  <div class="more-menu-item" onclick="showPage('confessions',null);closeMoreMenu()">🤫 Confessions</div>
   <div class="more-menu-item" onclick="showPage('letters',null);closeMoreMenu()">🔒 Letters</div>
   <div class="more-menu-item" onclick="showPage('vision',null);closeMoreMenu()">💛 Messages</div>
   <div class="more-menu-item" onclick="showPage('map',null);closeMoreMenu()">📍 Hometown</div>
@@ -613,34 +557,22 @@ function toggleAdmin() {
   }
 }
 
-// ── PROFILE VIEW & SORT ────────────────────────────────
-let profileView = 'grid';
-let profileSort = 'roll';
 let allProfileData = [];
-
-function filterProfiles(q) {
-  const query = q.toLowerCase();
-  document.querySelectorAll('.profile-card-grid, .profile-card-list').forEach(c => {
-    const name = (c.dataset.name || '').toLowerCase();
-    const nick = (c.dataset.nick || '').toLowerCase();
-    c.style.display = (name.includes(query) || nick.includes(query)) ? '' : 'none';
-  });
-}
-
-function setProfileView(view) {
-  profileView = view;
-  document.getElementById('gridViewBtn').classList.toggle('active', view === 'grid');
-  document.getElementById('listViewBtn').classList.toggle('active', view === 'list');
-  const grid = document.getElementById('profileGrid');
-  grid.className = view === 'grid' ? 'grid-3' : '';
-  if (window.renderProfiles) window.renderProfiles();
-}
+let profileSort = 'roll';
 
 function sortProfiles(sort, btn) {
   profileSort = sort;
   document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (window.renderProfiles) window.renderProfiles();
+}
+
+function filterProfiles(q) {
+  document.querySelectorAll('.profile-card').forEach(c => {
+    const name = (c.dataset.name || '').toLowerCase();
+    const nick = (c.dataset.nick || '').toLowerCase();
+    c.style.display = (name.includes(q.toLowerCase()) || nick.includes(q.toLowerCase())) ? '' : 'none';
+  });
 }
 
 // ── PROFILE MODAL ──────────────────────────────────────
@@ -699,23 +631,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft')  lightboxNav(-1);
   if (e.key === 'Escape')     closeLightbox();
 });
-
-// ── BOTTOM NAV ─────────────────────────────────────────
-function setBottomNav(el) {
-  document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
-  if (el) el.classList.add('active');
-  closeMoreMenu();
-}
-function toggleMoreMenu(el) {
-  const menu = document.getElementById('moreMenu');
-  const isOpen = menu.classList.contains('open');
-  menu.classList.toggle('open', !isOpen);
-  document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active'));
-  if (!isOpen && el) el.classList.add('active');
-}
-function closeMoreMenu() {
-  document.getElementById('moreMenu').classList.remove('open');
-}
 
 function toggleAddProfile() {
   const f = document.getElementById('addProfileForm');
@@ -964,7 +879,6 @@ const profileColors = [
   {bg:'rgba(76,175,125,0.12)',color:'var(--green)'},
   {bg:'rgba(224,82,82,0.12)',color:'var(--red)'}
 ];
-// consistent color per person based on name
 function getProfileColor(name) {
   let hash = 0;
   for (let i = 0; i < (name||'').length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
@@ -973,23 +887,19 @@ function getProfileColor(name) {
 
 onSnapshot(query(collection(db,'profiles'), orderBy('createdAt','desc')), snap => {
   allProfileData = [];
-  snap.forEach(d => allProfileData.push({id: d.id, ...d.data()}));
+  snap.forEach(d => allProfileData.push({id:d.id, ...d.data()}));
   window.renderProfiles();
 });
 
 window.renderProfiles = function() {
   const grid = document.getElementById('profileGrid'); if (!grid) return;
   grid.innerHTML = '';
-  const uid = auth.currentUser ? auth.currentUser.uid : null;
-
-  // sort
   let sorted = [...allProfileData];
   if (profileSort === 'roll')   sorted.sort((a,b) => parseInt(a.roll||9999) - parseInt(b.roll||9999));
   if (profileSort === 'name')   sorted.sort((a,b) => (a.name||'').localeCompare(b.name||''));
   if (profileSort === 'recent') sorted.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
-
   sorted.forEach(p => {
-    const isMe = uid && p.id === uid;
+    const isMe = auth.currentUser && p.id === auth.currentUser.uid;
     const col  = getProfileColor(p.name);
     const safeNick  = (p.nick||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     const safeBio   = (p.bio||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
@@ -998,47 +908,28 @@ window.renderProfiles = function() {
     const safeBday  = (p.bday||'').replace(/'/g,"\\'");
     const safeAlt   = (p.alt||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     const bdayDisplay = p.bday ? new Date(p.bday+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'long'}) : '';
+    const avatarHTML = p.photo
+      ? `<img src="${p.photo}" style="width:70px;height:70px;border-radius:50%;margin:0 auto 12px;display:block;object-fit:cover;border:2px solid rgba(201,168,76,0.4);" referrerpolicy="no-referrer"/>`
+      : `<div style="width:70px;height:70px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;border:2px solid ${col.color};background:${col.bg};color:${col.color};">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
     const modalData = JSON.stringify({name:p.name,nick:p.nick||'',bio:p.bio||'',roll:p.roll||'',phone:p.phone||'',bday:p.bday||'',alt:p.alt||'',photo:p.photo||'',bg:col.bg,color:col.color}).replace(/'/g,"\\'");
-
-    if (profileView === 'grid') {
-      const avatarHTML = p.photo
-        ? `<img src="${p.photo}" style="width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:block;object-fit:cover;border:2px solid rgba(201,168,76,0.4);" referrerpolicy="no-referrer"/>`
-        : `<div style="width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background:${col.bg};color:${col.color};border:2px solid ${col.color};">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
-      const div = document.createElement('div');
-      div.className = 'profile-card-grid';
-      div.dataset.name = (p.name||'').toLowerCase();
-      div.dataset.nick = (p.nick||'').toLowerCase();
-      div.onclick = () => openProfileModal(JSON.parse(modalData.replace(/\\'/g,"'")));
-      div.innerHTML = `${avatarHTML}
-        <div style="font-size:14px;font-weight:600;margin-bottom:2px;">${p.name}</div>
-        ${p.nick?`<div style="font-size:11px;color:var(--gold);margin-bottom:4px;">"${p.nick}"</div>`:''}
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${p.roll?'#'+p.roll:''}</div>
-        <span class="badge badge-gold">IT 2022–26</span>
-        ${isMe?`<div style="margin-top:8px;"><button class="btn" style="width:100%;font-size:11px;" onclick="event.stopPropagation();window.editProfileForm('${safeNick}','${safeBio}','${safeRoll}','${safePhone}','${safeBday}','${safeAlt}')">✏️ Edit</button></div>`:''}`;
-      grid.appendChild(div);
-    } else {
-      // LIST VIEW
-      const avatarHTML = p.photo
-        ? `<img src="${p.photo}" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid rgba(201,168,76,0.4);flex-shrink:0;" referrerpolicy="no-referrer"/>`
-        : `<div style="width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;background:${col.bg};color:${col.color};border:2px solid ${col.color};flex-shrink:0;">${(p.name||'?').slice(0,2).toUpperCase()}</div>`;
-      const div = document.createElement('div');
-      div.className = 'profile-card-list';
-      div.dataset.name = (p.name||'').toLowerCase();
-      div.dataset.nick = (p.nick||'').toLowerCase();
-      div.onclick = () => openProfileModal(JSON.parse(modalData.replace(/\\'/g,"'")));
-      div.innerHTML = `${avatarHTML}
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:14px;font-weight:600;">${p.name} ${p.nick?`<span style="font-size:12px;color:var(--gold);">"${p.nick}"</span>`:''}</div>
-          <div style="font-size:12px;color:var(--muted2);font-style:italic;">${p.bio||'IT Batch 2022–26'}</div>
-          <div style="display:flex;gap:12px;margin-top:4px;flex-wrap:wrap;">
-            ${p.roll?`<span style="font-size:11px;color:var(--muted);">🎫 ${p.roll}</span>`:''}
-            ${bdayDisplay?`<span style="font-size:11px;color:var(--muted);">🎂 ${bdayDisplay}</span>`:''}
-            ${p.alt?`<span style="font-size:11px;color:var(--purple);">✨ ${p.alt}</span>`:''}
-          </div>
-        </div>
-        ${isMe?`<button class="btn" style="font-size:11px;padding:5px 10px;flex-shrink:0;" onclick="event.stopPropagation();window.editProfileForm('${safeNick}','${safeBio}','${safeRoll}','${safePhone}','${safeBday}','${safeAlt}')">✏️</button>`:''}`;
-      grid.appendChild(div);
-    }
+    const div = document.createElement('div');
+    div.className = 'profile-card';
+    div.dataset.name = (p.name||'').toLowerCase();
+    div.dataset.nick = (p.nick||'').toLowerCase();
+    div.style.cursor = 'pointer';
+    div.onclick = () => openProfileModal(JSON.parse(modalData.replace(/\\'/g,"'")));
+    div.innerHTML = `${avatarHTML}
+      <div style="font-size:15px;font-weight:600;margin-bottom:2px;">${p.name}</div>
+      ${p.nick?`<div style="font-size:12px;color:var(--gold);margin-bottom:4px;">"${p.nick}"</div>`:''}
+      <div style="font-size:12px;color:var(--muted2);font-style:italic;margin-bottom:10px;">${p.bio||'IT Batch 2022–26'}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;text-align:left;">
+        ${p.roll?`<div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><span>🎫</span><span>${p.roll}</span></div>`:''}
+        ${bdayDisplay?`<div style="font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;"><span>🎂</span><span>${bdayDisplay}</span></div>`:''}
+        ${p.alt?`<div style="font-size:12px;color:var(--purple);display:flex;align-items:center;gap:6px;background:rgba(155,127,232,0.08);border-radius:var(--radius-sm);padding:5px 8px;"><span>✨</span><span>${p.alt}</span></div>`:''}
+      </div>
+      <span class="badge badge-gold">IT 2022–26</span>
+      ${isMe?`<div style="margin-top:10px;"><button class="btn" style="width:100%;font-size:12px;" onclick="event.stopPropagation();window.editProfileForm('${safeNick}','${safeBio}','${safeRoll}','${safePhone}','${safeBday}','${safeAlt}')">✏️ Edit my profile</button></div>`:''}`;
+    grid.appendChild(div);
   });
 };
 
