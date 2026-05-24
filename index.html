@@ -875,20 +875,30 @@ onSnapshot(query(collection(db,'posts'), orderBy('createdAt','desc')), snap => {
   });
 });
 window.addPost   = async () => { const u=auth.currentUser; if(!u) return; const t=document.getElementById('newPost').value.trim(); if(!t) return; await addDoc(collection(db,'posts'),{text:t,name:u.displayName,uid:u.uid,likes:0,createdAt:serverTimestamp()}); document.getElementById('newPost').value=''; };
+const likingInProgress = new Set();
 window.likePost  = async (id, el) => {
   const u = auth.currentUser; if (!u) return;
-  const likeRef = doc(db,'posts',id,'likes',u.uid);
-  const likeSnap = await getDoc(likeRef);
-  if (likeSnap.exists()) {
-    // already liked — unlike
-    await deleteDoc(likeRef);
-    await updateDoc(doc(db,'posts',id),{likes:increment(-1)});
-    el.style.color = '';
-  } else {
-    // not liked yet — like
-    await setDoc(likeRef,{likedAt:serverTimestamp()});
-    await updateDoc(doc(db,'posts',id),{likes:increment(1)});
-    el.style.color = 'var(--red)';
+  if (likingInProgress.has(id)) return;
+  likingInProgress.add(id);
+  el.style.opacity = '0.5';
+  el.style.pointerEvents = 'none';
+  try {
+    const likeRef = doc(db,'posts',id,'likes',u.uid);
+    const likeSnap = await getDoc(likeRef);
+    if (likeSnap.exists()) {
+      await deleteDoc(likeRef);
+      await updateDoc(doc(db,'posts',id),{likes:increment(-1)});
+      el.style.color = '';
+    } else {
+      await setDoc(likeRef,{likedAt:serverTimestamp()});
+      await updateDoc(doc(db,'posts',id),{likes:increment(1)});
+      el.style.color = 'var(--red)';
+    }
+  } catch(err) { console.error('Like error:',err); }
+  finally {
+    likingInProgress.delete(id);
+    el.style.opacity = '';
+    el.style.pointerEvents = '';
   }
 };
 window.deletePost= async (id) => { if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',id)); };
