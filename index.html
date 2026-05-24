@@ -861,14 +861,36 @@ onSnapshot(query(collection(db,'posts'), orderBy('createdAt','desc')), snap => {
       </div>
       <div style="font-size:14px;color:var(--muted2);">${p.text}</div>
       <div class="post-actions">
-        <span class="post-action" onclick="window.likePost('${d.id}')">❤️ ${p.likes||0}</span>
+        <span class="post-action" id="like-${d.id}" onclick="window.likePost('${d.id}',this)">❤️ ${p.likes||0}</span>
         ${isMe?`<span class="post-action" style="margin-left:auto;color:var(--red);" onclick="window.deletePost('${d.id}')">🗑 Delete</span>`:''}
       </div>`;
     feed.appendChild(div);
+    // check if current user already liked this post
+    if (auth.currentUser) {
+      getDoc(doc(db,'posts',d.id,'likes',auth.currentUser.uid)).then(s => {
+        const el = document.getElementById('like-'+d.id);
+        if (el && s.exists()) el.style.color = 'var(--red)';
+      }).catch(()=>{});
+    }
   });
 });
 window.addPost   = async () => { const u=auth.currentUser; if(!u) return; const t=document.getElementById('newPost').value.trim(); if(!t) return; await addDoc(collection(db,'posts'),{text:t,name:u.displayName,uid:u.uid,likes:0,createdAt:serverTimestamp()}); document.getElementById('newPost').value=''; };
-window.likePost  = async (id) => { await updateDoc(doc(db,'posts',id),{likes:increment(1)}); };
+window.likePost  = async (id, el) => {
+  const u = auth.currentUser; if (!u) return;
+  const likeRef = doc(db,'posts',id,'likes',u.uid);
+  const likeSnap = await getDoc(likeRef);
+  if (likeSnap.exists()) {
+    // already liked — unlike
+    await deleteDoc(likeRef);
+    await updateDoc(doc(db,'posts',id),{likes:increment(-1)});
+    el.style.color = '';
+  } else {
+    // not liked yet — like
+    await setDoc(likeRef,{likedAt:serverTimestamp()});
+    await updateDoc(doc(db,'posts',id),{likes:increment(1)});
+    el.style.color = 'var(--red)';
+  }
+};
 window.deletePost= async (id) => { if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',id)); };
 
 // ── PROFILES ───────────────────────────────────────────
@@ -1029,6 +1051,19 @@ window.sealLetter = async () => { const u=auth.currentUser; if(!u) return; const
 // ── MESSAGES TO BATCH ──────────────────────────────────
 onSnapshot(query(collection(db,'visions'), orderBy('createdAt','desc')), snap => {
   const feed = document.getElementById('visionFeed'); if (!feed) return; feed.innerHTML = '';
+  // hide form if user already posted
+  const uid = auth.currentUser ? auth.currentUser.uid : null;
+  const alreadyPosted = uid && snap.docs.some(d => d.data().uid === uid);
+  const msgForm = document.querySelector('#vision .card');
+  if (msgForm) {
+    if (alreadyPosted) {
+      msgForm.innerHTML = `<div style="display:flex;align-items:center;gap:10px;color:var(--green);font-size:13px;">
+        <span style="font-size:18px;">✅</span>
+        <div><div style="font-weight:500;">Your message has been posted!</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">Each person can only post once.</div></div>
+      </div>`;
+    }
+  }
   snap.forEach(d => {
     const p = d.data();
     const i = (p.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
@@ -1052,6 +1087,9 @@ window.addVision = async () => {
   const u = auth.currentUser; if (!u) return;
   const msg = document.getElementById('vDream').value.trim();
   if (!msg) { alert('Please write your message to the batch!'); return; }
+  // check if user already posted
+  const existing = await getDocs(query(collection(db,'visions'), where('uid','==',u.uid)));
+  if (!existing.empty) { alert('You already posted your message to the batch! Each person can only post once.'); return; }
   await addDoc(collection(db,'visions'), { name:u.displayName, dream:msg, uid:u.uid, createdAt:serverTimestamp() });
   document.getElementById('vDream').value = '';
   alert('Message posted! 💛');
