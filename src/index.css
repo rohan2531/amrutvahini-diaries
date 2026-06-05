@@ -1,0 +1,260 @@
+/* ── THE PREMIUM SYSTEM DESIGN CORE ── */
+:root {
+  --bg-gradient: radial-gradient(circle at top center, #161210 0%, #0a0807 100%);
+  --panel-bg: rgba(22, 18, 16, 0.7);
+  --card-bg: rgba(28, 24, 22, 0.45);
+  --border-color: rgba(201, 168, 76, 0.12);
+  --border-hover: rgba(201, 168, 76, 0.25);
+  
+  --gold-glow: #e0b84c;
+  --gold-dim: #c9a84c;
+  --text-main: #f5f3ef;
+  --text-muted: #9e968f;
+  --text-dim: #6e6660;
+  
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --cb-transition: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Smooth Base Resets */
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CINEMATIC FADE-IN ANIMATION ── */
+.page {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: pageReveal 0.5s var(--cb-transition) forwards;
+}
+
+@keyframes pageReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── APP BAR & NAVIGATION (GLASSMORPHISM) ── */
+.topbar {
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar-logo {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #fff 30%, var(--gold-glow) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Navigation Tab bar Links */
+.nav {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
+  margin: 24px auto;
+  max-width: 900px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  overflow-x: auto;
+}
+
+.nav-item {
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s var(--cb-transition);
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-item.active {
+  color: #000;
+  background: linear-gradient(135deg, #fff 0%, var(--gold-glow) 100%);
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(224, 184, 76, 0.2);
+}
+
+/* ── PREMIUM GLASS CARDS & INTERACTION ── */
+.card, .profile-card, .post, .vision-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all 0.4s var(--cb-transition);
+}
+
+/* Grid Adjustments */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Interactive Card Hovers */
+.profile-card:hover, .photo-card-container:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-hover);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(201, 168, 76, 0.08);
+}
+
+/* ── MODERN MINIMALIST INPUT FORMS ── */
+input[type="text"], input[type="tel"], input[type="date"], input[type="email"], textarea, select {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  color: var(--text-main);
+  font-size: 14px;
+  transition: all 0.3s var(--cb-transition);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--gold-glow);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 3px rgba(224, 184, 76, 0.1);
+}
+
+/* ── BUTTON STYLING ELEVATION ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.3s var(--cb-transition);
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #fff 0%, var(--gold-dim) 100%);
+  color: #120e0c;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(224, 184, 76, 0.25);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Sort buttons adjustments */
+.sort-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-btn.active {
+  background: rgba(201, 168, 76, 0.1);
+  border-color: var(--gold-glow);
+  color: var(--gold-glow);
+}
+
+/* ── MATTE OVERLAY LIGHTBOX MODALS ── */
+.profile-modal-overlay, .lightbox {
+  background: rgba(6, 5, 5, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s var(--cb-transition);
+}
+
+.profile-modal {
+  background: #161210;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  max-width: 440px;
+  width: 90%;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  animation: modalScale 0.35s var(--cb-transition);
+}
+
+/* ── PROFILES TAB HIGH-END ANIMATION KEYFRAMES ── */
+@keyframes profileFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Skeleton Loading Shimmer Gradient Sweeper Engine */
+.skeleton-card {
+  background: rgba(255, 255, 255, 0.01) !important;
+  border: 1px solid rgba(255, 255, 255, 0.02) !important;
+}
+
+.skeleton-shimmer {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(201, 168, 76, 0.03) 50%, 
+    rgba(255,255,255,0) 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmerSweep 1.8s infinite ease-in-out;
+}
+
+@keyframes shimmerSweep {
+  100% {
+    transform: translateX(100%);
+  }
+}
